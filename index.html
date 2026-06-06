@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高中物理实验书</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="sky-layer" aria-hidden="true">
+    <span class="sunbeam sunbeam-a"></span>
+    <span class="sunbeam sunbeam-b"></span>
+    <span class="dust dust-a"></span>
+    <span class="dust dust-b"></span>
+    <span class="dust dust-c"></span>
+  </div>
+
+  <main class="app-shell">
+    <section class="intro" id="intro">
+      <div class="intro-window" aria-hidden="true">
+        <div class="window-frame"></div>
+        <div class="cloud cloud-a"></div>
+        <div class="cloud cloud-b"></div>
+      </div>
+      <div class="intro-book" id="introBook">
+        <div class="book-cover">
+          <div class="cover-glow"></div>
+          <p class="cover-kicker">Physics Lab</p>
+          <h1>高中物理实验书</h1>
+          <p class="cover-subtitle">在光里看见规律</p>
+          <div class="cover-lines" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="book-shadow"></div>
+      </div>
+      <button class="open-book-btn" id="openBookBtn" type="button">
+        <span class="btn-icon">▶</span>
+        <span>打开实验书</span>
+      </button>
+    </section>
+
+    <section class="lab-app" id="labApp" aria-label="高中物理实验书">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <p class="eyebrow">Physics Lab Book</p>
+            <h2>高中物理实验书</h2>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="toggleShelfBtn" type="button" title="实验目录" aria-label="实验目录">☰</button>
+          <button class="icon-btn" id="resetAllBtn" type="button" title="回到封面" aria-label="回到封面">↺</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="shelf" id="shelf" aria-label="实验目录">
+          <div class="shelf-head">
+            <p class="eyebrow">第一版旗舰章节</p>
+            <h3>实验书签</h3>
+          </div>
+          <div class="experiment-list" id="experimentList"></div>
+          <div class="future-shelf">
+            <p class="eyebrow">后续扩展书架</p>
+            <div id="futureList" class="future-list"></div>
+          </div>
+        </aside>
+
+        <section class="book-spread">
+          <div class="page scene-page">
+            <div class="page-label">
+              <span id="sceneChapter">力学</span>
+              <strong id="sceneTitle">探究加速度与力、质量的关系</strong>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="sceneCanvas" width="980" height="620"></canvas>
+              <div class="pause-badge" id="pauseBadge">暂停观察</div>
+            </div>
+            <div class="live-strip" id="liveStrip"></div>
+          </div>
+
+          <aside class="page notes-page">
+            <div class="experiment-title-block">
+              <p class="eyebrow" id="experimentChapter">力学</p>
+              <h2 id="experimentTitle">探究加速度与力、质量的关系</h2>
+              <p id="experimentMood" class="experiment-mood">纸带、轨迹和图像一起写下牛顿第二定律。</p>
+            </div>
+
+            <div class="tool-row">
+              <button class="tool-btn primary" id="playBtn" type="button" title="播放" aria-label="播放">
+                <span class="btn-icon">▶</span><span>播放</span>
+              </button>
+              <button class="tool-btn" id="pauseBtn" type="button" title="暂停" aria-label="暂停">
+                <span class="btn-icon">Ⅱ</span><span>暂停</span>
+              </button>
+              <button class="tool-btn" id="resetBtn" type="button" title="重置" aria-label="重置">
+                <span class="btn-icon">↺</span><span>重置</span>
+              </button>
+            </div>
+
+            <div class="panel control-panel">
+              <div class="panel-head">
+                <h3>实验器材</h3>
+                <span id="statusPill" class="status-pill">待开始</span>
+              </div>
+              <div id="controls" class="controls"></div>
+            </div>
+
+            <div class="panel knowledge-panel">
+              <div class="panel-head">
+                <h3>知识点</h3>
+                <span id="knowledgeTag" class="status-pill subtle">概览</span>
+              </div>
+              <article id="knowledgeCard" class="knowledge-card"></article>
+            </div>
+
+            <div class="panel conclusion-panel">
+              <div class="panel-head">
+                <h3>结论锁定</h3>
+                <span id="confidencePill" class="status-pill subtle">观察中</span>
+              </div>
+              <p id="conclusionText"></p>
+            </div>
+          </aside>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
