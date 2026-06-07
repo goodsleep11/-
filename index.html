@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>计算机网络实验书</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232f9c9a'/%3E%3Cpath d='M18 16h28v32H18z' fill='%23fff8e9'/%3E%3Cpath d='M32 16v32M23 24h18M23 32h18M23 40h18' stroke='%233f78b5' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true">
+    <span class="sun-ray ray-a"></span>
+    <span class="sun-ray ray-b"></span>
+    <span class="particle p-a"></span>
+    <span class="particle p-b"></span>
+    <span class="particle p-c"></span>
+  </div>
+
+  <main class="shell">
+    <section class="cover-scene" id="coverScene">
+      <div class="window" aria-hidden="true">
+        <span></span>
+        <span></span>
+      </div>
+      <button class="cover-book" id="openBookBtn" type="button" aria-label="打开计算机网络实验书">
+        <span class="book-spine"></span>
+        <span class="cover-kicker">Network Lab</span>
+        <strong>计算机网络实验书</strong>
+        <span class="cover-subtitle">在纸页、光线和数据包里看见协议</span>
+        <span class="cover-lines" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+      </button>
+      <p class="cover-hint">点击书本开始实验</p>
+    </section>
+
+    <section class="lab" id="lab" aria-label="计算机网络实验书工作区">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true"></div>
+          <div>
+            <p class="eyebrow">Interactive Network Lab</p>
+            <h1>计算机网络实验书</h1>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="catalogBtn" type="button" title="实验目录" aria-label="实验目录">☰</button>
+          <button class="icon-btn university-toggle" id="universityBtn" type="button" title="大学知识" aria-label="大学知识">U</button>
+          <button class="icon-btn" id="homeBtn" type="button" title="回到封面" aria-label="回到封面">↩</button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="catalog" id="catalog" aria-label="实验目录">
+          <div class="catalog-head">
+            <p class="eyebrow">课程全目录</p>
+            <h2>网络实验书签</h2>
+          </div>
+          <div class="flagship-list" id="flagshipList"></div>
+          <div class="full-catalog">
+            <div class="catalog-head compact">
+              <p class="eyebrow">覆盖范围</p>
+              <h3>全部实验索引</h3>
+            </div>
+            <div id="fullCatalogList" class="full-catalog-list"></div>
+          </div>
+        </aside>
+
+        <section class="book" aria-live="polite">
+          <section class="page scene-page">
+            <div class="page-title">
+              <span id="layerName">分层模型</span>
+              <strong id="sceneTitle">协议栈封装与解封装</strong>
+            </div>
+            <div class="stage-wrap" id="stageWrap">
+              <canvas id="networkCanvas" width="1100" height="680"></canvas>
+              <div class="view-hud" id="viewHud">
+                <span id="viewReadout">视角 0° / 缩放 100%</span>
+                <button class="mini-btn" id="resetViewBtn" type="button">回正</button>
+              </div>
+              <div class="hover-tip" id="hoverTip"></div>
+              <div class="pause-overlay" id="pauseOverlay">暂停观察：长按设备、链路或数据包查看解析</div>
+              <div class="metric-ribbon" id="metricRibbon"></div>
+            </div>
+          </section>
+
+          <aside class="page notes-page">
+            <div class="experiment-heading">
+              <p class="eyebrow" id="experimentLayer">分层模型</p>
+              <h2 id="experimentTitle">协议栈封装与解封装</h2>
+              <p id="experimentBrief">把一次应用数据发送拆成“加头部、穿越链路、逐层解封装”的可视化过程。</p>
+            </div>
+
+            <div class="toolbar">
+              <button class="tool-btn primary" id="playBtn" type="button"><span>▶</span>播放</button>
+              <button class="tool-btn" id="pauseBtn" type="button"><span>Ⅱ</span>暂停</button>
+              <button class="tool-btn" id="resetBtn" type="button"><span>↻</span>重置</button>
+            </div>
+
+            <section class="panel controls-panel">
+              <div class="panel-head">
+                <h3>实验参数</h3>
+                <span class="pill" id="statePill">待开始</span>
+              </div>
+              <div class="controls" id="controls"></div>
+            </section>
+
+            <section class="panel diagnostics-panel">
+              <div class="panel-head">
+                <h3>误差监测</h3>
+                <span class="pill subtle" id="diagnosticsPill">实时</span>
+              </div>
+              <div class="diagnostics-list" id="diagnosticsList"></div>
+            </section>
+
+            <section class="panel manual-panel">
+              <div class="panel-head">
+                <h3>实验小手册</h3>
+                <span class="pill subtle">步骤</span>
+              </div>
+              <div class="manual-card" id="manualCard"></div>
+            </section>
+
+            <section class="panel knowledge-panel">
+              <div class="panel-head">
+                <h3>知识点解析</h3>
+                <span class="pill subtle" id="knowledgeTag">概览</span>
+              </div>
+              <article class="knowledge" id="knowledgeCard"></article>
+            </section>
+
+            <section class="panel conclusion-panel">
+              <div class="panel-head">
+                <h3>实验结论</h3>
+                <span class="pill subtle" id="conclusionPill">观察中</span>
+              </div>
+              <p id="conclusionText"></p>
+            </section>
+          </aside>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <aside class="university-panel" id="universityPanel" aria-label="大学知识面板">
+    <div class="university-head">
+      <div>
+        <p class="eyebrow">University Layer</p>
+        <h2>大学知识</h2>
+      </div>
+      <button class="icon-btn compact-btn" id="closeUniversityBtn" type="button" aria-label="关闭大学知识">×</button>
+    </div>
+    <div id="universityContent" class="university-content"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
