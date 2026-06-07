@@ -346,17 +346,188 @@ const experiments = [
         formula: "I = U / (R + R滑)"
       }
     }
+  },
+  {
+    id: "force",
+    icon: "Σ",
+    chapter: "力学",
+    title: "探究互成角度两个力的合成",
+    mood: "两个弹簧测力计轻轻拉住圆环，平行四边形把合力画出来。",
+    accent: "#6f6aa8",
+    controls: [
+      { key: "forceA", label: "分力 F₁", min: 1.0, max: 8.0, step: 0.1, value: 4.0, unit: "N" },
+      { key: "forceB", label: "分力 F₂", min: 1.0, max: 8.0, step: 0.1, value: 3.2, unit: "N" },
+      { key: "forceAngle", label: "夹角 θ", min: 20, max: 160, step: 1, value: 72, unit: "°" }
+    ],
+    overview: {
+      title: "保持圆环静止，画出两条分力",
+      body: "两只弹簧测力计同时拉圆环。把两个分力按方向和大小作图，平行四边形的对角线就是等效合力。",
+      formula: "F = √(F₁² + F₂² + 2F₁F₂cosθ)"
+    },
+    conclusion: "两个互成角度的力可以用平行四边形定则求合力。夹角越大，合力通常越小；当方向相同时合力最大，方向相反时合力最小。",
+    cards: {
+      vectorA: {
+        label: "分力 F₁",
+        title: "力是有方向的量",
+        body: "合成力时不能只把数字相加，还要把方向一起带入。箭头长度表示大小，箭头方向表示力的方向。",
+        formula: "力：矢量"
+      },
+      vectorB: {
+        label: "分力 F₂",
+        title: "夹角会改变合力大小",
+        body: "两力夹角变大时，两个力在同一方向上的贡献减少，所以合力不再等于简单相加。",
+        formula: "F² = F₁² + F₂² + 2F₁F₂cosθ"
+      },
+      resultant: {
+        label: "合力",
+        title: "对角线表示等效作用",
+        body: "合力对物体产生的效果，与两个分力共同作用的效果相同。实验中常用一个力替代两个力来验证。",
+        formula: "F合 = F₁ + F₂（矢量和）"
+      },
+      angle: {
+        label: "夹角",
+        title: "角度越大，合力越不容易变大",
+        body: "当 F₁、F₂ 大小不变时，cosθ 随 θ 增大而减小，合力也随之减小。",
+        formula: "cosθ 决定交叉项"
+      }
+    }
+  },
+  {
+    id: "gas",
+    icon: "pV",
+    chapter: "热学",
+    title: "探究气体等温变化规律",
+    mood: "活塞慢慢压下，气体把 pV = 常量写在透明针筒里。",
+    accent: "#e86f61",
+    controls: [
+      { key: "gasVolume", label: "气体体积 V", min: 20, max: 80, step: 1, value: 50, unit: "mL" },
+      { key: "gasTemp", label: "温度 T", min: 280, max: 330, step: 1, value: 300, unit: "K" },
+      { key: "gasAmount", label: "气体物质的量", min: 0.7, max: 1.3, step: 0.01, value: 1.0, unit: "份" }
+    ],
+    overview: {
+      title: "缓慢移动活塞，尽量保持温度不变",
+      body: "一定质量气体在温度不变时，压强与体积成反比。真实实验要缓慢操作，让气体有时间和外界交换热量。",
+      formula: "pV = 常量"
+    },
+    conclusion: "一定质量气体在温度不变时，p 与 V 成反比，p-V 图像是双曲线，p-1/V 图像近似为过原点直线。",
+    cards: {
+      piston: {
+        label: "活塞",
+        title: "体积变小，碰撞更频繁",
+        body: "温度不变时分子平均动能不变。体积减小后，单位时间撞到器壁的次数增加，压强升高。",
+        formula: "p ∝ 1/V"
+      },
+      gauge: {
+        label: "压强计",
+        title: "压强和体积反向变化",
+        body: "读数应满足 pV 近似不变。若温度明显升高或漏气，乘积会偏离常量。",
+        formula: "p₁V₁ = p₂V₂"
+      },
+      graph: {
+        label: "p-V 图像",
+        title: "双曲线来自反比例",
+        body: "横轴体积增大时，纵轴压强减小。把横轴换成 1/V，图像会更接近直线。",
+        formula: "p = C / V"
+      }
+    }
+  },
+  {
+    id: "resistivity",
+    icon: "ρ",
+    chapter: "电学",
+    title: "测量金属丝电阻率",
+    mood: "把细金属丝拉直，长度、直径和伏安读数共同给出材料的性格。",
+    accent: "#d6a744",
+    controls: [
+      { key: "wireLength", label: "金属丝长度 L", min: 0.20, max: 1.20, step: 0.01, value: 0.60, unit: "m" },
+      { key: "wireDiameter", label: "金属丝直径 d", min: 0.20, max: 0.80, step: 0.01, value: 0.40, unit: "mm" },
+      { key: "wireVoltage", label: "两端电压 U", min: 0.5, max: 4.0, step: 0.1, value: 2.0, unit: "V" }
+    ],
+    overview: {
+      title: "测出长度、直径、电压和电流",
+      body: "先用伏安法测金属丝电阻，再用螺旋测微器测直径，算横截面积。电阻率是材料本身的重要属性。",
+      formula: "ρ = RS / L,  S = πd²/4"
+    },
+    conclusion: "同种材料温度一定时，电阻 R 与长度 L 成正比，与横截面积 S 成反比。由 ρ = RS/L 可求金属丝电阻率。",
+    cards: {
+      wire: {
+        label: "金属丝",
+        title: "长度越长，电阻越大",
+        body: "电子通过更长的导体时受到更多阻碍，因此同种材料、同一截面积下 R 与 L 成正比。",
+        formula: "R ∝ L"
+      },
+      micrometer: {
+        label: "螺旋测微器",
+        title: "直径误差会被平方放大",
+        body: "横截面积由 d² 决定，直径读数稍有偏差，会对电阻率结果产生更明显影响。",
+        formula: "S = πd²/4"
+      },
+      meters: {
+        label: "伏安读数",
+        title: "先由 U/I 得到电阻",
+        body: "电压表测金属丝两端电压，电流表测通过金属丝的电流，温度变化要尽量小。",
+        formula: "R = U/I"
+      },
+      formula: {
+        label: "电阻率",
+        title: "把形状影响剥离出来",
+        body: "电阻率描述材料导电性能。把长度和横截面积的影响扣除后，才能比较不同材料。",
+        formula: "ρ = RS/L"
+      }
+    }
+  },
+  {
+    id: "lens",
+    icon: "f",
+    chapter: "光学",
+    title: "测定凸透镜焦距",
+    mood: "烛焰、透镜和光屏在一条光轨上移动，清晰像像一小片晨光落在屏上。",
+    accent: "#427aa1",
+    controls: [
+      { key: "objectDistance", label: "物距 u", min: 18, max: 80, step: 1, value: 36, unit: "cm" },
+      { key: "focalLength", label: "透镜焦距 f", min: 8, max: 22, step: 0.5, value: 12, unit: "cm" },
+      { key: "screenOffset", label: "光屏偏离", min: -18, max: 18, step: 1, value: 0, unit: "cm" }
+    ],
+    overview: {
+      title: "移动光屏，找到最清晰的倒立实像",
+      body: "当物距大于焦距时，凸透镜能在另一侧形成实像。调节光屏到像距位置，用透镜成像公式求焦距。",
+      formula: "1/f = 1/u + 1/v"
+    },
+    conclusion: "凸透镜成实像时，物距 u、像距 v 和焦距 f 满足 1/f = 1/u + 1/v。光屏离像距越远，像越模糊。",
+    cards: {
+      candle: {
+        label: "烛焰",
+        title: "物体必须在焦点之外才能接到实像",
+        body: "当 u > f 时，凸透镜另一侧可形成倒立实像；当 u ≤ f 时，光屏上无法接到实像。",
+        formula: "u > f"
+      },
+      lens: {
+        label: "凸透镜",
+        title: "透镜把光线会聚",
+        body: "平行主光轴的光线通过凸透镜后会经过焦点，过光心的光线传播方向近似不变。",
+        formula: "会聚透镜"
+      },
+      screen: {
+        label: "光屏",
+        title: "清晰像只在像距附近出现",
+        body: "光屏位置等于像距 v 时，来自同一点的光线重新会聚，屏上像最清晰。",
+        formula: "v = uf/(u-f)"
+      },
+      graph: {
+        label: "成像公式",
+        title: "用 u 和 v 反推 f",
+        body: "测出多组物距和像距，代入公式或作图，可以减小偶然误差。",
+        formula: "f = uv/(u+v)"
+      }
+    }
   }
 ];
 
 const futureExperiments = [
-  ["力学", "互成角度两个力的合成"],
   ["力学", "探究向心力大小的影响因素"],
-  ["热学", "气体等温变化与压强体积关系"],
-  ["电学", "测量金属丝电阻率"],
   ["电学", "测定电源电动势和内阻"],
   ["电磁学", "探究通电导线在磁场中受力"],
-  ["光学", "测定凸透镜焦距"],
+  ["光学", "用双缝干涉测波长"],
   ["近代物理", "光电效应与临界频率"]
 ];
 
@@ -513,6 +684,10 @@ function updatePhysics(dt) {
   if (id === "spring") updateSpring(dt);
   if (id === "energy") updateEnergy(dt);
   if (id === "resistance") updateResistance(dt);
+  if (id === "force") updateForce(dt);
+  if (id === "gas") updateGas(dt);
+  if (id === "resistivity") updateResistivity(dt);
+  if (id === "lens") updateLens(dt);
 }
 
 function updateNewton() {
@@ -560,6 +735,22 @@ function updateEnergy() {
 
 function updateResistance() {
   if (S.t >= 4.8) markDone();
+}
+
+function updateForce() {
+  if (S.t >= 4.8) markDone();
+}
+
+function updateGas() {
+  if (S.t >= 5.0) markDone();
+}
+
+function updateResistivity() {
+  if (S.t >= 5.0) markDone();
+}
+
+function updateLens() {
+  if (S.t >= 5.0) markDone();
 }
 
 function renderExperimentTabs() {
@@ -709,6 +900,42 @@ function getLiveData() {
       ["总电阻", `${fmt(r.totalResistance)} Ω`]
     ];
   }
+  if (id === "force") {
+    const f = forceState();
+    return [
+      ["分力 F₁", `${fmt(f.f1)} N`],
+      ["分力 F₂", `${fmt(f.f2)} N`],
+      ["夹角 θ", `${fmt(f.thetaDeg, 1)} °`],
+      ["合力 F", `${fmt(f.resultant)} N`]
+    ];
+  }
+  if (id === "gas") {
+    const g = gasState();
+    return [
+      ["体积 V", `${fmt(g.volume, 0)} mL`],
+      ["压强 p", `${fmt(g.pressure)} kPa`],
+      ["温度 T", `${fmt(g.temp, 0)} K`],
+      ["pV", `${fmt(g.pv, 0)} kPa·mL`]
+    ];
+  }
+  if (id === "resistivity") {
+    const r = resistivityState();
+    return [
+      ["电阻 R", `${fmt(r.resistance)} Ω`],
+      ["电流 I", `${fmt(r.current)} A`],
+      ["截面积 S", `${fmt(r.area * 1e6)} mm²`],
+      ["电阻率 ρ", `${fmt(r.rhoMeasured * 1e8)}×10⁻⁸ Ω·m`]
+    ];
+  }
+  if (id === "lens") {
+    const l = lensState();
+    return [
+      ["物距 u", `${fmt(l.u, 0)} cm`],
+      ["像距 v", l.realImage ? `${fmt(l.v, 1)} cm` : "无实像"],
+      ["焦距 f", `${fmt(l.f, 1)} cm`],
+      ["清晰度", l.realImage ? `${fmt(l.sharpness, 0)}%` : "0%"]
+    ];
+  }
   return [];
 }
 
@@ -796,6 +1023,10 @@ function draw() {
   if (id === "spring") drawSpring();
   if (id === "energy") drawEnergy();
   if (id === "resistance") drawResistance();
+  if (id === "force") drawForce();
+  if (id === "gas") drawGas();
+  if (id === "resistivity") drawResistivity();
+  if (id === "lens") drawLens();
 }
 
 function roundRect(x, y, w, h, r = 8) {
@@ -2018,9 +2249,634 @@ function drawUIGraph(x, y, w, h, state) {
   ctx.restore();
 }
 
+function forceState() {
+  const f1 = S.values.forceA;
+  const f2 = S.values.forceB;
+  const thetaDeg = S.values.forceAngle;
+  const half = thetaDeg * Math.PI / 360;
+  const a1 = -half;
+  const a2 = half;
+  const v1 = { x: f1 * Math.cos(a1), y: f1 * Math.sin(a1) };
+  const v2 = { x: f2 * Math.cos(a2), y: f2 * Math.sin(a2) };
+  const sx = v1.x + v2.x;
+  const sy = v1.y + v2.y;
+  return {
+    f1,
+    f2,
+    thetaDeg,
+    theta: thetaDeg * Math.PI / 180,
+    a1,
+    a2,
+    v1,
+    v2,
+    sum: { x: sx, y: sy },
+    resultant: Math.hypot(sx, sy),
+    direction: Math.atan2(sy, sx)
+  };
+}
+
+function forceGeometry() {
+  const W = S.cssW, H = S.cssH;
+  const f = forceState();
+  const origin = { x: W * 0.38, y: H * 0.46 };
+  const scale = clamp(Math.min(W, H) * 0.052, 20, 34);
+  const p1 = { x: origin.x + f.v1.x * scale, y: origin.y + f.v1.y * scale };
+  const p2 = { x: origin.x + f.v2.x * scale, y: origin.y + f.v2.y * scale };
+  const sum = { x: origin.x + f.sum.x * scale, y: origin.y + f.sum.y * scale };
+  return { ...f, origin, p1, p2, sum, scale };
+}
+
+function drawForce() {
+  const W = S.cssW, H = S.cssH;
+  const g = forceGeometry();
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.58, 46, "#6f6aa8");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.48, 9);
+  drawChunkRect(W * 0.16, H * 0.23, W * 0.45, H * 0.34, 14, "#f7f1e8", "#bba17a", "rgba(101,76,45,.24)", 10);
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(83,97,112,.16)";
+  ctx.lineWidth = 2;
+  for (let x = W * 0.18; x <= W * 0.59; x += 26) {
+    ctx.beginPath();
+    ctx.moveTo(x, H * 0.25);
+    ctx.lineTo(x, H * 0.55);
+    ctx.stroke();
+  }
+  for (let y = H * 0.26; y <= H * 0.55; y += 24) {
+    ctx.beginPath();
+    ctx.moveTo(W * 0.17, y);
+    ctx.lineTo(W * 0.60, y);
+    ctx.stroke();
+  }
+
+  ctx.setLineDash([7, 6]);
+  ctx.strokeStyle = "rgba(111,106,168,.42)";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(g.p1.x, g.p1.y);
+  ctx.lineTo(g.sum.x, g.sum.y);
+  ctx.moveTo(g.p2.x, g.p2.y);
+  ctx.lineTo(g.sum.x, g.sum.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  drawVectorScale(g.origin, g.p1, `F₁=${fmt(g.f1)}N`, "#6f6aa8");
+  drawVectorScale(g.origin, g.p2, `F₂=${fmt(g.f2)}N`, "#d6a744");
+  drawArrow(g.origin.x, g.origin.y, g.p1.x, g.p1.y, "#6f6aa8", 4);
+  drawArrow(g.origin.x, g.origin.y, g.p2.x, g.p2.y, "#d6a744", 4);
+  drawGlowLine(g.origin.x, g.origin.y, g.sum.x, g.sum.y, "rgba(232,111,97,.78)", 5);
+  drawArrow(g.origin.x, g.origin.y, g.sum.x, g.sum.y, "#e86f61", 4);
+  drawBeveledCircle(g.origin.x, g.origin.y, 17, "#f7efe5", "#b99768", "rgba(101,76,45,.34)");
+  drawBeveledCircle(g.origin.x, g.origin.y, 8, "#6f6aa8", "#403d73", "rgba(255,255,255,.22)");
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(232,111,97,.38)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(g.origin.x, g.origin.y, 54, g.a1, g.a2);
+  ctx.stroke();
+  ctx.restore();
+  drawLabel(`θ=${fmt(g.thetaDeg, 0)}°`, g.origin.x + 38, g.origin.y - 56, "#7d3e38");
+  drawLabel(`F合=${fmt(g.resultant)} N`, g.sum.x + 12, g.sum.y - 14, "#7d3e38");
+
+  drawForcePanel(W * 0.70, H * 0.16, W * 0.21, H * 0.33, g);
+  drawHotspotHints([
+    { key: "vectorA", x: g.p1.x, y: g.p1.y, text: "拖动 F₁" },
+    { key: "vectorB", x: g.p2.x, y: g.p2.y, text: "拖动 F₂" },
+    { key: "angle", x: g.origin.x + 52, y: g.origin.y - 48, text: "拖动夹角" },
+    { key: "resultant", x: g.sum.x, y: g.sum.y, text: "长按合力" }
+  ]);
+}
+
+function drawVectorScale(origin, end, label, color) {
+  const angle = Math.atan2(end.y - origin.y, end.x - origin.x);
+  const len = Math.hypot(end.x - origin.x, end.y - origin.y);
+  const x = origin.x + Math.cos(angle) * (len + 54);
+  const y = origin.y + Math.sin(angle) * (len + 54);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  drawChunkRect(-52, -14, 104, 28, 14, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.25)", 5);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  for (let i = -3; i <= 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * 12, -7);
+    ctx.lineTo(i * 12, 7);
+    ctx.stroke();
+  }
+  drawBeveledCircle(-60, 0, 7, color, shadeColor(color, -22), "rgba(255,255,255,.18)");
+  drawBeveledCircle(60, 0, 7, color, shadeColor(color, -22), "rgba(255,255,255,.18)");
+  ctx.fillStyle = "#536170";
+  ctx.font = "bold 11px Microsoft YaHei";
+  ctx.fillText(label, -30, 4);
+  ctx.restore();
+}
+
+function drawForcePanel(x, y, w, h, g) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("平行四边形定则", x + 18, y + 26);
+  ctx.fillText("F² = F₁² + F₂²", x + 18, y + 56);
+  ctx.fillText("+ 2F₁F₂cosθ", x + 38, y + 78);
+  const barY = y + h - 62;
+  const max = 16;
+  [["F₁", g.f1, "#6f6aa8"], ["F₂", g.f2, "#d6a744"], ["F", g.resultant, "#e86f61"]].forEach(([label, value, color], i) => {
+    const bx = x + 20 + i * ((w - 52) / 3);
+    const bh = clamp(value / max, 0, 1) * 54;
+    roundRect(bx, barY - bh, 20, bh, 5);
+    const grad = ctx.createLinearGradient(bx, barY - bh, bx, barY);
+    grad.addColorStop(0, "rgba(255,255,255,.62)");
+    grad.addColorStop(.24, color);
+    grad.addColorStop(1, shadeColor(color, -18));
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.fillStyle = "#536170";
+    ctx.fillText(label, bx + 1, barY + 18);
+  });
+  ctx.restore();
+}
+
+function gasState() {
+  const volume = S.values.gasVolume;
+  const temp = S.values.gasTemp;
+  const amount = S.values.gasAmount;
+  const pressure = 100 * amount * (temp / 300) * (50 / volume);
+  return {
+    volume,
+    temp,
+    amount,
+    pressure,
+    pv: pressure * volume,
+    constant: 5000 * amount * (temp / 300)
+  };
+}
+
+function gasGeometry() {
+  const W = S.cssW, H = S.cssH;
+  const chamberX = W * 0.15;
+  const chamberY = H * 0.38;
+  const chamberW = W * 0.45;
+  const chamberH = H * 0.15;
+  const gasW = map(S.values.gasVolume, 20, 80, chamberW * 0.28, chamberW * 0.86);
+  const pistonX = chamberX + gasW;
+  return { chamberX, chamberY, chamberW, chamberH, gasW, pistonX };
+}
+
+function drawGas() {
+  const W = S.cssW, H = S.cssH;
+  const state = gasState();
+  const g = gasGeometry();
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.58, 46, "#e86f61");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.48, 9);
+  drawGasParticles(g.chamberX + 12, g.chamberY + 10, g.gasW - 24, g.chamberH - 20, state);
+  drawSyringe(g, state);
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(83,97,112,.34)";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(g.chamberX + g.chamberW * 0.18, g.chamberY + g.chamberH);
+  ctx.bezierCurveTo(W * 0.44, H * 0.64, W * 0.62, H * 0.46, W * 0.73, H * 0.34);
+  ctx.stroke();
+  ctx.restore();
+
+  drawRoundMeter(W * 0.76, H * 0.28, "p", state.pressure, "kPa", 260, "#e86f61");
+  drawGasGraph(W * 0.70, H * 0.46, W * 0.21, H * 0.25, state);
+  drawLabel(`pV ≈ ${fmt(state.pv, 0)} kPa·mL`, W * 0.10, H * 0.22, "#7d3e38");
+  drawLabel(`T = ${fmt(state.temp, 0)} K`, W * 0.10, H * 0.29, "#236e69");
+  drawHotspotHints([
+    { key: "piston", x: g.pistonX, y: g.chamberY + g.chamberH / 2, text: "拖动活塞" },
+    { key: "gauge", x: W * 0.76, y: H * 0.28, text: "拖动温度" },
+    { key: "graph", x: W * 0.80, y: H * 0.58, text: "长按图像" }
+  ]);
+}
+
+function drawSyringe(g, state) {
+  ctx.save();
+  drawOvalShadow(g.chamberX + g.chamberW / 2, g.chamberY + g.chamberH + 32, g.chamberW * 1.05, 28, 0.17);
+  roundRect(g.chamberX, g.chamberY, g.chamberW, g.chamberH, 14);
+  ctx.fillStyle = "rgba(126, 195, 220, .19)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,103,122,.42)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  const gasGrad = ctx.createLinearGradient(g.chamberX, g.chamberY, g.chamberX + g.gasW, g.chamberY + g.chamberH);
+  gasGrad.addColorStop(0, "rgba(232,111,97,.20)");
+  gasGrad.addColorStop(.6, "rgba(255,222,146,.34)");
+  gasGrad.addColorStop(1, "rgba(232,111,97,.12)");
+  roundRect(g.chamberX + 8, g.chamberY + 8, g.gasW - 16, g.chamberH - 16, 10);
+  ctx.fillStyle = gasGrad;
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(83,97,112,.35)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i <= 8; i++) {
+    const x = g.chamberX + 16 + i * (g.chamberW - 32) / 8;
+    ctx.beginPath();
+    ctx.moveTo(x, g.chamberY - 10);
+    ctx.lineTo(x, g.chamberY + 6);
+    ctx.stroke();
+  }
+
+  drawChunkRect(g.pistonX - 10, g.chamberY - 10, 20, g.chamberH + 20, 8, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 6);
+  drawPill3D(g.pistonX + 8, g.chamberY + g.chamberH / 2 - 7, g.chamberW - g.gasW + 58, 14, "#758795", "#46545e");
+  drawChunkRect(g.chamberX + g.chamberW + 42, g.chamberY + g.chamberH / 2 - 28, 22, 56, 8, "#758795", "#46545e", "rgba(36,50,64,.24)", 6);
+  ctx.restore();
+  drawLabel(`${fmt(state.volume, 0)} mL`, g.chamberX + g.gasW / 2 - 24, g.chamberY - 20, "#7d3e38");
+}
+
+function drawGasParticles(x, y, w, h, state) {
+  if (w <= 12 || h <= 12) return;
+  const count = Math.round(map(state.amount, 0.7, 1.3, 15, 26));
+  ctx.save();
+  for (let i = 0; i < count; i++) {
+    const px = x + ((i * 37 + Math.sin(S.t * 1.7 + i) * 9 + w * 4) % w);
+    const py = y + ((i * 23 + Math.cos(S.t * 1.3 + i) * 7 + h * 4) % h);
+    ctx.fillStyle = i % 3 === 0 ? "rgba(232,111,97,.76)" : "rgba(255,255,255,.82)";
+    ctx.beginPath();
+    ctx.arc(px, py, 3.1, 0, TAU);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawGasGraph(x, y, w, h, state) {
+  const originX = x + 30;
+  const originY = y + h - 28;
+  const plotW = w - 52;
+  const plotH = h - 56;
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, y + 18);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(x + w - 18, originY);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#e86f61";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i <= 60; i++) {
+    const volume = lerp(20, 80, i / 60);
+    const pressure = state.constant / volume;
+    const px = originX + (volume - 20) / 60 * plotW;
+    const py = originY - clamp(pressure / 260, 0, 1) * plotH;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  const pointX = originX + (state.volume - 20) / 60 * plotW;
+  const pointY = originY - clamp(state.pressure / 260, 0, 1) * plotH;
+  drawBeveledCircle(pointX, pointY, 6, "#e86f61", "#9f3f3c", "#7d3e38");
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("p-V", x + w - 46, y + 20);
+  ctx.fillText("pV=常量", x + 36, y + 32);
+  ctx.restore();
+}
+
+function resistivityState() {
+  const rho = 4.8e-7;
+  const length = S.values.wireLength;
+  const diameterM = S.values.wireDiameter / 1000;
+  const area = Math.PI * diameterM * diameterM / 4;
+  const resistance = rho * length / area;
+  const current = S.values.wireVoltage / Math.max(resistance, 0.0001);
+  return {
+    rho,
+    length,
+    diameterM,
+    area,
+    resistance,
+    current,
+    rhoMeasured: resistance * area / length
+  };
+}
+
+function resistivityGeometry() {
+  const W = S.cssW, H = S.cssH;
+  const wireX = W * 0.15;
+  const wireY = H * 0.42;
+  const wireW = map(S.values.wireLength, 0.2, 1.2, W * 0.18, W * 0.48);
+  return { wireX, wireY, wireW };
+}
+
+function drawResistivity() {
+  const W = S.cssW, H = S.cssH;
+  const state = resistivityState();
+  const g = resistivityGeometry();
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.58, 46, "#d6a744");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.48, 9);
+  drawWireBench(g, state);
+  drawMicrometer(W * 0.70, H * 0.23, state);
+  drawRoundMeter(W * 0.23, H * 0.23, "A", state.current, "A", 1.2, "#2f958e");
+  drawRoundMeter(W * 0.40, H * 0.23, "V", S.values.wireVoltage, "V", 4.0, "#427aa1");
+  drawResistivityPanel(W * 0.70, H * 0.49, W * 0.22, H * 0.23, state);
+  drawLabel(`R = ${fmt(state.resistance)} Ω`, W * 0.10, H * 0.18, "#8a6826");
+  drawLabel(`ρ = ${fmt(state.rhoMeasured * 1e8)}×10⁻⁸ Ω·m`, W * 0.10, H * 0.31, "#7d3e38");
+  drawHotspotHints([
+    { key: "wire", x: g.wireX + g.wireW / 2, y: g.wireY, text: "拖动金属丝" },
+    { key: "micrometer", x: W * 0.78, y: H * 0.30, text: "拖动测直径" },
+    { key: "meters", x: W * 0.32, y: H * 0.23, text: "拖动电压" },
+    { key: "formula", x: W * 0.81, y: H * 0.60, text: "长按公式" }
+  ]);
+}
+
+function drawWireBench(g, state) {
+  const wireThickness = map(S.values.wireDiameter, 0.2, 0.8, 3, 9);
+  drawChunkRect(g.wireX - 20, g.wireY + 56, g.wireW + 40, 26, 9, "#758795", "#46545e", "rgba(36,50,64,.25)", 7);
+  drawChunkRect(g.wireX - 8, g.wireY - 28, 16, 86, 7, "#f4e7d0", "#b99768", "rgba(101,76,45,.25)", 5);
+  drawChunkRect(g.wireX + g.wireW - 8, g.wireY - 28, 16, 86, 7, "#f4e7d0", "#b99768", "rgba(101,76,45,.25)", 5);
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(117,79,17,.35)";
+  ctx.lineWidth = wireThickness + 8;
+  ctx.beginPath();
+  ctx.moveTo(g.wireX, g.wireY);
+  ctx.lineTo(g.wireX + g.wireW, g.wireY);
+  ctx.stroke();
+  const grad = ctx.createLinearGradient(g.wireX, g.wireY, g.wireX + g.wireW, g.wireY);
+  grad.addColorStop(0, "#fff3b0");
+  grad.addColorStop(.25, "#d6a744");
+  grad.addColorStop(.74, "#9d7a2d");
+  grad.addColorStop(1, "#fff2aa");
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = wireThickness;
+  ctx.beginPath();
+  ctx.moveTo(g.wireX, g.wireY);
+  ctx.lineTo(g.wireX + g.wireW, g.wireY);
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(83,97,112,.35)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i <= 10; i++) {
+    const x = g.wireX + i * g.wireW / 10;
+    ctx.beginPath();
+    ctx.moveTo(x, g.wireY + 38);
+    ctx.lineTo(x, g.wireY + (i % 5 === 0 ? 56 : 49));
+    ctx.stroke();
+  }
+  ctx.restore();
+  drawLabel(`L = ${fmt(state.length)} m`, g.wireX + g.wireW / 2 - 34, g.wireY + 98, "#8a6826");
+}
+
+function drawMicrometer(x, y, state) {
+  ctx.save();
+  drawChunkRect(x - 78, y + 18, 156, 34, 12, "#758795", "#46545e", "rgba(36,50,64,.25)", 7);
+  drawChunkRect(x - 76, y - 22, 40, 82, 12, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 7);
+  drawPill3D(x - 16, y + 2, 92, 18, "#f4e7d0", "#b99768");
+  drawChunkRect(x + 48, y - 14, 60, 48, 12, "#d6a744", "#8f6725", "rgba(101,76,45,.32)", 7);
+  ctx.strokeStyle = "rgba(83,97,112,.42)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 7; i++) {
+    ctx.beginPath();
+    ctx.moveTo(x + 54 + i * 7, y - 8);
+    ctx.lineTo(x + 54 + i * 7, y + 28);
+    ctx.stroke();
+  }
+  drawBeveledCircle(x - 14, y + 11, map(S.values.wireDiameter, 0.2, 0.8, 5, 12), "#d6a744", "#8f6725", "rgba(101,76,45,.3)");
+  ctx.restore();
+  drawLabel(`d = ${fmt(S.values.wireDiameter)} mm`, x - 44, y - 34, "#8a6826");
+  drawLabel(`S = ${fmt(state.area * 1e6)} mm²`, x - 44, y + 82, "#236e69");
+}
+
+function drawResistivityPanel(x, y, w, h, state) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("ρ = RS / L", x + 18, y + 28);
+  ctx.fillText("S = πd² / 4", x + 18, y + 54);
+  const originX = x + 34;
+  const originY = y + h - 28;
+  const plotW = w - 58;
+  const plotH = h - 90;
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, y + 76);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(x + w - 18, originY);
+  ctx.stroke();
+  ctx.strokeStyle = "#d6a744";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX + plotW, originY - plotH);
+  ctx.stroke();
+  const px = originX + clamp((state.length - 0.2) / 1.0, 0, 1) * plotW;
+  const py = originY - clamp(state.resistance / 8, 0, 1) * plotH;
+  drawBeveledCircle(px, py, 5, "#e86f61", "#9f3f3c", "#7d3e38");
+  ctx.restore();
+}
+
+function lensState() {
+  const u = S.values.objectDistance;
+  const f = S.values.focalLength;
+  const realImage = u > f + 0.01;
+  const v = realImage ? (u * f) / (u - f) : null;
+  const screenDistance = realImage ? v + S.values.screenOffset : 52 + S.values.screenOffset;
+  const blur = realImage ? Math.abs(S.values.screenOffset) : 18;
+  return {
+    u,
+    f,
+    realImage,
+    v,
+    screenDistance,
+    blur,
+    sharpness: clamp(100 - blur * 6, 0, 100),
+    magnification: realImage ? v / u : 0
+  };
+}
+
+function lensGeometry() {
+  const W = S.cssW, H = S.cssH;
+  const state = lensState();
+  const axisY = H * 0.45;
+  const lensX = W * 0.47;
+  const scale = clamp(Math.min(W * 0.0061, H * 0.010), 2.1, 5.9);
+  const candleX = clamp(lensX - state.u * scale, W * 0.08, W * 0.40);
+  const idealImageX = state.realImage ? lensX + state.v * scale : lensX + W * 0.20;
+  const screenX = clamp(lensX + state.screenDistance * scale, W * 0.58, W * 0.88);
+  return { ...state, axisY, lensX, scale, candleX, idealImageX, screenX };
+}
+
+function drawLens() {
+  const W = S.cssW, H = S.cssH;
+  const g = lensGeometry();
+
+  drawToyBase(W * 0.08, H * 0.68, W * 0.84, 46, "#427aa1");
+  drawSlotMarks(W * 0.12, H * 0.708, W * 0.76, 12);
+  drawTrack3D(W * 0.12, g.axisY + 98, W * 0.88);
+  ctx.save();
+  ctx.setLineDash([7, 6]);
+  ctx.strokeStyle = "rgba(83,97,112,.35)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W * 0.10, g.axisY);
+  ctx.lineTo(W * 0.90, g.axisY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  const objH = H * 0.16;
+  const objTop = { x: g.candleX, y: g.axisY - objH };
+  const imageH = g.realImage ? clamp(objH * g.magnification, H * 0.05, H * 0.23) : 0;
+  const imageTop = { x: g.idealImageX, y: g.axisY + imageH };
+
+  drawCandle(g.candleX, g.axisY + 88, objH);
+  drawLensElement(g.lensX, g.axisY, H * 0.30, g.f);
+  drawScreen(g.screenX, g.axisY, H * 0.32);
+  drawLensRays(g, objTop, imageTop);
+  drawScreenImage(g, imageH);
+  drawLensPanel(W * 0.70, H * 0.16, W * 0.21, H * 0.23, g);
+
+  drawLabel(`u=${fmt(g.u, 0)} cm`, g.candleX - 36, g.axisY + 130, "#7d3e38");
+  drawLabel(`f=${fmt(g.f, 1)} cm`, g.lensX - 28, g.axisY - H * 0.20, "#236e69");
+  drawLabel(g.realImage ? `v=${fmt(g.v, 1)} cm` : "u≤f：无实像", g.lensX + 30, g.axisY + 130, g.realImage ? "#236e69" : "#7d3e38");
+  drawHotspotHints([
+    { key: "candle", x: g.candleX, y: g.axisY - objH * 0.55, text: "拖动物距" },
+    { key: "lens", x: g.lensX, y: g.axisY, text: "拖动焦距" },
+    { key: "screen", x: g.screenX, y: g.axisY, text: "拖动光屏" },
+    { key: "graph", x: W * 0.81, y: H * 0.26, text: "长按公式" }
+  ]);
+}
+
+function drawCandle(x, baseY, h) {
+  drawOvalShadow(x, baseY + 10, 70, 18, 0.18);
+  drawChunkRect(x - 16, baseY - h, 32, h, 8, "#f4e7d0", "#b99768", "rgba(101,76,45,.28)", 7);
+  const flameY = baseY - h - 16;
+  ctx.save();
+  const grad = ctx.createRadialGradient(x, flameY, 2, x, flameY, 26);
+  grad.addColorStop(0, "rgba(255,255,255,.95)");
+  grad.addColorStop(.28, "rgba(255,224,92,.86)");
+  grad.addColorStop(1, "rgba(232,111,97,0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(x, flameY, 18, 30, 0, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = "#e86f61";
+  ctx.beginPath();
+  ctx.moveTo(x, flameY - 24);
+  ctx.bezierCurveTo(x + 18, flameY - 6, x + 8, flameY + 16, x, flameY + 20);
+  ctx.bezierCurveTo(x - 11, flameY + 8, x - 14, flameY - 9, x, flameY - 24);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawLensElement(x, axisY, h, focalLength) {
+  ctx.save();
+  drawOvalShadow(x, axisY + h / 2 + 42, 86, 20, 0.15);
+  drawChunkRect(x - 10, axisY + h / 2, 20, 110, 8, "#758795", "#46545e", "rgba(36,50,64,.25)", 6);
+  const w = map(focalLength, 8, 22, 54, 36);
+  const grad = ctx.createLinearGradient(x - w / 2, axisY - h / 2, x + w / 2, axisY + h / 2);
+  grad.addColorStop(0, "rgba(255,255,255,.18)");
+  grad.addColorStop(.48, "rgba(126,195,220,.42)");
+  grad.addColorStop(1, "rgba(66,122,161,.22)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(x, axisY - h / 2);
+  ctx.bezierCurveTo(x + w / 2, axisY - h * .28, x + w / 2, axisY + h * .28, x, axisY + h / 2);
+  ctx.bezierCurveTo(x - w / 2, axisY + h * .28, x - w / 2, axisY - h * .28, x, axisY - h / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(66,122,161,.55)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawScreen(x, axisY, h) {
+  drawChunkRect(x - 11, axisY - h / 2, 22, h, 7, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 7);
+  drawChunkRect(x - 38, axisY + h / 2, 76, 22, 9, "#758795", "#46545e", "rgba(36,50,64,.25)", 6);
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.76)";
+  roundRect(x - 7, axisY - h / 2 + 12, 14, h - 24, 5);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawLensRays(g, objTop, imageTop) {
+  ctx.save();
+  ctx.globalAlpha = g.realImage ? 1 : 0.68;
+  const color = "rgba(245,210,80,.86)";
+  if (g.realImage) {
+    drawGlowLine(objTop.x, objTop.y, g.lensX, objTop.y, color, 3);
+    drawGlowLine(g.lensX, objTop.y, imageTop.x, imageTop.y, color, 3);
+    drawGlowLine(objTop.x, objTop.y, g.lensX, g.axisY, "rgba(232,111,97,.78)", 3);
+    drawGlowLine(g.lensX, g.axisY, imageTop.x, imageTop.y, "rgba(232,111,97,.78)", 3);
+    drawGlowLine(objTop.x, objTop.y, g.lensX, g.axisY - (g.axisY - objTop.y) * 0.42, "rgba(66,122,161,.78)", 3);
+    drawGlowLine(g.lensX, g.axisY - (g.axisY - objTop.y) * 0.42, imageTop.x, imageTop.y, "rgba(66,122,161,.78)", 3);
+  } else {
+    drawGlowLine(objTop.x, objTop.y, g.lensX, objTop.y, color, 3);
+    drawGlowLine(g.lensX, objTop.y, g.lensX + 170, objTop.y - 38, color, 3);
+    drawGlowLine(objTop.x, objTop.y, g.lensX, g.axisY, "rgba(232,111,97,.78)", 3);
+    drawGlowLine(g.lensX, g.axisY, g.lensX + 160, g.axisY + 28, "rgba(232,111,97,.78)", 3);
+  }
+  ctx.restore();
+}
+
+function drawScreenImage(g, imageH) {
+  if (!g.realImage) {
+    drawLabel("光屏接不到实像", g.screenX - 64, g.axisY - 44, "#7d3e38");
+    return;
+  }
+  const offsetPx = (g.screenX - g.idealImageX) * 0.18;
+  const alpha = 0.35 + g.sharpness / 180;
+  const spread = map(g.blur, 0, 18, 0, 18);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  for (let i = 0; i < 5; i++) {
+    const dx = (i - 2) * spread * 0.42 + offsetPx;
+    const dy = Math.sin(i) * spread * 0.18;
+    ctx.fillStyle = i === 2 ? "#e86f61" : "rgba(232,111,97,.38)";
+    ctx.beginPath();
+    ctx.moveTo(g.screenX + dx, g.axisY + imageH * 0.72 + dy);
+    ctx.bezierCurveTo(g.screenX + 12 + dx, g.axisY + imageH * 0.30 + dy, g.screenX + 6 + dx, g.axisY - 6 + dy, g.screenX + dx, g.axisY - imageH * 0.12 + dy);
+    ctx.bezierCurveTo(g.screenX - 8 + dx, g.axisY + imageH * 0.28 + dy, g.screenX - 11 + dx, g.axisY + imageH * 0.56 + dy, g.screenX + dx, g.axisY + imageH * 0.72 + dy);
+    ctx.fill();
+  }
+  ctx.restore();
+  drawLabel(`清晰度 ${fmt(g.sharpness, 0)}%`, g.screenX - 50, g.axisY - imageH - 22, g.sharpness > 70 ? "#236e69" : "#7d3e38");
+}
+
+function drawLensPanel(x, y, w, h, g) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("1/f = 1/u + 1/v", x + 16, y + 28);
+  ctx.fillText(g.realImage ? `v = ${fmt(g.v, 1)} cm` : "u≤f 时成虚像", x + 16, y + 56);
+  ctx.strokeStyle = "#427aa1";
+  ctx.lineWidth = 3;
+  const axisY = y + h - 38;
+  ctx.beginPath();
+  ctx.moveTo(x + 18, axisY);
+  ctx.lineTo(x + w - 18, axisY);
+  ctx.stroke();
+  const ux = x + 42;
+  const vx = x + w - 42;
+  drawArrow(ux, axisY - 38, ux, axisY + 1, "#e86f61", 2);
+  drawArrow((ux + vx) / 2, axisY - 48, vx, axisY + 1, "#d6a744", 2);
+  drawBeveledCircle((ux + vx) / 2, axisY, 7, "#427aa1", "#2e536e", "rgba(255,255,255,.18)");
+  ctx.restore();
+}
+
 function drawHotspotHints(items) {
   ctx.save();
   ctx.font = "12px Microsoft YaHei";
+  const compact = S.cssW < 520;
   items.forEach(item => {
     const hover = item.key === S.hoverHotspot || item.key === S.activeHotspot;
     const pulse = 0.5 + Math.sin(S.t * 3) * 0.18;
@@ -2041,6 +2897,7 @@ function drawHotspotHints(items) {
       ctx.stroke();
       ctx.setLineDash([]);
     }
+    if (compact && !hover) return;
     const text = hover ? "拖动调节 / 长按解析" : item.text;
     const metrics = ctx.measureText(text);
     let tx = item.x + radius + 10;
@@ -2127,7 +2984,46 @@ function getHotspotAt(x, y) {
       ["meters", W * 0.47, H * 0.36, 82]
     );
   }
-  return spots.find(([key, sx, sy, r]) => Math.hypot(x - sx, y - sy) <= r)?.[0] || null;
+  if (id === "force") {
+    const g = forceGeometry();
+    spots.push(
+      ["vectorA", g.p1.x, g.p1.y, 78],
+      ["vectorB", g.p2.x, g.p2.y, 78],
+      ["angle", g.origin.x + 52, g.origin.y - 48, 76],
+      ["resultant", g.sum.x, g.sum.y, 82]
+    );
+  }
+  if (id === "gas") {
+    const g = gasGeometry();
+    spots.push(
+      ["piston", g.pistonX, g.chamberY + g.chamberH / 2, 88],
+      ["gauge", W * 0.76, H * 0.28, 86],
+      ["graph", W * 0.80, H * 0.58, 92]
+    );
+  }
+  if (id === "resistivity") {
+    const g = resistivityGeometry();
+    spots.push(
+      ["wire", g.wireX + g.wireW / 2, g.wireY, 88],
+      ["micrometer", W * 0.78, H * 0.30, 92],
+      ["meters", W * 0.32, H * 0.23, 92],
+      ["formula", W * 0.81, H * 0.60, 86]
+    );
+  }
+  if (id === "lens") {
+    const g = lensGeometry();
+    spots.push(
+      ["candle", g.candleX, g.axisY - H * 0.08, 86],
+      ["lens", g.lensX, g.axisY, 92],
+      ["screen", g.screenX, g.axisY, 92],
+      ["graph", W * 0.81, H * 0.26, 82]
+    );
+  }
+  const hit = spots
+    .map(([key, sx, sy, r]) => ({ key, distance: Math.hypot(x - sx, y - sy), r }))
+    .filter(item => item.distance <= item.r)
+    .sort((a, b) => (a.distance / a.r) - (b.distance / b.r))[0];
+  return hit?.key || null;
 }
 
 function canvasPoint(evt) {
@@ -2277,6 +3173,30 @@ function inferDragTarget(x, y, hot = getHotspotAt(x, y)) {
     if (hot === "rheostat") return "rheostat";
     return null;
   }
+  if (id === "force") {
+    if (hot === "vectorA") return "forceA";
+    if (hot === "vectorB") return "forceB";
+    if (hot === "angle" || hot === "resultant") return "forceAngle";
+    return null;
+  }
+  if (id === "gas") {
+    if (hot === "piston") return "gasVolume";
+    if (hot === "gauge") return "gasTemp";
+    if (hot === "graph") return "gasAmount";
+    return null;
+  }
+  if (id === "resistivity") {
+    if (hot === "wire") return "wireLength";
+    if (hot === "micrometer") return "wireDiameter";
+    if (hot === "meters") return "wireVoltage";
+    return null;
+  }
+  if (id === "lens") {
+    if (hot === "candle") return "objectDistance";
+    if (hot === "lens") return "focalLength";
+    if (hot === "screen") return "screenOffset";
+    return null;
+  }
   return null;
 }
 
@@ -2284,8 +3204,8 @@ function applyDrag(key, x, y) {
   const control = S.current.controls.find(item => item.key === key);
   if (!control) return;
   let ratio = clamp(x / S.cssW, 0, 1);
-  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
-  if (["angle", "wavelength", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
+  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
+  if (["angle", "wavelength", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
   let value = control.min + ratio * (control.max - control.min);
   value = Math.round(value / control.step) * control.step;
   S.values[key] = clamp(value, control.min, control.max);
