@@ -552,7 +552,7 @@ button {
   grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr);
   gap: 0;
   min-height: calc(100vh - 94px);
-  transform: perspective(1600px) rotateX(1.4deg);
+  transform: none;
   transform-origin: center top;
   filter:
     drop-shadow(0 16px 0 rgba(116, 88, 57, .18))
@@ -645,8 +645,8 @@ button {
     0 10px 0 rgba(105, 91, 71, .24),
     0 24px 38px rgba(65, 75, 85, .18),
     inset 0 2px 0 rgba(255,255,255,.75);
-  transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
-  transform-style: preserve-3d;
+  transform: none;
+  transform-style: flat;
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
@@ -682,6 +682,8 @@ button {
 }
 
 .canvas-wrap.orbiting {
+  transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
   box-shadow:
     0 13px 0 rgba(105, 91, 71, .28),
     0 32px 52px rgba(65, 75, 85, .23),
@@ -697,7 +699,7 @@ button {
   cursor: grab;
   touch-action: none;
   user-select: none;
-  transform: translateZ(10px);
+  image-rendering: auto;
 }
 
 #sceneCanvas.hotspot {
@@ -912,6 +914,30 @@ button {
 
 .error-panel[hidden] {
   display: none;
+}
+
+.manual-panel {
+  border-color: rgba(140, 109, 215, .18);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.88), rgba(241, 237, 255, .56));
+}
+
+.manual-list {
+  margin: 0;
+  padding: 0 0 0 22px;
+  color: var(--ink-soft);
+  line-height: 1.64;
+  font-size: 13px;
+}
+
+.manual-list li {
+  margin: 7px 0;
+  padding-left: 3px;
+}
+
+.manual-list li::marker {
+  color: var(--purple);
+  font-weight: 700;
 }
 
 .panel::before {

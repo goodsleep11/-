@@ -25,6 +25,8 @@ const errorToggleBtn = document.getElementById("errorToggleBtn");
 const errorPanel = document.getElementById("errorPanel");
 const errorTag = document.getElementById("errorTag");
 const errorCard = document.getElementById("errorCard");
+const manualTag = document.getElementById("manualTag");
+const manualList = document.getElementById("manualList");
 const conclusionText = document.getElementById("conclusionText");
 const confidencePill = document.getElementById("confidencePill");
 const statusPill = document.getElementById("statusPill");
@@ -154,22 +156,21 @@ const experiments = [
   },
   {
     id: "optics",
-    icon: "λ",
+    icon: "n",
     chapter: "光学",
-    title: "探究折射与干涉条纹",
-    mood: "让光路、色散和条纹在书页上亮起来。",
-    accent: "#6f6aa8",
+    title: "探究光的折射定律",
+    mood: "一束细光穿过玻璃砖，把法线、角度和折射率照得清清楚楚。",
+    accent: "#5e79b8",
     controls: [
       { key: "angle", label: "入射角 i", min: 8, max: 68, step: 1, value: 38, unit: "°" },
-      { key: "refractive", label: "玻璃折射率 n", min: 1.20, max: 1.80, step: 0.01, value: 1.50, unit: "" },
-      { key: "wavelength", label: "波长 λ", min: 420, max: 680, step: 5, value: 560, unit: "nm" }
+      { key: "refractive", label: "玻璃折射率 n", min: 1.20, max: 1.80, step: 0.01, value: 1.50, unit: "" }
     ],
     overview: {
-      title: "看光在界面处怎样转弯",
-      body: "折射遵循 n₁sin i = n₂sin r。右侧条纹用双缝近似展示，波长越长，条纹间距越大。",
-      formula: "n₁sin i = n₂sin r,  Δx = λL/d"
+      title: "先把法线和入射点找准",
+      body: "单色细光从空气进入玻璃时传播速度改变，光线在界面处发生偏折。空气近似 n₁=1，因此 sin i / sin r 可用来测玻璃折射率。",
+      formula: "n₁sin i = n₂sin r"
     },
-    conclusion: "光从空气进入玻璃时向法线偏折；折射率越大，折射角越小。双缝干涉中，波长越长或屏距越大，条纹间距越大。",
+    conclusion: "光从空气进入玻璃时向法线偏折；入射角相同时，玻璃折射率越大，折射角越小。多组数据中 sin i / sin r 近似为定值。",
     cards: {
       ray: {
         label: "折射光线",
@@ -183,11 +184,62 @@ const experiments = [
         body: "入射角和折射角不是相对界面测量，而是相对垂直界面的法线测量。",
         formula: "i = ∠(入射光, 法线)"
       },
+      ratio: {
+        label: "数据比值",
+        title: "sin i / sin r 才是稳定量",
+        body: "直接比较 i 和 r 不会得到简单比例。把角度换成正弦值后，空气到玻璃的折射实验会得到近似恒定的比值。",
+        formula: "sin i / sin r = n₂ / n₁"
+      }
+    }
+  },
+  {
+    id: "interference",
+    icon: "λ",
+    chapter: "光学",
+    title: "用双缝干涉测波长",
+    mood: "细小的双缝把光变成一排明暗相间的节拍，屏幕就是它的乐谱。",
+    accent: "#8c6dd7",
+    controls: [
+      { key: "wavelength", label: "光波长 λ", min: 420, max: 680, step: 5, value: 560, unit: "nm" },
+      { key: "slitDistance", label: "双缝间距 d", min: 0.15, max: 0.50, step: 0.01, value: 0.24, unit: "mm" },
+      { key: "screenDistance", label: "屏距 L", min: 0.60, max: 1.80, step: 0.01, value: 1.20, unit: "m" }
+    ],
+    overview: {
+      title: "先找中央明纹，再量相邻明纹",
+      body: "双缝发出的两束相干光在屏上叠加。相邻明纹间距满足 Δx = λL/d，因此测出 Δx、d 和 L 后可以反推波长。",
+      formula: "Δx = λL/d,  λ = Δx d/L"
+    },
+    conclusion: "双缝干涉中，相邻明纹间距 Δx 与波长 λ、屏距 L 成正比，与双缝间距 d 成反比。测多条条纹总距离再求平均能减小读数误差。",
+    cards: {
+      source: {
+        label: "单色光源",
+        title: "相干光来自稳定的同一束光",
+        body: "实验要使用单色性较好的光源，并让光路与双缝、屏幕基本同轴。光源不稳定或光路偏斜会让条纹变暗、变歪。",
+        formula: "同频率、相位差稳定"
+      },
+      slits: {
+        label: "双缝板",
+        title: "缝距 d 决定条纹展开程度",
+        body: "双缝间距越小，两束光到屏幕各点的路程差变化越慢，明纹之间就越宽。",
+        formula: "Δx ∝ 1/d"
+      },
+      screen: {
+        label: "观察屏",
+        title: "屏距 L 越大，条纹越容易量",
+        body: "屏幕离双缝越远，同一角度差对应的实际距离越大，条纹间距随之增大。",
+        formula: "Δx ∝ L"
+      },
       fringe: {
-        label: "干涉条纹",
-        title: "明暗条纹来自路程差",
-        body: "两束相干光到达屏幕时，路程差为整数倍波长处加强，为半整数倍波长处减弱。",
-        formula: "Δx = λL / d"
+        label: "明暗条纹",
+        title: "明纹来自整数倍路程差",
+        body: "两束光到达屏幕时，路程差为整数倍波长处相互加强形成明纹，为半整数倍波长处相互削弱形成暗纹。",
+        formula: "d sinθ = kλ"
+      },
+      formula: {
+        label: "测量公式",
+        title: "用多条条纹平均出 Δx",
+        body: "实际读数常测 n 个条纹间隔的总距离 s，再用 Δx=s/n，最后代入 λ=Δxd/L。",
+        formula: "λ = Δx d / L"
       }
     }
   },
@@ -533,7 +585,6 @@ const futureExperiments = [
   ["力学", "探究向心力大小的影响因素"],
   ["电学", "测定电源电动势和内阻"],
   ["电磁学", "探究通电导线在磁场中受力"],
-  ["光学", "用双缝干涉测波长"],
   ["近代物理", "光电效应与临界频率"]
 ];
 
@@ -588,6 +639,36 @@ function fmt(value, digits = 2) {
   return value.toFixed(digits);
 }
 
+function snellState() {
+  const iRad = S.values.angle * Math.PI / 180;
+  const sinR = clamp(Math.sin(iRad) / S.values.refractive, -0.999, 0.999);
+  const rRad = Math.asin(sinR);
+  return {
+    iRad,
+    rRad,
+    ratio: Math.sin(iRad) / Math.sin(rRad)
+  };
+}
+
+function interferenceState() {
+  const wavelengthM = S.values.wavelength * 1e-9;
+  const slitM = S.values.slitDistance * 1e-3;
+  const screenM = S.values.screenDistance;
+  const spacingM = wavelengthM * screenM / slitM;
+  const spacingMm = spacingM * 1000;
+  const intervals = 6;
+  const totalMm = spacingMm * intervals;
+  return {
+    wavelengthM,
+    slitM,
+    screenM,
+    spacingMm,
+    intervals,
+    totalMm,
+    inferredNm: spacingM * slitM / screenM * 1e9
+  };
+}
+
 const STEP_GUIDES = {
   cart: ["释放小车前先确认轨道水平，拖动车身或拉力箭头可以改变合外力。", "看小车位置、纸带点距和 a 的实时读数是否同步变大。", "现实中轨道摩擦和纸带阻力会让测得加速度偏小。"],
   force: ["改变拉力大小时，只保留一个变量明显变化。", "F/M 的比值决定加速度，不能只看 F 的数字。", "滑轮摩擦、细线质量和轨道未调平都会带来系统偏差。"],
@@ -599,6 +680,12 @@ const STEP_GUIDES = {
   timer: ["多测几次完整振动的总时间，再求平均周期。", "T² 与 L 的线性关系比单次读数更可靠。", "人工计时反应通常让周期读数偏大或波动。"],
   ray: ["先找法线，再量入射角和折射角。", "角度必须相对法线读，不是相对界面读。", "光斑宽度、半圆玻璃位置和量角器读数会造成偏差。"],
   normal: ["法线是所有角度测量的基准。", "折射率越大，折射光线越靠近法线。", "法线画偏会让整组角度系统性偏大或偏小。"],
+  "optics.ratio": ["不要直接比较 i 和 r，先把角度换成正弦值。", "多组数据中 sin i / sin r 近似不变，才说明折射率稳定。", "入射角过小会让读数相对误差变明显，实验中常取几组中等角度。"],
+  "interference.source": ["先让单色光正对双缝板，保证光斑落在两缝附近。", "光源、双缝和观察屏尽量共轴，条纹才会居中且清楚。", "环境杂散光太强时，暗纹对比度会下降。"],
+  "interference.slits": ["双缝间距 d 要使用器材标称值或显微测量值。", "d 越小，条纹间距 Δx 越大，屏上更容易读出。", "缝宽过大或双缝不平行会让条纹边缘变模糊。"],
+  "interference.screen": ["移动观察屏相当于改变屏距 L。", "屏距越大，条纹间距越大，但亮度会下降。", "读屏距时要量双缝到屏幕的距离，而不是光源到屏幕。"],
+  "interference.fringe": ["先找到中央明纹，再量两侧多条明纹间的总距离。", "相邻明纹中心间距是 Δx，不要从条纹边缘开始量。", "现实模式中条纹中心判断会带来主要读数误差。"],
+  "interference.formula": ["测 n 个间隔总距离 s，再算 Δx=s/n。", "代入 λ=Δxd/L 时注意单位统一，mm 要换成 m。", "多次取左右两侧条纹平均，比只量一格更可靠。"],
   fringe: ["观察相邻明纹中心的间距，而不是只看一条纹。", "波长越大，条纹间距越大。", "屏幕距离、缝间距和条纹中心判断都会影响结果。"],
   magnet: ["磁体靠近或远离线圈时才会产生明显感应。", "速度越大，磁通量变化越快，指针偏转越大。", "磁体没有沿轴线运动会让磁通量变化不稳定。"],
   coil: ["改变线圈匝数会放大或缩小感应电动势。", "匝数越多，同样磁通变化产生的总电动势越大。", "线圈电阻和接触不良会削弱电流读数。"],
@@ -651,6 +738,13 @@ const ERROR_GUIDES = {
     formula: "n测 = sin i / sin r",
     sources: ["法线画偏", "光线有宽度", "量角器中心未对准入射点"],
     reduce: ["先校准法线", "用细光束", "多组角度取平均"]
+  },
+  interference: {
+    title: "双缝干涉测波长的误差",
+    real: "现实模式会加入条纹中心判断、屏距读数和双缝间距标称误差，反推波长会轻微偏离设定值。",
+    formula: "λ测 = Δx测 d测 / L测",
+    sources: ["明纹中心位置判断不准", "只量一条间距导致偶然误差大", "屏距 L 或缝距 d 的读数偏差"],
+    reduce: ["测多条明纹总距离再求平均", "取中央明纹左右两侧条纹平均", "降低杂散光并让光路共轴"]
   },
   induction: {
     title: "电磁感应的误差",
@@ -710,6 +804,22 @@ const ERROR_GUIDES = {
   }
 };
 
+const MANUAL_GUIDES = {
+  newton: ["调平轨道并让小车、纸带、滑轮在同一直线上。", "保持小车质量不变，逐次改变拉力，记录纸带点距或速度图像。", "再保持拉力不变，改变小车质量，比较加速度变化。", "用 a-F 或 a-1/M 图像判断正比关系。"],
+  projectile: ["固定释放口高度，确认小球水平飞出。", "让小球多次从同一位置释放，在竖直板或纸上描出轨迹点。", "用平滑曲线连接轨迹，并记录落地点和水平位移。", "分别用水平匀速和竖直自由落体公式分析。"],
+  pendulum: ["量出支点到摆球球心的摆长 L，控制摆角较小。", "释放摆球时不要推动，等摆动稳定后开始计时。", "测 20 到 30 次全振动总时间，求平均周期 T。", "代入 g=4π²L/T²，并多次测量取平均。"],
+  optics: ["在纸上画出界面和法线，把玻璃砖准确放在标记位置。", "让细光束从空气斜射入玻璃，标出入射光和折射光方向。", "用量角器分别读入射角 i 和折射角 r。", "计算 sin i / sin r，并用多组角度验证折射率近似恒定。"],
+  interference: ["调暗环境，让单色光源、双缝板和观察屏尽量共轴。", "固定双缝间距 d，并量出双缝到屏幕的距离 L。", "在屏上找到中央明纹，选取左右两侧清晰明纹。", "测 n 个条纹间隔总距离 s，求 Δx=s/n。", "代入 λ=Δxd/L，重复测量并做误差分析。"],
+  induction: ["把线圈、电流表和导线连接成闭合回路，并先校零。", "让磁体沿线圈轴线靠近，观察电流表偏转方向。", "再让磁体远离线圈，比较指针方向是否相反。", "改变速度、磁场强度或匝数，观察偏转幅度变化。"],
+  spring: ["记录弹簧原长 L₀，逐个增加砝码。", "每次等砝码静止后读弹簧总长，求伸长量 x。", "用 F=mg 算拉力，作 F-x 图像。", "判断图像是否近似过原点直线，并由斜率求 k。"],
+  energy: ["确定轨道起点高度和小球质量，先忽略摩擦建立理想模型。", "释放小球，观察高度、速度和动能势能变化。", "加入现实损耗后比较总机械能是否下降。", "用 Ep 减少量和 Ek 增加量判断能量转化。"],
+  resistance: ["按电流表串联、电压表并联接好电路，滑动变阻器先接大阻值。", "逐步移动滑片，记录多组 U 和 I。", "计算每组 R=U/I，或作 U-I 图像求斜率。", "注意电阻发热会改变读数，读数应快速稳定。"],
+  force: ["固定圆环位置，用两只测力计沿不同方向拉住。", "记录两个分力大小和夹角，按比例画出两条矢量。", "作平行四边形，对角线表示合力。", "改变夹角或分力，比较合力变化。"],
+  gas: ["检查针筒密封，缓慢推动活塞以接近等温。", "每次体积改变后等待压强计稳定。", "记录多组 p 和 V，计算 pV。", "作 p-V 或 p-1/V 图像判断反比例关系。"],
+  resistivity: ["把金属丝拉直，量出接线柱间有效长度 L。", "用螺旋测微器在多处测直径 d 并取平均。", "用伏安法测金属丝电阻 R，尽量避免温升。", "代入 ρ=Rπd²/(4L)，分析直径误差的影响。"],
+  lens: ["让烛焰、凸透镜和光屏中心在同一主光轴上。", "固定透镜，移动烛焰得到物距 u。", "移动光屏找到最清晰倒立实像，记录像距 v。", "代入 1/f=1/u+1/v，多组数据求平均焦距。"]
+};
+
 function stableNoise(key) {
   let hash = 0;
   const text = `${S.current.id}:${key}`;
@@ -727,6 +837,10 @@ function realityRule(label) {
     ["水平位移", -0.028, 0],
     ["周期", 0.018, 0],
     ["反推 g", -0.034, 0],
+    ["反推 λ", 0.016, 0],
+    ["波长", 0, 2.2],
+    ["缝距", 0.012, 0],
+    ["屏距", -0.01, 0],
     ["角", 0, 0.6],
     ["条纹间距", 0.018, 0],
     ["感应电动势", -0.05, 0],
@@ -847,6 +961,12 @@ function renderErrorPanel() {
   `;
 }
 
+function renderManual() {
+  const steps = MANUAL_GUIDES[S.current.id] || ["观察器材状态。", "只改变一个变量并记录现象。", "把读数代入公式，检查是否符合物理结论。"];
+  manualTag.textContent = `${steps.length} 步`;
+  manualList.innerHTML = steps.map(step => `<li>${step}</li>`).join("");
+}
+
 function renderModeControls() {
   idealModeBtn.classList.toggle("active", S.mode === "ideal");
   realModeBtn.classList.toggle("active", S.mode === "real");
@@ -955,6 +1075,7 @@ function updatePhysics(dt) {
   if (id === "projectile") updateProjectile(dt);
   if (id === "pendulum") updatePendulum(dt);
   if (id === "optics") updateOptics(dt);
+  if (id === "interference") updateInterference(dt);
   if (id === "induction") updateInduction(dt);
   if (id === "spring") updateSpring(dt);
   if (id === "energy") updateEnergy(dt);
@@ -994,6 +1115,10 @@ function updatePendulum() {
 
 function updateOptics() {
   if (S.t >= 4.5) markDone();
+}
+
+function updateInterference() {
+  if (S.t >= 5.2) markDone();
 }
 
 function updateInduction() {
@@ -1079,6 +1204,7 @@ function renderStaticText() {
   experimentMood.textContent = exp.mood;
   conclusionText.textContent = exp.conclusion;
   setKnowledge(exp.overview, "概览");
+  renderManual();
   renderModeControls();
 }
 
@@ -1128,14 +1254,22 @@ function getLiveData() {
     ];
   }
   if (id === "optics") {
-    const i = S.values.angle * Math.PI / 180;
-    const r = Math.asin(Math.sin(i) / S.values.refractive);
-    const spacing = S.values.wavelength * 1.2 / 0.24 / 1000;
+    const o = snellState();
     return [
       ["入射角 i", `${fmt(S.values.angle, 1)} °`],
-      ["折射角 r", `${fmt(r * 180 / Math.PI, 1)} °`],
+      ["折射角 r", `${fmt(o.rRad * 180 / Math.PI, 1)} °`],
       ["折射率 n", `${fmt(S.values.refractive)} `],
-      ["条纹间距", `${fmt(spacing, 2)} mm`]
+      ["sin i / sin r", `${fmt(o.ratio, 2)} `]
+    ];
+  }
+  if (id === "interference") {
+    const v = interferenceState();
+    return [
+      ["波长 λ", `${fmt(S.values.wavelength, 0)} nm`],
+      ["缝距 d", `${fmt(S.values.slitDistance, 2)} mm`],
+      ["屏距 L", `${fmt(S.values.screenDistance, 2)} m`],
+      ["条纹间距 Δx", `${fmt(v.spacingMm, 2)} mm`],
+      ["反推 λ", `${fmt(v.inferredNm, 0)} nm`]
     ];
   }
   if (id === "induction") {
@@ -1225,10 +1359,12 @@ function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   S.cssW = Math.max(320, rect.width);
   S.cssH = Math.max(220, rect.height);
-  S.dpr = window.devicePixelRatio || 1;
+  S.dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1.5), 2);
   canvas.width = Math.round(S.cssW * S.dpr);
   canvas.height = Math.round(S.cssH * S.dpr);
   ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   resetCanvasTilt();
   draw();
 }
@@ -1295,6 +1431,7 @@ function draw() {
   if (id === "projectile") drawProjectile();
   if (id === "pendulum") drawPendulum();
   if (id === "optics") drawOptics();
+  if (id === "interference") drawInterference();
   if (id === "induction") drawInduction();
   if (id === "spring") drawSpring();
   if (id === "energy") drawEnergy();
@@ -1750,11 +1887,12 @@ function drawOptics() {
   const W = S.cssW, H = S.cssH;
   const cx = W * 0.42, cy = H * 0.44;
   const normalTop = H * 0.18, normalBottom = H * 0.72;
-  const i = S.values.angle * Math.PI / 180;
-  const r = Math.asin(Math.sin(i) / S.values.refractive);
-  const lambdaColor = wavelengthToColor(S.values.wavelength);
+  const o = snellState();
+  const i = o.iRad;
+  const r = o.rRad;
+  const rayColor = "rgba(86, 142, 255, .92)";
 
-  drawToyBase(W * 0.09, H * 0.735, W * 0.82, 42, "#6f6aa8");
+  drawToyBase(W * 0.09, H * 0.735, W * 0.82, 42, "#5e79b8");
   drawSlotMarks(W * 0.13, H * 0.76, W * 0.72, 10);
   ctx.fillStyle = "rgba(255,255,255,.28)";
   ctx.fillRect(0, cy + H * 0.03, W * 0.62, H * 0.29);
@@ -1774,10 +1912,10 @@ function drawOptics() {
   const iy = cy - Math.cos(i) * inLen;
   const rx = cx + Math.sin(r) * outLen;
   const ry = cy + Math.cos(r) * outLen;
-  drawGlowLine(ix, iy, cx, cy, lambdaColor, 4);
-  drawGlowLine(cx, cy, rx, ry, lambdaColor, 4);
-  drawArrow(ix, iy, cx, cy, lambdaColor, 3);
-  drawArrow(cx, cy, rx, ry, lambdaColor, 3);
+  drawGlowLine(ix, iy, cx, cy, rayColor, 4);
+  drawGlowLine(cx, cy, rx, ry, rayColor, 4);
+  drawArrow(ix, iy, cx, cy, rayColor, 3);
+  drawArrow(cx, cy, rx, ry, rayColor, 3);
 
   ctx.strokeStyle = "rgba(232,111,97,.35)";
   ctx.lineWidth = 2;
@@ -1792,33 +1930,163 @@ function drawOptics() {
   drawLabel(`r = ${fmt(r * 180 / Math.PI, 1)}°`, cx + 18, cy + 68, "#236e69");
   drawLabel("法线", cx + 10, normalTop + 22, "#536170");
 
-  drawFringes(W * 0.70, H * 0.18, W * 0.18, H * 0.58, lambdaColor);
+  drawOpticsRatioPanel(W * 0.67, H * 0.20, W * 0.22, H * 0.38, o);
   drawHotspotHints([
     { key: "ray", x: cx + 38, y: cy + 42, text: "长按光线" },
     { key: "normal", x: cx, y: cy - 86, text: "长按法线" },
-    { key: "fringe", x: W * 0.80, y: H * 0.44, text: "长按条纹" }
+    { key: "ratio", x: W * 0.78, y: H * 0.36, text: "长按比值" }
   ]);
 }
 
-function drawFringes(x, y, w, h, color) {
-  drawChunkRect(x, y, w, h, 10, "#30384f", "#1c2230", "rgba(255,255,255,.18)", 9);
-  const spacing = map(S.values.wavelength, 420, 680, 18, 32);
-  for (let yy = y + h / 2; yy < y + h - 10; yy += spacing) drawFringeLine(x, yy, w, color);
-  for (let yy = y + h / 2 - spacing; yy > y + 10; yy -= spacing) drawFringeLine(x, yy, w, color);
-  drawLabel("双缝干涉屏", x - 4, y - 10, "#243240");
+function drawOpticsRatioPanel(x, y, w, h, o) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 8);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("折射数据", x + 16, y + 28);
+  ctx.fillText(`sin i = ${fmt(Math.sin(o.iRad), 3)}`, x + 16, y + 58);
+  ctx.fillText(`sin r = ${fmt(Math.sin(o.rRad), 3)}`, x + 16, y + 84);
+  ctx.fillText(`sin i / sin r = ${fmt(o.ratio, 2)}`, x + 16, y + 110);
+  ctx.strokeStyle = "#5e79b8";
+  ctx.lineWidth = 3;
+  const graphX = x + 20;
+  const graphY = y + h - 38;
+  ctx.beginPath();
+  ctx.moveTo(graphX, graphY);
+  ctx.lineTo(x + w - 18, graphY - map(S.values.refractive, 1.2, 1.8, 18, 54));
+  ctx.stroke();
+  drawLabel("n 越大 r 越小", x + 14, y + h - 14, "#236e69");
+  ctx.restore();
 }
 
-function drawFringeLine(x, y, w, color) {
-  const grad = ctx.createLinearGradient(x, y, x + w, y);
+function drawInterference() {
+  const W = S.cssW, H = S.cssH;
+  const v = interferenceState();
+  const color = wavelengthToColor(S.values.wavelength);
+  const axisY = H * 0.47;
+  const sourceX = W * 0.17;
+  const slitX = W * 0.42;
+  const screenX = W * 0.70;
+  const screenY = H * 0.18;
+  const screenW = W * 0.19;
+  const screenH = H * 0.55;
+
+  drawToyBase(W * 0.08, H * 0.735, W * 0.84, 42, "#8c6dd7");
+  drawSlotMarks(W * 0.14, H * 0.76, W * 0.72, 11);
+
+  drawLaserSource(sourceX, axisY, color);
+  drawDoubleSlitPlate(slitX, axisY);
+
+  drawGlowLine(sourceX + 34, axisY, slitX - 16, axisY, color, 5);
+  const pulse = 0.55 + Math.sin(S.t * 2.5) * 0.14;
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  drawGlowLine(slitX + 10, axisY - 12, screenX + screenW * 0.50, axisY, color, 3);
+  drawGlowLine(slitX + 10, axisY + 12, screenX + screenW * 0.50, axisY, color, 3);
+  drawGlowLine(slitX + 10, axisY - 12, screenX + screenW * 0.36, axisY - screenH * 0.20, color, 2);
+  drawGlowLine(slitX + 10, axisY + 12, screenX + screenW * 0.64, axisY + screenH * 0.20, color, 2);
+  ctx.restore();
+
+  drawInterferenceScreen(screenX, screenY, screenW, screenH, color, v);
+  drawInterferenceFormulaPanel(W * 0.46, H * 0.16, W * 0.20, H * 0.24, v);
+  drawLabel(`d = ${fmt(S.values.slitDistance, 2)} mm`, slitX - 54, axisY + 112, "#4d3d86");
+  drawLabel(`L = ${fmt(S.values.screenDistance, 2)} m`, lerp(slitX, screenX, 0.46), H * 0.70, "#536170");
+
+  drawHotspotHints([
+    { key: "source", x: sourceX, y: axisY, text: "长按光源" },
+    { key: "slits", x: slitX, y: axisY, text: "长按双缝" },
+    { key: "screen", x: screenX + screenW * 0.50, y: axisY, text: "长按屏幕" },
+    { key: "fringe", x: screenX + screenW * 0.50, y: screenY + screenH * 0.20, text: "长按条纹" },
+    { key: "formula", x: W * 0.56, y: H * 0.27, text: "长按公式" }
+  ]);
+}
+
+function drawLaserSource(x, y, color) {
+  drawChunkRect(x - 62, y - 26, 74, 48, 10, "#f8f1e6", "#b9a988", "rgba(77,61,134,.25)", 8);
+  drawPill3D(x - 22, y - 12, 76, 24, "#6b617e", "#40384d");
+  drawBeveledCircle(x + 50, y, 13, "#f7fbff", "#b8c5d0", "rgba(77,61,134,.22)");
+  drawGlowLine(x + 49, y, x + 88, y, color, 5);
+  drawLabel(`${fmt(S.values.wavelength, 0)} nm`, x - 56, y + 58, "#4d3d86");
+}
+
+function drawDoubleSlitPlate(x, y) {
+  drawChunkRect(x - 16, y - 92, 32, 184, 9, "#343044", "#1d1a2b", "rgba(255,255,255,.16)", 7);
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.82)";
+  roundRect(x - 4, y - 19, 8, 13, 3);
+  ctx.fill();
+  roundRect(x - 4, y + 6, 8, 13, 3);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(140,109,215,.58)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + 24, y - 12);
+  ctx.lineTo(x + 48, y - 12);
+  ctx.moveTo(x + 24, y + 12);
+  ctx.lineTo(x + 48, y + 12);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawInterferenceScreen(x, y, w, h, color, v) {
+  drawChunkRect(x, y, w, h, 10, "#30384f", "#1c2230", "rgba(255,255,255,.18)", 9);
+  const center = x + w / 2;
+  const visualSpacing = clamp(map(v.spacingMm, 0.9, 6.2, w * 0.05, w * 0.17), 5, 32);
+  for (let k = -6; k <= 6; k++) {
+    const xx = center + k * visualSpacing;
+    if (xx < x + 12 || xx > x + w - 12) continue;
+    const alpha = Math.max(0.20, 1 - Math.abs(k) * 0.10);
+    drawVerticalFringeBand(xx, y + 12, h - 24, color, k === 0 ? 8 : 5, alpha);
+  }
+  drawFringeRuler(x, y, w, h, center, visualSpacing, v);
+  drawLabel("观察屏", x + 12, y - 10, "#243240");
+}
+
+function drawVerticalFringeBand(x, y, h, color, width, alpha = 1) {
+  const grad = ctx.createLinearGradient(x - width, y, x + width, y);
   grad.addColorStop(0, "rgba(255,255,255,0)");
   grad.addColorStop(.5, color);
   grad.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 3;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = grad;
+  roundRect(x - width, y, width * 2, h, width);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawFringeRuler(x, y, w, h, center, spacing, v) {
+  const span = Math.min(spacing * v.intervals, w * 0.72);
+  const x1 = center - span / 2;
+  const x2 = center + span / 2;
+  const yy = y + h - 28;
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,255,255,.72)";
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(x + 14, y);
-  ctx.lineTo(x + w - 14, y);
+  ctx.moveTo(x1, yy);
+  ctx.lineTo(x2, yy);
+  ctx.moveTo(x1, yy - 7);
+  ctx.lineTo(x1, yy + 7);
+  ctx.moveTo(x2, yy - 7);
+  ctx.lineTo(x2, yy + 7);
   ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.86)";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText(`6Δx=${fmt(v.totalMm, 1)}mm`, Math.max(x + 10, x1 - 12), yy - 12);
+  ctx.restore();
+}
+
+function drawInterferenceFormulaPanel(x, y, w, h, v) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("Δx = λL/d", x + 15, y + 28);
+  ctx.fillText(`Δx = ${fmt(v.spacingMm, 2)} mm`, x + 15, y + 56);
+  ctx.fillText(`λ = Δxd/L`, x + 15, y + 84);
+  ctx.fillText(`λ测 = ${fmt(v.inferredNm, 0)} nm`, x + 15, y + 112);
+  ctx.restore();
 }
 
 function wavelengthToColor(nm) {
@@ -3219,7 +3487,21 @@ function getHotspotAt(x, y) {
     spots.push(["bob", pivotX + Math.sin(theta) * lenPx, pivotY + Math.cos(theta) * lenPx, 72], ["angle", pivotX + 74, pivotY + 36, 80], ["timer", W * 0.18, H * 0.20, 92]);
   }
   if (id === "optics") {
-    spots.push(["ray", W * 0.46, H * 0.50, 90], ["normal", W * 0.42, H * 0.31, 78], ["fringe", W * 0.80, H * 0.44, 92]);
+    spots.push(["ray", W * 0.46, H * 0.50, 90], ["normal", W * 0.42, H * 0.31, 78], ["ratio", W * 0.78, H * 0.36, 92]);
+  }
+  if (id === "interference") {
+    const axisY = H * 0.47;
+    const screenX = W * 0.70;
+    const screenY = H * 0.18;
+    const screenW = W * 0.19;
+    const screenH = H * 0.55;
+    spots.push(
+      ["source", W * 0.17, axisY, 92],
+      ["slits", W * 0.42, axisY, 92],
+      ["screen", screenX + screenW * 0.50, axisY, 96],
+      ["fringe", screenX + screenW * 0.50, screenY + screenH * 0.20, 88],
+      ["formula", W * 0.56, H * 0.27, 88]
+    );
   }
   if (id === "induction") {
     const coilY = H * 0.47;
@@ -3421,7 +3703,13 @@ function inferDragTarget(x, y, hot = getHotspotAt(x, y)) {
   }
   if (id === "optics") {
     if (hot === "ray" || hot === "normal") return "angle";
-    if (hot === "fringe") return "wavelength";
+    if (hot === "ratio") return "refractive";
+    return null;
+  }
+  if (id === "interference") {
+    if (hot === "source" || hot === "fringe") return "wavelength";
+    if (hot === "slits") return "slitDistance";
+    if (hot === "screen" || hot === "formula") return "screenDistance";
     return null;
   }
   if (id === "induction") {
@@ -3479,8 +3767,8 @@ function applyDrag(key, x, y) {
   const control = S.current.controls.find(item => item.key === key);
   if (!control) return;
   let ratio = clamp(x / S.cssW, 0, 1);
-  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
-  if (["angle", "wavelength", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
+  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength", "slitDistance", "refractive"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
+  if (["angle", "wavelength", "screenDistance", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
   let value = control.min + ratio * (control.max - control.min);
   value = Math.round(value / control.step) * control.step;
   S.values[key] = clamp(value, control.min, control.max);
