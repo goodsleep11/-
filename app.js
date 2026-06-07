@@ -7,6 +7,7 @@ const labApp = document.getElementById("labApp");
 const openBookBtn = document.getElementById("openBookBtn");
 const resetAllBtn = document.getElementById("resetAllBtn");
 const toggleShelfBtn = document.getElementById("toggleShelfBtn");
+const questionImportTopBtn = document.getElementById("questionImportTopBtn");
 const shelf = document.getElementById("shelf");
 const experimentList = document.getElementById("experimentList");
 const futureList = document.getElementById("futureList");
@@ -34,6 +35,14 @@ const pauseBadge = document.getElementById("pauseBadge");
 const playBtn = document.getElementById("playBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
+const questionToggleBtn = document.getElementById("questionToggleBtn");
+const questionPanel = document.getElementById("questionPanel");
+const questionTag = document.getElementById("questionTag");
+const questionInput = document.getElementById("questionInput");
+const questionAnalyzeBtn = document.getElementById("questionAnalyzeBtn");
+const questionApplyBtn = document.getElementById("questionApplyBtn");
+const questionClearBtn = document.getElementById("questionClearBtn");
+const questionResult = document.getElementById("questionResult");
 const toast = document.getElementById("toast");
 
 const TAU = Math.PI * 2;
@@ -1159,7 +1168,7 @@ experiments.push(
 );
 
 const futureExperiments = [
-  ["智能题目", "导入题目并匹配实验模型（下一阶段）"]
+  ["后续增强", "题图 OCR、逐步求解批注与更多真实器材误差"]
 ];
 
 const S = {
@@ -1183,6 +1192,8 @@ const S = {
   lastKnowledgeHotspot: null,
   pointer: { x: 0.5, y: 0.5 },
   view: { yaw: 0, pitch: 0 },
+  questionPanelOpen: false,
+  questionPlan: null,
   toastTimer: null,
   dpr: 1,
   cssW: 980,
@@ -2023,20 +2034,732 @@ function defaultValues(exp) {
   return Object.fromEntries(exp.controls.map(control => [control.key, control.value]));
 }
 
-function selectExperiment(id) {
+function qParam(key, labels, unitType, options = {}) {
+  return { key, labels, unitType, ...options };
+}
+
+const QUESTION_UNITS = {
+  lengthM: { pattern: "(?:cm|厘米|mm|毫米|m(?!\\s*/)|米(?!每秒))" },
+  lengthCm: { pattern: "(?:cm|厘米|mm|毫米|m(?!\\s*/)|米(?!每秒))" },
+  lengthMm: { pattern: "(?:cm|厘米|mm|毫米|m(?!\\s*/)|米(?!每秒))" },
+  speed: { pattern: "(?:m\\s*/\\s*s|米\\s*/\\s*秒|米每秒|cm\\s*/\\s*s|厘米每秒)" },
+  massKg: { pattern: "(?:kg|千克|g|克)" },
+  forceN: { pattern: "(?:n|牛顿|牛)" },
+  forceConstant: { pattern: "(?:n\\s*/\\s*m|牛\\s*/\\s*米|牛每米)" },
+  angleDeg: { pattern: "(?:°|度)" },
+  voltageV: { pattern: "(?:v|伏特|伏)" },
+  currentA: { pattern: "(?:ma|毫安|a|安培|安)" },
+  resistanceOhm: { pattern: "(?:k欧|千欧|欧姆|欧)" },
+  resistanceKOhm: { pattern: "(?:k欧|千欧|欧姆|欧)" },
+  capacitanceMicroF: { pattern: "(?:uf|微法|mf|毫法|f|法)" },
+  timeS: { pattern: "(?:ms|毫秒|s|秒)" },
+  volumeMicroL: { pattern: "(?:ul|微升|ml|毫升)" },
+  volumeML: { pattern: "(?:ml|毫升|l|升|ul|微升)" },
+  tempK: { pattern: "(?:k|开尔文|℃|摄氏度)" },
+  tempC: { pattern: "(?:℃|摄氏度|k|开尔文)" },
+  tesla: { pattern: "(?:t|特斯拉)" },
+  turns: { pattern: "(?:匝)" },
+  ratio: { pattern: "(?:倍)" },
+  percent: { pattern: "(?:%|％)" },
+  accel: { pattern: "(?:m\\s*/\\s*s(?:2|²)|米每秒平方|米每二次方秒)" },
+  angularSpeed: { pattern: "(?:rad\\s*/\\s*s|弧度每秒)" },
+  frequency14: { pattern: "(?:(?:×|x|\\*)\\s*10\\s*(?:\\^\\s*)?14\\s*)?(?:hz|赫兹)" },
+  ev: { pattern: "(?:ev|电子伏特)" },
+  number: { pattern: "" }
+};
+
+const QUESTION_MODELS = [
+  {
+    id: "newton",
+    keywords: [["牛顿第二定律", 9], ["加速度与力", 8], ["加速度与质量", 8], ["f=ma", 7], ["合外力", 5], ["牵引力", 3], ["小车", 2], ["纸带", 2]],
+    formulas: ["F = ma", "x = 1/2 at^2"],
+    assumptions: ["模型默认小车从静止释放，轨道水平，摩擦已补偿。"],
+    params: [
+      qParam("mass", ["小车质量", "车质量", "质量"], "massKg"),
+      qParam("force", ["合外力", "牵引力", "拉力", "外力"], "forceN")
+    ]
+  },
+  {
+    id: "projectile",
+    keywords: [["平抛", 10], ["水平抛", 10], ["水平射出", 8], ["不计空气阻力", 3], ["落地点", 4], ["射程", 4], ["抛出", 3]],
+    formulas: ["t = sqrt(2h/g)", "x = v0 t"],
+    assumptions: ["默认竖直方向初速度为 0，空气阻力忽略，g = 9.8 m/s^2。"],
+    params: [
+      qParam("speed", ["初速度", "水平速度", "水平初速度", "v0", "速度"], "speed", { fallback: true }),
+      qParam("height", ["抛出高度", "高度", "高处", "距地面", "h"], "lengthM", { fallback: true })
+    ]
+  },
+  {
+    id: "pendulum",
+    keywords: [["单摆", 10], ["摆长", 8], ["周期", 4], ["重力加速度", 5], ["小角度", 3], ["测g", 4]],
+    formulas: ["T = 2πsqrt(L/g)", "g = 4π^2L/T^2"],
+    assumptions: ["默认摆角较小，摆线不可伸长，空气阻力和支点摩擦忽略。"],
+    params: [
+      qParam("length", ["摆长", "线长", "l"], "lengthM", { fallback: true }),
+      qParam("angle", ["摆角", "初始角", "偏角", "θ"], "angleDeg")
+    ]
+  },
+  {
+    id: "optics",
+    keywords: [["折射", 10], ["折射定律", 9], ["入射角", 6], ["折射角", 6], ["折射率", 7], ["玻璃砖", 4], ["snell", 4]],
+    formulas: ["n = sin i / sin r"],
+    assumptions: ["默认光从空气射入玻璃，入射面平整，光线在同一平面内。"],
+    params: [
+      qParam("angle", ["入射角", "i"], "angleDeg", { fallback: true }),
+      qParam("refractive", ["折射率", "玻璃折射率", "n"], "number")
+    ]
+  },
+  {
+    id: "interference",
+    keywords: [["双缝", 11], ["干涉", 9], ["条纹间距", 6], ["相邻亮条纹", 5], ["波长", 5], ["屏距", 4], ["缝距", 4]],
+    formulas: ["Δx = λL/d", "λ = dΔx/L"],
+    assumptions: ["默认小角度近似成立，双缝到屏距离远大于缝距。"],
+    params: [
+      qParam("wavelength", ["波长", "光波长", "λ"], "frequency14", { custom: extractWavelengthNm }),
+      qParam("slitDistance", ["双缝间距", "缝距", "d"], "lengthMm"),
+      qParam("screenDistance", ["屏距", "到屏距离", "缝屏距离", "l"], "lengthM")
+    ]
+  },
+  {
+    id: "induction",
+    keywords: [["感应电流", 10], ["楞次", 9], ["电磁感应", 8], ["磁通量", 6], ["线圈", 3], ["磁体", 3], ["电流方向", 3]],
+    formulas: ["E = nΔΦ/Δt", "感应电流阻碍磁通量变化"],
+    assumptions: ["默认线圈闭合，磁体沿线圈轴线运动，电表零点居中。"],
+    params: [
+      qParam("magnetSpeed", ["磁体速度", "磁铁速度", "靠近速度", "远离速度"], "speed"),
+      qParam("field", ["磁场强度", "磁感应强度", "磁场"], "tesla"),
+      qParam("turns", ["线圈匝数", "匝数"], "turns")
+    ]
+  },
+  {
+    id: "spring",
+    keywords: [["弹簧", 10], ["胡克", 9], ["劲度系数", 7], ["伸长量", 5], ["弹力", 4], ["悬挂", 3]],
+    formulas: ["F = kx", "mg = kx"],
+    assumptions: ["默认弹簧未超过弹性限度，挂钩和托盘质量忽略。"],
+    params: [
+      qParam("springK", ["劲度系数", "k"], "forceConstant"),
+      qParam("loadMass", ["悬挂质量", "砝码质量", "物体质量", "质量"], "massKg"),
+      qParam("naturalLength", ["原长", "自然长度", "l0"], "lengthCm")
+    ]
+  },
+  {
+    id: "energy",
+    keywords: [["机械能", 10], ["机械能守恒", 10], ["动能", 4], ["势能", 4], ["释放高度", 5], ["能量损耗", 4]],
+    formulas: ["mgh = 1/2 mv^2", "E_k + E_p = 常量"],
+    assumptions: ["默认最低点作为零势能面，现实模式会加入空气阻力和摩擦损耗。"],
+    params: [
+      qParam("height", ["释放高度", "高度", "下落高度", "h"], "lengthM", { fallback: true }),
+      qParam("mass", ["小球质量", "物体质量", "质量"], "massKg"),
+      qParam("loss", ["能量损耗", "损耗", "损失"], "percent")
+    ]
+  },
+  {
+    id: "resistance",
+    keywords: [["伏安法", 10], ["测电阻", 9], ["待测电阻", 6], ["滑动变阻器", 5], ["电压表", 3], ["电流表", 3], ["欧姆定律", 4]],
+    formulas: ["R = U/I"],
+    assumptions: ["默认电表内阻影响较小，电路连接正确，滑动变阻器串联限流。"],
+    params: [
+      qParam("voltage", ["电源电压", "电压", "u"], "voltageV", { fallback: true }),
+      qParam("resistance", ["待测电阻", "电阻", "r"], "resistanceOhm"),
+      qParam("rheostat", ["滑动变阻器", "变阻器", "滑阻"], "resistanceOhm")
+    ]
+  },
+  {
+    id: "force",
+    keywords: [["力的合成", 10], ["互成角度", 8], ["合力", 6], ["分力", 5], ["平行四边形", 6], ["橡皮筋", 3]],
+    formulas: ["F^2 = F1^2 + F2^2 + 2F1F2cosθ"],
+    assumptions: ["默认两分力作用点相同，弹簧测力计已调零。"],
+    params: [
+      qParam("forceA", ["f1", "分力1", "分力一", "第一分力"], "forceN"),
+      qParam("forceB", ["f2", "分力2", "分力二", "第二分力"], "forceN"),
+      qParam("forceAngle", ["夹角", "角度", "θ"], "angleDeg", { fallback: true })
+    ]
+  },
+  {
+    id: "gas",
+    keywords: [["等温", 10], ["气体", 6], ["玻意耳", 8], ["压强", 5], ["体积", 4], ["pv", 5], ["注射器", 3]],
+    formulas: ["pV = 常量", "pV = nRT"],
+    assumptions: ["默认气体温度稳定、气体量不变，活塞缓慢移动。"],
+    params: [
+      qParam("gasVolume", ["气体体积", "体积", "v"], "volumeML", { fallback: true }),
+      qParam("gasTemp", ["气体温度", "温度", "热力学温度"], "tempK"),
+      qParam("gasAmount", ["物质的量", "气体量", "n"], "number")
+    ]
+  },
+  {
+    id: "resistivity",
+    keywords: [["电阻率", 10], ["金属丝", 7], ["直径", 4], ["长度", 3], ["螺旋测微器", 4], ["游标卡尺", 3]],
+    formulas: ["ρ = RS/L", "S = πd^2/4"],
+    assumptions: ["默认金属丝温度变化可忽略，直径需要多点测量取平均。"],
+    params: [
+      qParam("wireLength", ["金属丝长度", "导线长度", "长度", "l"], "lengthM"),
+      qParam("wireDiameter", ["金属丝直径", "导线直径", "直径", "d"], "lengthMm"),
+      qParam("wireVoltage", ["两端电压", "电压", "u"], "voltageV")
+    ]
+  },
+  {
+    id: "lens",
+    keywords: [["凸透镜", 10], ["焦距", 8], ["物距", 6], ["像距", 5], ["光屏", 4], ["成像", 4]],
+    formulas: ["1/f = 1/u + 1/v"],
+    assumptions: ["默认物、透镜、光屏中心大致等高，成清晰实像后读数。"],
+    params: [
+      qParam("objectDistance", ["物距", "u"], "lengthCm", { fallback: true }),
+      qParam("focalLength", ["焦距", "f"], "lengthCm"),
+      qParam("screenOffset", ["光屏偏离", "偏离", "偏移"], "lengthCm")
+    ]
+  },
+  {
+    id: "centripetal",
+    keywords: [["向心力", 10], ["圆周运动", 7], ["角速度", 6], ["转动半径", 6], ["半径", 4], ["匀速圆周", 5]],
+    formulas: ["F = mω^2r", "F = mv^2/r"],
+    assumptions: ["默认小球做匀速圆周运动，绳长变化和空气阻力忽略。"],
+    params: [
+      qParam("mass", ["小球质量", "质量"], "massKg"),
+      qParam("radius", ["转动半径", "半径", "r"], "lengthM", { fallback: true }),
+      qParam("angularSpeed", ["角速度", "ω"], "angularSpeed")
+    ]
+  },
+  {
+    id: "battery",
+    keywords: [["电动势", 10], ["内阻", 8], ["闭合电路", 5], ["端电压", 5], ["电源", 3], ["外电阻", 4]],
+    formulas: ["U = E - Ir", "I = E/(R+r)"],
+    assumptions: ["默认电源电动势和内阻稳定，电表接入影响较小。"],
+    params: [
+      qParam("emf", ["电动势", "e"], "voltageV"),
+      qParam("internalResistance", ["内阻", "r"], "resistanceOhm"),
+      qParam("loadResistance", ["外电阻", "负载电阻", "电阻r"], "resistanceOhm")
+    ]
+  },
+  {
+    id: "magneticForce",
+    keywords: [["安培力", 10], ["通电导线", 8], ["磁场中受力", 7], ["磁感应强度", 5], ["bil", 6], ["有效长度", 4]],
+    formulas: ["F = BIL"],
+    assumptions: ["默认导线与磁场垂直，有效长度是处在匀强磁场中的部分。"],
+    params: [
+      qParam("current", ["电流", "i"], "currentA", { fallback: true }),
+      qParam("magneticField", ["磁感应强度", "磁场强度", "磁场", "b"], "tesla"),
+      qParam("conductorLength", ["有效长度", "导线长度", "长度", "l"], "lengthM")
+    ]
+  },
+  {
+    id: "photoelectric",
+    keywords: [["光电效应", 11], ["逸出功", 8], ["截止电压", 6], ["临界频率", 7], ["光电子", 5], ["入射光频率", 5]],
+    formulas: ["hν = W0 + Ek", "Ek = eUc"],
+    assumptions: ["默认使用单色光，光强影响光电子数量，不改变最大初动能。"],
+    params: [
+      qParam("frequency", ["入射光频率", "光频率", "频率"], "frequency14", { fallback: true }),
+      qParam("workFunction", ["逸出功", "脱出功", "w0"], "ev"),
+      qParam("lightIntensity", ["光强", "光照强度", "强度"], "percent")
+    ]
+  },
+  {
+    id: "instantSpeed",
+    keywords: [["瞬时速度", 11], ["打点计时器", 6], ["纸带", 4], ["点迹", 4], ["计时周期", 6], ["取样时刻", 4]],
+    formulas: ["v ≈ Δx/Δt", "v = at"],
+    assumptions: ["默认小车做匀加速直线运动，用相邻点距的平均值近似瞬时速度。"],
+    params: [
+      qParam("dotInterval", ["计时周期", "打点周期", "时间间隔"], "timeS"),
+      qParam("instantAccel", ["加速度", "a"], "accel"),
+      qParam("sampleTime", ["取样时刻", "时刻", "t"], "timeS")
+    ]
+  },
+  {
+    id: "capacitor",
+    keywords: [["电容器", 10], ["充电", 5], ["放电", 5], ["rc", 8], ["时间常量", 7], ["电容", 5]],
+    formulas: ["τ = RC", "U_C = U(1-e^{-t/RC})"],
+    assumptions: ["默认电源内阻忽略，电容初始电压为 0。"],
+    params: [
+      qParam("capacitance", ["电容", "电容器", "c"], "capacitanceMicroF", { fallback: true }),
+      qParam("resistanceRC", ["电阻", "限流电阻", "r"], "resistanceKOhm"),
+      qParam("supplyVoltage", ["电源电压", "电压", "u"], "voltageV")
+    ]
+  },
+  {
+    id: "lengthTools",
+    keywords: [["长度测量", 10], ["游标卡尺", 7], ["螺旋测微器", 7], ["零点误差", 7], ["毫米刻度尺", 5], ["圆柱直径", 4]],
+    formulas: ["测量值 = 主尺读数 + 游标读数 - 零点误差"],
+    assumptions: ["默认读数时视线垂直刻度，多次测量取平均。"],
+    params: [
+      qParam("objectLength", ["物体长度", "长度", "l"], "lengthMm"),
+      qParam("cylinderDiameter", ["圆柱直径", "直径", "d"], "lengthMm"),
+      qParam("zeroError", ["零点误差", "零差"], "lengthMm")
+    ]
+  },
+  {
+    id: "multimeter",
+    keywords: [["多用电表", 11], ["万用表", 10], ["欧姆挡", 7], ["电压挡", 6], ["电流挡", 6], ["表笔", 4]],
+    formulas: ["先选挡位，再调零，最后读数"],
+    assumptions: ["默认测电阻前已欧姆调零，测电压时电表并联，测电流时电表串联。"],
+    params: [
+      qParam("meterMode", ["挡位", "量程", "模式"], "number", { custom: extractMeterMode }),
+      qParam("meterVoltage", ["电池电压", "电压", "u"], "voltageV"),
+      qParam("meterResistance", ["待测电阻", "电阻", "r"], "resistanceOhm")
+    ]
+  },
+  {
+    id: "momentum",
+    keywords: [["动量守恒", 11], ["碰撞", 7], ["碰前", 5], ["碰后", 5], ["小车", 3], ["气垫导轨", 4], ["m1v1", 4]],
+    formulas: ["m1v1 + m2v2 = m1v1' + m2v2'"],
+    assumptions: ["默认系统水平方向合外力近似为 0，碰撞时间短。"],
+    params: [
+      qParam("cartMassA", ["m1", "车a质量", "a车质量", "车1质量", "小车a质量"], "massKg"),
+      qParam("cartMassB", ["m2", "车b质量", "b车质量", "车2质量", "小车b质量"], "massKg"),
+      qParam("cartSpeedA", ["v1", "车a初速度", "a车初速度", "车1初速度", "初速度"], "speed")
+    ]
+  },
+  {
+    id: "transformer",
+    keywords: [["变压器", 11], ["原线圈", 7], ["副线圈", 7], ["匝数比", 6], ["理想变压器", 7], ["交流电", 3], ["原副线圈", 5]],
+    formulas: ["U1/U2 = N1/N2", "P1 ≈ P2"],
+    assumptions: ["默认理想变压器，忽略漏磁、铜损和铁损。"],
+    params: [
+      qParam("primaryVoltage", ["原线圈电压", "原边电压", "输入电压", "u1", "接入电压", "接"], "voltageV", { fallback: true }),
+      qParam("primaryTurns", ["原线圈匝数", "原边匝数", "n1", "原线圈", "初级线圈"], "turns"),
+      qParam("secondaryTurns", ["副线圈匝数", "副边匝数", "n2", "副线圈", "次级线圈"], "turns")
+    ]
+  },
+  {
+    id: "sensorControl",
+    keywords: [["传感器", 11], ["自动控制", 8], ["阈值", 6], ["热敏", 5], ["光敏", 5], ["继电器", 4], ["报警", 3]],
+    formulas: ["传感器信号与阈值比较后驱动执行器"],
+    assumptions: ["默认比较器响应足够快，执行器触发阈值稳定。"],
+    params: [
+      qParam("temperature", ["环境温度", "温度", "当前温度"], "tempC", { fallback: true }),
+      qParam("thresholdTemp", ["启动阈值", "阈值温度", "阈值"], "tempC"),
+      qParam("ambientLight", ["环境光照", "光照", "光强"], "percent")
+    ]
+  },
+  {
+    id: "oilFilm",
+    keywords: [["油膜", 11], ["油酸", 9], ["分子大小", 8], ["分子直径", 7], ["稀释", 6], ["单分子层", 5], ["痱子粉", 3]],
+    formulas: ["d ≈ V/S", "S = πD^2/4"],
+    assumptions: ["默认油酸在水面形成单分子层，油膜近似圆形。"],
+    params: [
+      qParam("dropVolume", ["一滴溶液体积", "每滴体积", "一滴", "体积"], "volumeMicroL", { fallback: true }),
+      qParam("dilutionRatio", ["稀释倍数", "稀释", "倍数"], "ratio"),
+      qParam("filmDiameter", ["油膜直径", "直径", "d"], "lengthCm")
+    ]
+  }
+];
+
+function escapeRegExp(text) {
+  return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function normalizeQuestionText(raw = "") {
+  return String(raw)
+    .replace(/[！-～]/g, char => String.fromCharCode(char.charCodeAt(0) - 0xFEE0))
+    .replace(/　/g, " ")
+    .replace(/[₀⁰]/g, "0")
+    .replace(/[₁¹]/g, "1")
+    .replace(/[₂²]/g, "2")
+    .replace(/[₃³]/g, "3")
+    .replace(/Ω/g, "欧")
+    .replace(/μ/g, "u")
+    .replace(/ω/g, "角速度")
+    .replace(/ν/g, "频率")
+    .replace(/λ/g, "波长")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function convertQuestionUnit(value, unit, unitType) {
+  const u = String(unit || "").replace(/\s+/g, "").toLowerCase();
+  if (unitType === "lengthM") {
+    if (u.includes("cm") || u.includes("厘米")) return value / 100;
+    if (u.includes("mm") || u.includes("毫米")) return value / 1000;
+    return value;
+  }
+  if (unitType === "lengthCm") {
+    if ((u === "m" || u.includes("米")) && !u.includes("厘米") && !u.includes("毫米")) return value * 100;
+    if (u.includes("mm") || u.includes("毫米")) return value / 10;
+    return value;
+  }
+  if (unitType === "lengthMm") {
+    if ((u === "m" || u.includes("米")) && !u.includes("厘米") && !u.includes("毫米")) return value * 1000;
+    if (u.includes("cm") || u.includes("厘米")) return value * 10;
+    return value;
+  }
+  if (unitType === "speed") {
+    if (u.includes("cm") || u.includes("厘米")) return value / 100;
+    return value;
+  }
+  if (unitType === "massKg") {
+    if (u === "g" || u.includes("克")) return value / 1000;
+    return value;
+  }
+  if (unitType === "resistanceOhm") {
+    if (u.includes("k欧") || u.includes("千欧")) return value * 1000;
+    return value;
+  }
+  if (unitType === "resistanceKOhm") {
+    if (u.includes("k欧") || u.includes("千欧")) return value;
+    return value / 1000;
+  }
+  if (unitType === "capacitanceMicroF") {
+    if (u.includes("mf") || u.includes("毫法")) return value * 1000;
+    if (u === "f" || u === "法") return value * 1000000;
+    return value;
+  }
+  if (unitType === "timeS") {
+    if (u.includes("ms") || u.includes("毫秒")) return value / 1000;
+    return value;
+  }
+  if (unitType === "volumeMicroL") {
+    if (u.includes("ml") || u.includes("毫升")) return value * 1000;
+    return value;
+  }
+  if (unitType === "volumeML") {
+    if (u === "l" || u === "升") return value * 1000;
+    if (u.includes("ul") || u.includes("微升")) return value / 1000;
+    return value;
+  }
+  if (unitType === "tempK") {
+    if (u.includes("℃") || u.includes("摄氏")) return value + 273.15;
+    return value;
+  }
+  if (unitType === "tempC") {
+    if (u === "k" || u.includes("开尔文")) return value - 273.15;
+    return value;
+  }
+  if (unitType === "currentA") {
+    if (u.includes("ma") || u.includes("毫安")) return value / 1000;
+    return value;
+  }
+  if (unitType === "frequency14") {
+    if (u.includes("10")) return value;
+    if (value > 1000000000000) return value / 100000000000000;
+    return value;
+  }
+  return value;
+}
+
+function labelPattern(labels) {
+  return `(?:${labels.map(label => escapeRegExp(normalizeQuestionText(label))).join("|")})`;
+}
+
+function findContextValue(text, param) {
+  if (param.unitType === "number") return findNumberNearLabel(text, param.labels);
+  const unit = QUESTION_UNITS[param.unitType];
+  if (!unit) return null;
+  const label = labelPattern(param.labels);
+  const gap = "(?:[^\\d\\n]{0,14})";
+  const valueUnit = `(-?\\d+(?:\\.\\d+)?)\\s*(${unit.pattern})`;
+  const patterns = [
+    new RegExp(`${label}${gap}${valueUnit}`, "iu"),
+    new RegExp(`${valueUnit}${gap}${label}`, "iu")
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
+    const value = convertQuestionUnit(Number(match[1]), match[2], param.unitType);
+    if (!Number.isFinite(value)) continue;
+    return { value, source: match[0].trim() };
+  }
+  return null;
+}
+
+function findNumberNearLabel(text, labels) {
+  const label = labelPattern(labels);
+  const gap = "(?:[^\\d\\n]{0,14})";
+  const patterns = [
+    new RegExp(`${label}${gap}(-?\\d+(?:\\.\\d+)?)`, "iu"),
+    new RegExp(`(-?\\d+(?:\\.\\d+)?)${gap}${label}`, "iu")
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (!match) continue;
+    const value = Number(match[1]);
+    if (Number.isFinite(value)) return { value, source: match[0].trim() };
+  }
+  return null;
+}
+
+function findAllUnitValues(text, unitType) {
+  const unit = QUESTION_UNITS[unitType];
+  if (!unit || unitType === "number") return [];
+  const pattern = new RegExp(`(-?\\d+(?:\\.\\d+)?)\\s*(${unit.pattern})`, "giu");
+  const values = [];
+  let match = pattern.exec(text);
+  while (match) {
+    const value = convertQuestionUnit(Number(match[1]), match[2], unitType);
+    if (Number.isFinite(value)) values.push({ value, source: match[0].trim() });
+    match = pattern.exec(text);
+  }
+  return values;
+}
+
+function findSingleUnitFallback(text, param) {
+  const values = findAllUnitValues(text, param.unitType);
+  return values.length === 1 ? values[0] : null;
+}
+
+function extractWavelengthNm(text) {
+  const param = { labels: ["波长", "光波长", "λ"], unitType: "lengthMm" };
+  const unit = "(?:nm|纳米|um|微米|mm|毫米|m(?!\\s*/)|米)";
+  const label = labelPattern(param.labels);
+  const gap = "(?:[^\\d\\n]{0,14})";
+  const valueUnit = `(-?\\d+(?:\\.\\d+)?)\\s*(${unit})`;
+  const patterns = [
+    new RegExp(`${label}${gap}${valueUnit}`, "giu"),
+    new RegExp(`${valueUnit}${gap}${label}`, "giu")
+  ];
+  const candidates = [];
+  for (const pattern of patterns) {
+    let match = pattern.exec(text);
+    while (match) {
+      const raw = Number(match[1]);
+      const u = match[2].replace(/\s+/g, "").toLowerCase();
+      let value = raw;
+      if (u.includes("um") || u.includes("微米")) value = raw * 1000;
+      else if (u.includes("mm") || u.includes("毫米")) value = raw * 1000000;
+      else if ((u === "m" || u.includes("米")) && !u.includes("纳米")) value = raw * 1000000000;
+      if (Number.isFinite(value)) {
+        candidates.push({
+          value,
+          source: match[0].trim(),
+          unit: u,
+          score: (u.includes("nm") || u.includes("纳米") ? 40 : 0) - Math.abs(value - 550) / 100
+        });
+      }
+      match = pattern.exec(text);
+    }
+  }
+  return candidates.sort((a, b) => b.score - a.score)[0] || null;
+}
+
+function extractMeterMode(text) {
+  if (/欧姆挡|电阻挡|测电阻|ω|欧姆/.test(text)) return { value: 1, source: "欧姆挡" };
+  if (/电流挡|测电流|毫安挡|安培挡/.test(text)) return { value: 2, source: "电流挡" };
+  if (/电压挡|测电压|伏特挡|直流电压|交流电压/.test(text)) return { value: 0, source: "电压挡" };
+  return null;
+}
+
+function clampQuestionValue(exp, key, value) {
+  const control = exp.controls.find(item => item.key === key);
+  if (!control) return null;
+  const step = Number(control.step) || 1;
+  const rounded = Math.round(value / step) * step;
+  const fixed = Number(rounded.toFixed(6));
+  const clamped = clamp(fixed, control.min, control.max);
+  return {
+    control,
+    value: clamped,
+    clipped: Math.abs(clamped - fixed) > step / 2
+  };
+}
+
+function scoreQuestionModel(text, model) {
+  const exp = experiments.find(item => item.id === model.id);
+  let score = 0;
+  const matched = [];
+  model.keywords.forEach(([keyword, weight]) => {
+    const normalized = normalizeQuestionText(keyword);
+    if (normalized && text.includes(normalized)) {
+      score += weight;
+      matched.push(keyword);
+    }
+  });
+  if (exp && text.includes(normalizeQuestionText(exp.title))) {
+    score += 10;
+    matched.push(exp.title);
+  }
+  return { model, exp, score, matched };
+}
+
+function extractQuestionValues(text, model, exp) {
+  const values = [];
+  const misses = [];
+  const used = new Set();
+  model.params.forEach(param => {
+    let found = param.custom ? param.custom(text, param) : findContextValue(text, param);
+    if (!found && param.fallback) found = findSingleUnitFallback(text, param);
+    if (!found) {
+      if (param.important) misses.push(param.key);
+      return;
+    }
+    const normalized = clampQuestionValue(exp, param.key, found.value);
+    if (!normalized) return;
+    used.add(param.key);
+    values.push({
+      key: param.key,
+      label: normalized.control.label,
+      value: normalized.value,
+      display: formatControl(normalized.control, normalized.value),
+      source: found.source,
+      clipped: normalized.clipped
+    });
+  });
+  return { values, misses, used };
+}
+
+function buildQuestionPlan(rawText) {
+  const text = normalizeQuestionText(rawText);
+  if (!text) {
+    return {
+      rawText,
+      text,
+      exp: null,
+      confidence: 0,
+      values: [],
+      matched: [],
+      alternatives: [],
+      warning: "先粘贴一道题目。"
+    };
+  }
+  const scored = QUESTION_MODELS
+    .map(model => scoreQuestionModel(text, model))
+    .sort((a, b) => b.score - a.score);
+  const best = scored[0];
+  if (!best || best.score < 4 || !best.exp) {
+    return {
+      rawText,
+      text,
+      exp: null,
+      confidence: 0,
+      values: [],
+      matched: [],
+      alternatives: scored.slice(0, 3).filter(item => item.score > 0),
+      warning: "还没识别到足够明确的实验线索，可以补充关键词、已知量或实验名称。"
+    };
+  }
+  const extracted = extractQuestionValues(text, best.model, best.exp);
+  let confidence = Math.round(30 + best.score * 4.2 + extracted.values.length * 7);
+  if (best.score < 7) confidence = Math.min(confidence, 58);
+  confidence = clamp(confidence, 38, 97);
+  return {
+    rawText,
+    text,
+    exp: best.exp,
+    model: best.model,
+    confidence,
+    values: extracted.values,
+    misses: extracted.misses,
+    matched: best.matched,
+    alternatives: scored.slice(1, 3).filter(item => item.score > 3),
+    formulas: best.model.formulas,
+    assumptions: best.model.assumptions,
+    warning: confidence < 55 ? "匹配还不够稳，套入前建议看一下题干是否属于该实验模型。" : ""
+  };
+}
+
+function renderQuestionResult(plan) {
+  S.questionPlan = plan;
+  questionApplyBtn.disabled = !(plan && plan.exp);
+  if (!plan || !plan.text) {
+    questionTag.textContent = "待识别";
+    questionResult.innerHTML = `<p class="question-empty">${escapeHtml(plan?.warning || "还没有导入题目。")}</p>`;
+    return;
+  }
+  if (!plan.exp) {
+    questionTag.textContent = "未匹配";
+    const alternatives = plan.alternatives.length
+      ? `<p>可能相关：${plan.alternatives.map(item => escapeHtml(item.exp?.title || item.model.id)).join("、")}</p>`
+      : "";
+    questionResult.innerHTML = `
+      <p class="question-warning">${escapeHtml(plan.warning)}</p>
+      ${alternatives}
+    `;
+    return;
+  }
+  questionTag.textContent = `${plan.confidence}%`;
+  const valueList = plan.values.length
+    ? `<ol class="question-list">${plan.values.map(item => `
+        <li>${escapeHtml(item.label)} → <strong>${escapeHtml(item.display)}</strong>（${escapeHtml(item.source)}${item.clipped ? "，已贴合滑块范围" : ""}）</li>
+      `).join("")}</ol>`
+    : `<p class="question-empty">已匹配实验，但题干里的数值暂时没有足够上下文可自动套入。</p>`;
+  const matched = plan.matched.length
+    ? `<div class="question-chip-row">${plan.matched.slice(0, 6).map(item => `<span class="question-chip">${escapeHtml(item)}</span>`).join("")}</div>`
+    : "";
+  const formulas = plan.formulas?.length
+    ? `<strong class="knowledge-subtitle">将调用的模型</strong><ol class="question-list">${plan.formulas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`
+    : "";
+  const assumptions = plan.assumptions?.length
+    ? `<strong class="knowledge-subtitle">默认条件</strong><ol class="question-list">${plan.assumptions.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`
+    : "";
+  const alternatives = plan.alternatives.length
+    ? `<p class="question-empty">备选：${plan.alternatives.map(item => escapeHtml(item.exp.title)).join("、")}</p>`
+    : "";
+  const warning = plan.warning ? `<p class="question-warning">${escapeHtml(plan.warning)}</p>` : "";
+  questionResult.innerHTML = `
+    <div class="question-match">
+      <strong>匹配：${escapeHtml(plan.exp.title)}</strong>
+      <div class="match-meter" style="--match:${plan.confidence}%"><span></span></div>
+      ${matched}
+    </div>
+    <strong class="knowledge-subtitle">已提取并可套入</strong>
+    ${valueList}
+    ${formulas}
+    ${assumptions}
+    ${alternatives}
+    ${warning}
+  `;
+}
+
+function setQuestionPanel(open, focusInput = false) {
+  S.questionPanelOpen = open;
+  questionPanel.hidden = !open;
+  questionToggleBtn.setAttribute("aria-expanded", String(open));
+  if (focusInput) requestAnimationFrame(() => questionInput.focus());
+}
+
+function analyzeQuestion() {
+  const plan = buildQuestionPlan(questionInput.value);
+  renderQuestionResult(plan);
+  if (plan.exp) {
+    showToast(`识别为：${plan.exp.title}`);
+  } else {
+    showToast("还没有匹配到明确实验。");
+  }
+}
+
+function applyExperimentState(id, overrides = {}, collapseShelf = true) {
   const exp = experiments.find(item => item.id === id) || experiments[0];
   S.current = exp;
   S.values = defaultValues(exp);
+  Object.entries(overrides).forEach(([key, value]) => {
+    const normalized = clampQuestionValue(exp, key, value);
+    if (normalized) S.values[key] = normalized.value;
+  });
   S.lastKnowledgeHotspot = null;
   resetSimulation(false);
   renderExperimentTabs();
   renderControls();
   renderStaticText();
-  if (window.matchMedia("(max-width: 1120px)").matches) {
+  updateControlOutputs();
+  updateLiveStrip();
+  if (collapseShelf && window.matchMedia("(max-width: 1120px)").matches) {
     shelf.classList.remove("open");
     requestAnimationFrame(() => labApp.scrollIntoView({ block: "start", behavior: "smooth" }));
   }
   draw();
+}
+
+function applyQuestionPlan() {
+  const plan = S.questionPlan;
+  if (!plan || !plan.exp) {
+    showToast("先识别一道题目。");
+    return;
+  }
+  const overrides = Object.fromEntries(plan.values.map(item => [item.key, item.value]));
+  applyExperimentState(plan.exp.id, overrides);
+  questionTag.textContent = "已套入";
+  showToast(plan.values.length ? "题干条件已套入实验模型。" : "已切换到匹配的实验模型。");
+}
+
+function selectExperiment(id) {
+  applyExperimentState(id);
 }
 
 function resetSimulation(showMessage = true) {
@@ -6102,6 +6825,11 @@ function bindEvents() {
     shelf.classList.toggle("open");
   });
 
+  questionImportTopBtn.addEventListener("click", () => {
+    setQuestionPanel(true, true);
+    requestAnimationFrame(() => questionPanel.scrollIntoView({ block: "nearest", behavior: "smooth" }));
+  });
+
   experimentList.addEventListener("click", event => {
     const btn = event.target.closest("[data-exp]");
     if (!btn) return;
@@ -6125,6 +6853,35 @@ function bindEvents() {
     S.errorPanelOpen = !S.errorPanelOpen;
     renderModeControls();
     showToast(S.errorPanelOpen ? "误差分析已展开。" : "误差分析已收起。");
+  });
+
+  questionToggleBtn.addEventListener("click", () => {
+    setQuestionPanel(!S.questionPanelOpen, !S.questionPanelOpen);
+    if (!S.questionPanelOpen) return;
+    showToast("可以粘贴题目，让实验模型先替你搭好场景。");
+  });
+
+  questionAnalyzeBtn.addEventListener("click", analyzeQuestion);
+  questionApplyBtn.addEventListener("click", applyQuestionPlan);
+  questionClearBtn.addEventListener("click", () => {
+    questionInput.value = "";
+    S.questionPlan = null;
+    renderQuestionResult(null);
+    questionInput.focus();
+  });
+  questionInput.addEventListener("input", () => {
+    S.questionPlan = null;
+    questionApplyBtn.disabled = true;
+    questionTag.textContent = "待识别";
+    questionResult.innerHTML = questionInput.value.trim()
+      ? `<p class="question-empty">题目已更新，请重新识别。</p>`
+      : `<p class="question-empty">还没有导入题目。</p>`;
+  });
+  questionInput.addEventListener("keydown", event => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      analyzeQuestion();
+    }
   });
 
   playBtn.addEventListener("click", play);

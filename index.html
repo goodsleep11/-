@@ -51,6 +51,7 @@
           </div>
         </div>
         <div class="top-actions">
+          <button class="icon-btn" id="questionImportTopBtn" type="button" title="导入题目" aria-label="导入题目">⌕</button>
           <button class="icon-btn" id="toggleShelfBtn" type="button" title="实验目录" aria-label="实验目录">☰</button>
           <button class="icon-btn" id="resetAllBtn" type="button" title="回到封面" aria-label="回到封面">↺</button>
         </div>
@@ -109,6 +110,31 @@
               <button class="tool-btn analysis-toggle" id="errorToggleBtn" type="button" aria-expanded="false">
                 <span class="btn-icon">Δ</span><span>误差分析</span>
               </button>
+              <button class="tool-btn question-toggle" id="questionToggleBtn" type="button" aria-expanded="false">
+                <span class="btn-icon">⌕</span><span>导入题目</span>
+              </button>
+            </div>
+
+            <div class="panel question-panel" id="questionPanel" hidden>
+              <div class="panel-head">
+                <h3>题目模拟舱</h3>
+                <span id="questionTag" class="status-pill subtle">待识别</span>
+              </div>
+              <textarea id="questionInput" class="question-input" rows="5" placeholder="粘贴题目，例如：小球从1.8 m高处以4.0 m/s水平抛出"></textarea>
+              <div class="question-actions">
+                <button class="tool-btn primary" id="questionAnalyzeBtn" type="button">
+                  <span class="btn-icon">⌁</span><span>识别题目</span>
+                </button>
+                <button class="tool-btn" id="questionApplyBtn" type="button" disabled>
+                  <span class="btn-icon">↳</span><span>套入模型</span>
+                </button>
+                <button class="tool-btn" id="questionClearBtn" type="button">
+                  <span class="btn-icon">×</span><span>清空</span>
+                </button>
+              </div>
+              <div id="questionResult" class="question-result" aria-live="polite">
+                <p class="question-empty">还没有导入题目。</p>
+              </div>
             </div>
 
             <div class="panel error-panel" id="errorPanel" hidden>
