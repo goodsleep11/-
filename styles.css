@@ -842,6 +842,52 @@ button {
     inset 0 1px 0 rgba(255,255,255,.30);
 }
 
+.lab-options {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(84, 96, 109, .14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(228, 236, 240, .92), rgba(255,255,255,.62));
+  box-shadow:
+    inset 0 2px 5px rgba(65,75,85,.14),
+    0 5px 0 rgba(96,83,62,.10);
+}
+
+.mode-btn {
+  min-height: 34px;
+  border-radius: 6px;
+  color: var(--ink-soft);
+  background: transparent;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.mode-btn.active {
+  color: #fff;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.30), transparent 28%),
+    linear-gradient(180deg, #4aaeb2, #2f958e);
+  box-shadow:
+    0 3px 0 #236d68,
+    inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+.analysis-toggle {
+  min-width: 112px;
+}
+
 .panel {
   position: relative;
   z-index: 2;
@@ -855,6 +901,17 @@ button {
     0 5px 0 rgba(96, 83, 62, .10),
     0 14px 24px rgba(65, 75, 85, .08),
     inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.error-panel {
+  display: block;
+  border-color: rgba(232, 111, 97, .22);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.88), rgba(255, 239, 224, .72));
+}
+
+.error-panel[hidden] {
+  display: none;
 }
 
 .panel::before {
@@ -996,6 +1053,22 @@ button {
   margin: 0 0 8px;
 }
 
+.knowledge-subtitle {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.knowledge-card ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.knowledge-card li {
+  margin: 4px 0;
+}
+
 .formula {
   display: block;
   margin: 8px 0;
@@ -1005,6 +1078,12 @@ button {
   background: rgba(236, 252, 248, .8);
   color: #1f605b;
   font-family: Consolas, "SF Mono", monospace;
+}
+
+.formula.error-formula {
+  border-left-color: var(--coral);
+  background: rgba(255, 238, 232, .82);
+  color: #7d3e38;
 }
 
 .conclusion-panel p {

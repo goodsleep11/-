@@ -101,6 +101,24 @@
               </button>
             </div>
 
+            <div class="lab-options" aria-label="实验条件">
+              <div class="mode-switch" role="group" aria-label="理想或现实实验模式">
+                <button class="mode-btn active" id="idealModeBtn" type="button" aria-pressed="true">理想</button>
+                <button class="mode-btn" id="realModeBtn" type="button" aria-pressed="false">现实</button>
+              </div>
+              <button class="tool-btn analysis-toggle" id="errorToggleBtn" type="button" aria-expanded="false">
+                <span class="btn-icon">Δ</span><span>误差分析</span>
+              </button>
+            </div>
+
+            <div class="panel error-panel" id="errorPanel" hidden>
+              <div class="panel-head">
+                <h3>误差解读</h3>
+                <span id="errorTag" class="status-pill subtle">理想模式</span>
+              </div>
+              <article id="errorCard" class="knowledge-card"></article>
+            </div>
+
             <div class="panel control-panel">
               <div class="panel-head">
                 <h3>实验器材</h3>

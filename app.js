@@ -19,6 +19,12 @@ const experimentChapter = document.getElementById("experimentChapter");
 const experimentMood = document.getElementById("experimentMood");
 const knowledgeCard = document.getElementById("knowledgeCard");
 const knowledgeTag = document.getElementById("knowledgeTag");
+const idealModeBtn = document.getElementById("idealModeBtn");
+const realModeBtn = document.getElementById("realModeBtn");
+const errorToggleBtn = document.getElementById("errorToggleBtn");
+const errorPanel = document.getElementById("errorPanel");
+const errorTag = document.getElementById("errorTag");
+const errorCard = document.getElementById("errorCard");
 const conclusionText = document.getElementById("conclusionText");
 const confidencePill = document.getElementById("confidencePill");
 const statusPill = document.getElementById("statusPill");
@@ -547,6 +553,9 @@ const S = {
   dragMode: null,
   dragStart: null,
   hoverHotspot: null,
+  mode: "ideal",
+  errorPanelOpen: false,
+  lastKnowledgeHotspot: null,
   pointer: { x: 0.5, y: 0.5 },
   view: { yaw: 0, pitch: 0 },
   toastTimer: null,
@@ -579,6 +588,196 @@ function fmt(value, digits = 2) {
   return value.toFixed(digits);
 }
 
+const STEP_GUIDES = {
+  cart: ["释放小车前先确认轨道水平，拖动车身或拉力箭头可以改变合外力。", "看小车位置、纸带点距和 a 的实时读数是否同步变大。", "现实中轨道摩擦和纸带阻力会让测得加速度偏小。"],
+  force: ["改变拉力大小时，只保留一个变量明显变化。", "F/M 的比值决定加速度，不能只看 F 的数字。", "滑轮摩擦、细线质量和轨道未调平都会带来系统偏差。"],
+  graph: ["把多组数据落到图像上，先看趋势再读斜率。", "直线斜率通常就是本实验要找的物理量。", "描点过少、坐标比例不合适会放大读图误差。"],
+  ball: ["拖动小球或释放点，相当于改变初始状态。", "注意分解后的速度、能量或轨迹是否仍满足公式。", "空气阻力和碰撞损耗会让实际轨迹短一些、速度小一些。"],
+  vector: ["先把矢量分解到互相垂直的方向，再分别分析。", "水平分量和竖直分量常常遵循不同规律。", "箭头长度只是比例尺，读数时要回到公式。"],
+  target: ["落点用于反推飞行时间和水平位移。", "高度决定落地时间，水平速度决定同一时间内飞多远。", "空气阻力会让真实落点比理想值更近。"],
+  bob: ["摆球释放时不要推，只让它自然通过最低点。", "小角度时周期主要由摆长决定。", "角度偏大、支点摩擦和按表反应都会影响周期。"],
+  timer: ["多测几次完整振动的总时间，再求平均周期。", "T² 与 L 的线性关系比单次读数更可靠。", "人工计时反应通常让周期读数偏大或波动。"],
+  ray: ["先找法线，再量入射角和折射角。", "角度必须相对法线读，不是相对界面读。", "光斑宽度、半圆玻璃位置和量角器读数会造成偏差。"],
+  normal: ["法线是所有角度测量的基准。", "折射率越大，折射光线越靠近法线。", "法线画偏会让整组角度系统性偏大或偏小。"],
+  fringe: ["观察相邻明纹中心的间距，而不是只看一条纹。", "波长越大，条纹间距越大。", "屏幕距离、缝间距和条纹中心判断都会影响结果。"],
+  magnet: ["磁体靠近或远离线圈时才会产生明显感应。", "速度越大，磁通量变化越快，指针偏转越大。", "磁体没有沿轴线运动会让磁通量变化不稳定。"],
+  coil: ["改变线圈匝数会放大或缩小感应电动势。", "匝数越多，同样磁通变化产生的总电动势越大。", "线圈电阻和接触不良会削弱电流读数。"],
+  current: ["先判断磁通量增加还是减少，再判断感应电流方向。", "楞次定律的关键词是阻碍变化。", "电表零点偏移会让小电流方向判断变困难。"],
+  spring: ["读伸长量时用末长度减原长，不能直接读总长度。", "F-x 图像过原点且近似直线时，才说明在弹性限度内。", "弹簧自重、刻度估读和超出弹性限度会带来偏差。"],
+  load: ["逐个增加砝码，等静止后再读数。", "静止时弹簧拉力大小等于砝码重力。", "砝码摆动或读数未稳定会让伸长量偏大。"],
+  energy: ["把势能、动能和损耗同时看，判断能量去了哪里。", "理想光滑轨道上 Ep+Ek 应保持不变。", "摩擦和空气阻力会把机械能转化为内能。"],
+  loss: ["拖动损耗相当于加入真实阻力。", "损耗越大，末速度越低，动能越小。", "现实损耗通常和速度、接触面状态有关，不是固定常数。"],
+  resistor: ["先连好电路，再逐步改变电压电流。", "同一电阻的 U-I 图像越陡，电阻越大。", "温度升高会让金属电阻发生变化。"],
+  meters: ["电流表串联，电压表并联。", "读数要和量程匹配，指针在中间区域更可靠。", "仪表内阻、零点和估读都会进入误差。"],
+  rheostat: ["滑动变阻器先接入较大阻值，再逐步调节。", "它既保护电路，也提供多组 U-I 数据。", "滑片接触不良会让电流读数跳动。"],
+  vectorA: ["先固定圆环，再读第一只弹簧测力计。", "分力大小由箭头长度表示，方向由箭头指向表示。", "测力计没有沿绳方向拉会造成方向误差。"],
+  vectorB: ["第二个分力与第一个分力共同决定合力。", "夹角越大，合力通常越小。", "两个测力计读数不同步会让平行四边形不闭合。"],
+  resultant: ["平行四边形对角线表示两个力的等效合力。", "合力不是普通加法，而是矢量和。", "作图比例尺和角度读数是主要误差来源。"],
+  piston: ["缓慢移动活塞，让气体尽量保持等温。", "体积变小，压强升高，pV 应近似不变。", "快速压缩会升温，漏气会让 pV 偏离常量。"],
+  gauge: ["压强计读数要等气体状态稳定后再记录。", "温度一定时，p 与 V 成反比。", "压强计零点偏移会带来系统误差。"],
+  wire: ["金属丝要拉直，并准确量出参与导电的长度。", "长度越大，电阻越大。", "接线柱间的有效长度读错会直接影响电阻率。"],
+  micrometer: ["用螺旋测微器多处测直径再取平均。", "直径进入 S=πd²/4，误差会被平方放大。", "零点误差和用力过大会让直径读数偏小。"],
+  formula: ["把测得的 R、S、L 代入公式，比较材料属性。", "电阻率应尽量与导线形状无关。", "温度升高会改变金属材料的电阻率。"],
+  candle: ["移动烛焰相当于改变物距 u。", "u>f 时光屏上才能接到倒立实像。", "烛焰不在主光轴上会让像偏移或变形。"],
+  lens: ["透镜位置确定后，再分别调物距和像距。", "凸透镜把平行主轴的光线会聚到焦点。", "透镜焦距标称值和实际值可能略有差别。"],
+  screen: ["左右移动光屏，找到最清晰的像。", "屏距等于像距 v 时，像最清楚。", "判断清晰位置带有主观性，是成像实验的重要误差。"]
+};
+
+const ERROR_GUIDES = {
+  newton: {
+    title: "牛顿第二定律的误差",
+    real: "现实模式会加入轨道摩擦、纸带阻力和读数滞后，所以测得 a 往往略小于 F/M。",
+    formula: "a测 ≈ (F - f) / M",
+    sources: ["轨道没有完全调平", "纸带与打点计时器有阻力", "小车释放瞬间有轻微扰动"],
+    reduce: ["先平衡摩擦力", "多次改变 F 或 M 作图取斜率", "释放时只松手不推车"]
+  },
+  projectile: {
+    title: "平抛实验的误差",
+    real: "现实模式会让空气阻力和落点读数参与进来，射程会比理想模型略短。",
+    formula: "R测 < v₀√(2h/g)",
+    sources: ["空气阻力削弱水平速度", "释放口高度读数不准", "落点中心判断有偏差"],
+    reduce: ["多次描点取平均轨迹", "让初速度方向保持水平", "用铅垂线校准高度"]
+  },
+  pendulum: {
+    title: "单摆测 g 的误差",
+    real: "现实模式会加入支点摩擦、有限振幅和人工计时反应，周期常略偏大，反推 g 偏小。",
+    formula: "g测 = 4π²L / T测²",
+    sources: ["摆角过大", "摆长没有量到球心", "人工按表反应时间"],
+    reduce: ["控制小角度", "测 20 到 30 次全振动总时间", "多次测量取平均"]
+  },
+  optics: {
+    title: "光路实验的误差",
+    real: "现实模式会加入光斑宽度、法线绘制和角度估读误差。",
+    formula: "n测 = sin i / sin r",
+    sources: ["法线画偏", "光线有宽度", "量角器中心未对准入射点"],
+    reduce: ["先校准法线", "用细光束", "多组角度取平均"]
+  },
+  induction: {
+    title: "电磁感应的误差",
+    real: "现实模式下线圈电阻、磁体运动不沿轴线和电表阻尼会削弱指针偏转。",
+    formula: "E测 < N|ΔΦ/Δt|",
+    sources: ["磁体速度不均匀", "线圈接触电阻", "电表零点偏移"],
+    reduce: ["沿线圈轴线运动磁体", "检查接线", "先校零再读数"]
+  },
+  spring: {
+    title: "胡克定律实验的误差",
+    real: "现实模式会加入刻度估读、弹簧自重和砝码摆动，让 F-x 图像不再完美过原点。",
+    formula: "F = kx + b",
+    sources: ["零刻度未对齐", "弹簧自重", "砝码未完全静止"],
+    reduce: ["读数前等弹簧稳定", "从同一视线读刻度", "用多组数据拟合直线"]
+  },
+  energy: {
+    title: "机械能守恒的误差",
+    real: "现实模式会把摩擦、空气阻力和测速误差加入进来，总机械能会轻微下降。",
+    formula: "Ep减少 = Ek增加 + E损",
+    sources: ["轨道摩擦", "空气阻力", "速度测量点不准"],
+    reduce: ["减小接触摩擦", "多点测速", "比较能量差而不是只看瞬时值"]
+  },
+  resistance: {
+    title: "伏安法的误差",
+    real: "现实模式会加入电表内阻、温升和读数估计，测得 R 与真实值略有差异。",
+    formula: "R测 = U测 / I测",
+    sources: ["电压表分流或电流表分压", "电阻发热", "滑片接触不稳"],
+    reduce: ["选择合适量程", "快速读数避免升温", "多组 U-I 作图求斜率"]
+  },
+  force: {
+    title: "力的合成误差",
+    real: "现实模式会加入弹簧测力计估读、夹角读数和作图比例尺误差。",
+    formula: "F合² = F₁² + F₂² + 2F₁F₂cosθ",
+    sources: ["测力计未沿绳方向", "角度尺读数偏差", "平行四边形作图比例不准"],
+    reduce: ["让圆环回到同一位置", "统一比例尺", "多次作图比较合力"]
+  },
+  gas: {
+    title: "气体等温变化误差",
+    real: "现实模式会加入漏气、快速压缩升温和压强计零点误差，pV 会轻微漂移。",
+    formula: "pV ≈ 常量（等温、定量）",
+    sources: ["压缩太快导致温度上升", "针筒密封不严", "压强计零点偏移"],
+    reduce: ["缓慢推动活塞", "保持温度稳定", "检查密封并校零"]
+  },
+  resistivity: {
+    title: "电阻率测量误差",
+    real: "现实模式会突出直径读数的影响，因为 d 的误差会通过面积平方放大。",
+    formula: "ρ测 = R测πd测² / 4L测",
+    sources: ["螺旋测微器零点误差", "金属丝发热", "有效长度读错"],
+    reduce: ["多处测直径取平均", "小电流快速读数", "明确接线柱间有效长度"]
+  },
+  lens: {
+    title: "凸透镜焦距误差",
+    real: "现实模式会加入光屏清晰位置判断和刻度读数误差，像距不再完美等于理论值。",
+    formula: "1/f测 = 1/u测 + 1/v测",
+    sources: ["最清晰位置判断主观", "烛焰和透镜未共轴", "刻度起点读数不准"],
+    reduce: ["左右移动光屏找最清晰区间中点", "保持三者共轴", "多组 u、v 反推 f"]
+  }
+};
+
+function stableNoise(key) {
+  let hash = 0;
+  const text = `${S.current.id}:${key}`;
+  for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) % 100000;
+  const raw = Math.sin(hash * 12.9898) * 43758.5453;
+  return (raw - Math.floor(raw)) * 2 - 1;
+}
+
+function realityRule(label) {
+  const rules = [
+    ["加速度", -0.035, 0],
+    ["速度", -0.02, 0],
+    ["位移", -0.012, 0],
+    ["飞行时间", 0.006, 0],
+    ["水平位移", -0.028, 0],
+    ["周期", 0.018, 0],
+    ["反推 g", -0.034, 0],
+    ["角", 0, 0.6],
+    ["条纹间距", 0.018, 0],
+    ["感应电动势", -0.05, 0],
+    ["伸长量", 0.018, 0],
+    ["总长度", 0.008, 0],
+    ["动能", -0.035, 0],
+    ["势能", 0.004, 0],
+    ["电流", 0.012, 0],
+    ["电压", -0.01, 0],
+    ["测得 R", 0.018, 0],
+    ["电阻 R", 0.018, 0],
+    ["合力", -0.015, 0],
+    ["压强", 0.022, 0],
+    ["pV", -0.012, 0],
+    ["截面积", -0.024, 0],
+    ["电阻率", 0.032, 0],
+    ["像距", 0, 0.7],
+    ["焦距", 0.012, 0],
+    ["清晰度", -0.12, 0]
+  ];
+  const found = rules.find(([needle]) => label.includes(needle));
+  return found ? { rel: found[1], abs: found[2] } : { rel: 0.008, abs: 0 };
+}
+
+function applyRealityToLive(rows) {
+  if (S.mode !== "real") return rows;
+  return rows.map(([label, value]) => {
+    const match = String(value).match(/^(-?\d+(?:\.\d+)?)(.*)$/);
+    if (!match) return [label, value];
+    const number = Number(match[1]);
+    if (!Number.isFinite(number)) return [label, value];
+    const decimals = match[1].includes(".") ? Math.min(match[1].split(".")[1].length, 2) : 0;
+    const rule = realityRule(label);
+    const noisy = number * (1 + rule.rel + stableNoise(label) * 0.006) + rule.abs * stableNoise(`${label}:abs`);
+    const safe = label.includes("清晰度") ? clamp(noisy, 0, 100) : noisy;
+    const shown = Math.abs(safe) >= 100 ? safe.toFixed(0) : safe.toFixed(decimals);
+    const measuredLabel = label.startsWith("测得")
+      ? label.replace("测得", "实测")
+      : `实测${/^[A-Za-z]/.test(label) ? " " : ""}${label}`;
+    return [measuredLabel, `${shown}${match[2]}`];
+  });
+}
+
+function getStepGuide(hot) {
+  return STEP_GUIDES[`${S.current.id}.${hot}`] || STEP_GUIDES[hot] || null;
+}
+
+function listMarkup(items) {
+  return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+}
+
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
@@ -586,13 +785,86 @@ function showToast(message) {
   S.toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
 }
 
-function setKnowledge(card, tag = "知识点") {
+function setKnowledge(card, tag = "知识点", details = {}) {
+  const steps = details.steps || [];
+  const stepTitle = details.stepTitle || "操作步骤";
+  const modeTip = details.modeTip ? `<p>${details.modeTip}</p>` : "";
+  const stepBlock = steps.length ? `
+    <strong class="knowledge-subtitle">${stepTitle}</strong>
+    ${listMarkup(steps)}
+  ` : "";
   knowledgeTag.textContent = tag;
   knowledgeCard.innerHTML = `
     <h4>${card.title}</h4>
     <p>${card.body}</p>
     <span class="formula">${card.formula}</span>
+    ${modeTip}
+    ${stepBlock}
   `;
+}
+
+function setKnowledgeForHotspot(hot, announce = false) {
+  if (!hot || (!announce && hot === S.lastKnowledgeHotspot)) return;
+  const card = S.current.cards[hot];
+  const guide = getStepGuide(hot);
+  if (!card && !guide) return;
+  S.lastKnowledgeHotspot = hot;
+  const fallback = {
+    label: "实验步骤",
+    title: "把这一步和公式连起来",
+    body: "这个热点对应当前实验中的一个操作步骤。先观察现象，再回到公式判断变量之间的关系。",
+    formula: S.current.overview.formula
+  };
+  const target = card || fallback;
+  setKnowledge(target, target.label, {
+    steps: guide || [],
+    modeTip: S.mode === "real" ? "现实模式下，这一步还会受到误差面板里列出的仪器读数、环境条件或人为判断影响。" : ""
+  });
+  if (announce) showToast(`已打开：${target.label}`);
+}
+
+function getErrorGuide() {
+  return ERROR_GUIDES[S.current.id] || {
+    title: "当前实验的误差",
+    real: "现实模式会加入可解释的小偏差，帮助你比较理想模型和真实测量之间的差别。",
+    formula: "测量值 = 理论值 + 系统误差 + 随机误差",
+    sources: ["仪器精度有限", "读数存在估计", "环境条件不完全理想"],
+    reduce: ["多次测量取平均", "保持单一变量", "先校准仪器"]
+  };
+}
+
+function renderErrorPanel() {
+  const guide = getErrorGuide();
+  errorTag.textContent = S.mode === "real" ? "现实模式" : "理想模式";
+  errorCard.innerHTML = `
+    <h4>${guide.title}</h4>
+    <p>${S.mode === "real" ? guide.real : "理想模式暂时忽略主要误差，用来先看清物理结论的骨架。切到现实模式后，读数会出现可解释的偏差。"}</p>
+    <span class="formula error-formula">${guide.formula}</span>
+    <strong class="knowledge-subtitle">主要来源</strong>
+    ${listMarkup(guide.sources)}
+    <strong class="knowledge-subtitle">减小方法</strong>
+    ${listMarkup(guide.reduce)}
+  `;
+}
+
+function renderModeControls() {
+  idealModeBtn.classList.toggle("active", S.mode === "ideal");
+  realModeBtn.classList.toggle("active", S.mode === "real");
+  idealModeBtn.setAttribute("aria-pressed", String(S.mode === "ideal"));
+  realModeBtn.setAttribute("aria-pressed", String(S.mode === "real"));
+  errorPanel.hidden = !S.errorPanelOpen;
+  errorToggleBtn.setAttribute("aria-expanded", String(S.errorPanelOpen));
+  renderErrorPanel();
+}
+
+function setMode(mode) {
+  if (S.mode === mode) return;
+  S.mode = mode;
+  S.lastKnowledgeHotspot = null;
+  renderModeControls();
+  updateLiveStrip();
+  draw();
+  showToast(mode === "real" ? "已切到现实模式：读数会带有可解释误差。" : "已切回理想模式：先看清物理结论。");
 }
 
 function defaultValues(exp) {
@@ -603,6 +875,7 @@ function selectExperiment(id) {
   const exp = experiments.find(item => item.id === id) || experiments[0];
   S.current = exp;
   S.values = defaultValues(exp);
+  S.lastKnowledgeHotspot = null;
   resetSimulation(false);
   renderExperimentTabs();
   renderControls();
@@ -623,12 +896,14 @@ function resetSimulation(showMessage = true) {
   S.trail = [];
   S.samples = [];
   S.activeHotspot = null;
+  S.lastKnowledgeHotspot = null;
   statusPill.textContent = "待开始";
   pauseBadge.classList.remove("active");
   confidencePill.textContent = "观察中";
   confidencePill.classList.add("subtle");
   if (showMessage) showToast("实验已重置。");
   setKnowledge(S.current.overview, "概览");
+  renderModeControls();
   draw();
   updateLiveStrip();
 }
@@ -649,7 +924,7 @@ function pause() {
   S.lastTs = 0;
   statusPill.textContent = "已暂停";
   pauseBadge.classList.add("active");
-  showToast("画面已定格：长按器材或轨迹可以查看解析。");
+  showToast("画面已定格：悬停、点击或长按器材都可以查看步骤解析。");
   draw();
 }
 
@@ -804,6 +1079,7 @@ function renderStaticText() {
   experimentMood.textContent = exp.mood;
   conclusionText.textContent = exp.conclusion;
   setKnowledge(exp.overview, "概览");
+  renderModeControls();
 }
 
 function updateControlOutputs() {
@@ -940,7 +1216,7 @@ function getLiveData() {
 }
 
 function updateLiveStrip() {
-  liveStrip.innerHTML = getLiveData().map(([label, value]) => `
+  liveStrip.innerHTML = applyRealityToLive(getLiveData()).map(([label, value]) => `
     <div class="live-item"><span>${label}</span><strong>${value}</strong></div>
   `).join("");
 }
@@ -2898,7 +3174,7 @@ function drawHotspotHints(items) {
       ctx.setLineDash([]);
     }
     if (compact && !hover) return;
-    const text = hover ? "拖动调节 / 长按解析" : item.text;
+    const text = hover ? "拖动调节 / 步骤解析" : item.text;
     const metrics = ctx.measureText(text);
     let tx = item.x + radius + 10;
     if (tx + metrics.width + 16 > S.cssW - 10) tx = item.x - radius - metrics.width - 26;
@@ -3055,6 +3331,7 @@ function setHoverHotspot(hot) {
   if (hot === S.hoverHotspot) return;
   S.hoverHotspot = hot;
   canvas.classList.toggle("hotspot", Boolean(hot));
+  if (hot) setKnowledgeForHotspot(hot);
   draw();
 }
 
@@ -3065,13 +3342,10 @@ function beginPointer(evt) {
   setHoverHotspot(hot);
   S.activeHotspot = hot;
   if (hot) {
+    setKnowledgeForHotspot(hot, true);
     clearTimeout(S.longPressTimer);
     S.longPressTimer = setTimeout(() => {
-      const card = S.current.cards[hot];
-      if (card) {
-        setKnowledge(card, card.label);
-        showToast(`已打开：${card.label}`);
-      }
+      setKnowledgeForHotspot(hot, true);
     }, 450);
   }
   S.dragTarget = inferDragTarget(p.x, p.y, hot);
@@ -3104,6 +3378,7 @@ function movePointer(evt) {
   applyDrag(S.dragTarget, p.x, p.y);
   updateControlOutputs();
   resetSoft();
+  renderErrorPanel();
   draw();
   updateLiveStrip();
 }
@@ -3226,7 +3501,7 @@ function bindEvents() {
     intro.classList.add("hidden");
     labApp.classList.add("active");
     setTimeout(resizeCanvas, 80);
-    showToast("书页已打开。拖动参数，暂停后长按器材查看解析。");
+    showToast("书页已打开。悬停或点击器材会切换步骤知识点。");
   });
 
   resetAllBtn.addEventListener("click", () => {
@@ -3251,8 +3526,17 @@ function bindEvents() {
     S.values[input.dataset.key] = Number(input.value);
     updateControlOutputs();
     resetSoft();
+    renderErrorPanel();
     draw();
     updateLiveStrip();
+  });
+
+  idealModeBtn.addEventListener("click", () => setMode("ideal"));
+  realModeBtn.addEventListener("click", () => setMode("real"));
+  errorToggleBtn.addEventListener("click", () => {
+    S.errorPanelOpen = !S.errorPanelOpen;
+    renderModeControls();
+    showToast(S.errorPanelOpen ? "误差分析已展开。" : "误差分析已收起。");
   });
 
   playBtn.addEventListener("click", play);
@@ -3285,6 +3569,7 @@ function init() {
   renderFutureList();
   renderControls();
   renderStaticText();
+  renderModeControls();
   updateLiveStrip();
   bindEvents();
   requestAnimationFrame(resizeCanvas);
