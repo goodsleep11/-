@@ -787,6 +787,377 @@ const experiments = [
   }
 ];
 
+experiments.push(
+  {
+    id: "instantSpeed",
+    icon: "v",
+    chapter: "力学",
+    course: "required1",
+    title: "测量做直线运动物体的瞬时速度",
+    mood: "纸带上的点越来越疏，某一瞬间的速度藏在前后两点的间距里。",
+    accent: "#427aa1",
+    controls: [
+      { key: "dotInterval", label: "计时周期 Δt", min: 0.02, max: 0.10, step: 0.01, value: 0.04, unit: "s" },
+      { key: "instantAccel", label: "小车加速度 a", min: 0.4, max: 3.2, step: 0.1, value: 1.4, unit: "m/s²" },
+      { key: "sampleTime", label: "取样时刻 t", min: 0.3, max: 2.5, step: 0.1, value: 1.2, unit: "s" }
+    ],
+    overview: {
+      title: "用很短时间内的平均速度近似瞬时速度",
+      body: "打点计时器每隔相同时间打一个点。选定某一点，量出它前后相邻点之间的距离，用这一小段平均速度近似该点瞬时速度。",
+      formula: "v ≈ Δx / Δt"
+    },
+    conclusion: "时间间隔足够短时，某点附近一小段位移与时间的比值可近似为该点瞬时速度；匀加速运动中 v 随 t 线性增加。",
+    cards: {
+      tickerTape: {
+        label: "纸带",
+        title: "点距记录了速度变化",
+        body: "相邻两点的时间间隔相等，点距越大，说明这段时间内物体运动越快。",
+        formula: "Δt = 常量"
+      },
+      dotPair: {
+        label: "相邻点",
+        title: "取样点前后取一小段",
+        body: "实际常取目标点前后两个点之间的距离，除以两段计时周期，近似目标点瞬时速度。",
+        formula: "v_n ≈ x_{n+1}-x_{n-1} / 2T"
+      },
+      speedValue: {
+        label: "瞬时速度",
+        title: "时间越短，平均速度越接近瞬时速度",
+        body: "瞬时速度是某一时刻的速度。实验中只能用足够短时间内的平均速度来逼近它。",
+        formula: "v = lim Δx/Δt"
+      },
+      speedGraph: {
+        label: "v-t 图像",
+        title: "匀加速时速度图像是一条直线",
+        body: "如果合外力近似恒定，小车速度随时间均匀增大，v-t 图像斜率就是加速度。",
+        formula: "v = v₀ + at"
+      }
+    }
+  },
+  {
+    id: "capacitor",
+    icon: "C",
+    chapter: "电学",
+    course: "required3",
+    title: "观察电容器的充、放电现象",
+    mood: "电荷像光一样慢慢注入两片极板，电流在指数曲线里温柔退场。",
+    accent: "#6f6aa8",
+    controls: [
+      { key: "capacitance", label: "电容 C", min: 220, max: 2200, step: 10, value: 1000, unit: "μF" },
+      { key: "resistanceRC", label: "电阻 R", min: 0.5, max: 8.0, step: 0.1, value: 2.0, unit: "kΩ" },
+      { key: "supplyVoltage", label: "电源电压 U", min: 1.5, max: 9.0, step: 0.1, value: 5.0, unit: "V" }
+    ],
+    overview: {
+      title: "先充电，再放电，观察电压和电流如何变化",
+      body: "电容器通过电阻接到电源时，极板电压逐渐升高、电流逐渐减小；断开电源改成放电时，电压和电流按指数规律衰减。",
+      formula: "τ = RC"
+    },
+    conclusion: "RC 电路中充电电压满足 Uc=U(1-e^{-t/RC})，充电电流逐渐减小；放电时 Uc=U0e^{-t/RC}。R 或 C 越大，变化越慢。",
+    cards: {
+      capacitorPlate: {
+        label: "电容器",
+        title: "两极板储存等量异号电荷",
+        body: "电容器电压越高，极板上积累的电荷越多，理想关系为 Q=CU。",
+        formula: "Q = CU"
+      },
+      rcSwitch: {
+        label: "开关",
+        title: "充电和放电是两个方向的能量流",
+        body: "接通电源时电源向电容储能；放电时电容通过电阻释放能量。",
+        formula: "E = 1/2 CU²"
+      },
+      rcCurrent: {
+        label: "电流",
+        title: "电流一开始最大，随后衰减",
+        body: "充电初始电容两端电压小，电阻两端电压最大；随着电容电压升高，电流逐渐减小。",
+        formula: "I = U/R · e^{-t/RC}"
+      },
+      rcGraph: {
+        label: "指数曲线",
+        title: "时间常量决定快慢",
+        body: "τ=RC 越大，曲线越平缓。经过约 5τ 后，充电或放电基本完成。",
+        formula: "τ = RC"
+      }
+    }
+  },
+  {
+    id: "lengthTools",
+    icon: "L",
+    chapter: "测量",
+    course: "required3",
+    title: "长度的测量及其测量工具的选用",
+    mood: "直尺、游标卡尺和螺旋测微器依次登场，把“看起来差不多”变成可追踪的读数。",
+    accent: "#d6a744",
+    controls: [
+      { key: "objectLength", label: "物体长度 L", min: 20, max: 160, step: 1, value: 86, unit: "mm" },
+      { key: "cylinderDiameter", label: "圆柱直径 d", min: 2, max: 30, step: 0.1, value: 12.4, unit: "mm" },
+      { key: "zeroError", label: "零点误差", min: -0.20, max: 0.20, step: 0.01, value: 0.04, unit: "mm" }
+    ],
+    overview: {
+      title: "根据精度选择合适的测量工具",
+      body: "普通长度可用刻度尺，较小外径可用游标卡尺，更小直径常用螺旋测微器。读数时要估读并做零点修正。",
+      formula: "真实值 = 读数 - 零点误差"
+    },
+    conclusion: "测量工具的分度值越小，能分辨的长度变化越细。读数要看主尺、游标或微分筒，并用零点误差修正，多次测量取平均。",
+    cards: {
+      rulerTool: {
+        label: "刻度尺",
+        title: "普通长度先看分度值",
+        body: "刻度尺适合厘米、毫米量级长度。视线要垂直刻度，避免斜视带来读数偏差。",
+        formula: "估读到分度值下一位"
+      },
+      vernierTool: {
+        label: "游标卡尺",
+        title: "主尺加游标读数",
+        body: "先读游标零线左侧的主尺值，再加上与主尺刻线对齐的游标格数乘以精度。",
+        formula: "L = 主尺 + n×精度"
+      },
+      micrometerTool: {
+        label: "螺旋测微器",
+        title: "小直径要轻轻夹住",
+        body: "螺旋测微器适合测细丝直径。棘轮轻响后读数，避免过紧压扁被测物。",
+        formula: "d = 固定刻度 + 可动刻度"
+      },
+      zeroTool: {
+        label: "零点修正",
+        title: "零点不准会带来系统误差",
+        body: "测量前闭合量爪检查零点。若零点读数不为零，真实值要用读数减去零点误差。",
+        formula: "x真 = x读 - x0"
+      }
+    }
+  },
+  {
+    id: "multimeter",
+    icon: "ΩV",
+    chapter: "电学",
+    course: "required3",
+    title: "用多用电表测量电学中的物理量",
+    mood: "旋钮转过一格，表针就换一种语言读出电压、电阻或电流。",
+    accent: "#2f958e",
+    controls: [
+      { key: "meterMode", label: "挡位选择", min: 0, max: 2, step: 1, value: 0, unit: "", options: ["电压挡", "欧姆挡", "电流挡"] },
+      { key: "meterVoltage", label: "电池电压", min: 0.5, max: 12.0, step: 0.1, value: 3.0, unit: "V" },
+      { key: "meterResistance", label: "待测电阻", min: 20, max: 2000, step: 10, value: 470, unit: "Ω" }
+    ],
+    overview: {
+      title: "先选挡位，再接表笔，最后读对应刻度",
+      body: "多用电表可测电压、电流和电阻。测电压并联，测电流串联，测电阻要断开外电源并先欧姆调零。",
+      formula: "I = U / R"
+    },
+    conclusion: "使用多用电表时，挡位和接法必须与被测量匹配；量程应先大后小，读数要乘以挡位倍率，欧姆挡测量前需要调零。",
+    cards: {
+      meterBody: {
+        label: "表盘",
+        title: "同一指针对应不同刻度",
+        body: "电压、电流和电阻使用不同刻度线。读数时先确认挡位，再看对应刻度。",
+        formula: "读数 × 倍率"
+      },
+      probes: {
+        label: "表笔",
+        title: "红黑表笔要接对位置",
+        body: "测直流电压和电流时要注意正负极；测电阻时被测元件不能带电。",
+        formula: "红正黑负"
+      },
+      selector: {
+        label: "选择旋钮",
+        title: "不确定时先用大量程",
+        body: "量程太小可能过载。先用较大量程试测，再换到合适量程提高读数精度。",
+        formula: "先大后小"
+      },
+      meterReading: {
+        label: "读数",
+        title: "欧姆挡刻度不是均匀的",
+        body: "欧姆挡内部带电池，刻度左密右疏，测量前要短接表笔调零。",
+        formula: "R = U内 / I表"
+      }
+    }
+  },
+  {
+    id: "momentum",
+    icon: "p",
+    chapter: "力学",
+    course: "selective1",
+    title: "验证动量守恒定律",
+    mood: "两辆小车在低摩擦轨道上相遇，碰撞前后的总动量像一条安静的水平线。",
+    accent: "#e86f61",
+    controls: [
+      { key: "cartMassA", label: "车 A 质量 m₁", min: 0.20, max: 1.20, step: 0.01, value: 0.50, unit: "kg" },
+      { key: "cartMassB", label: "车 B 质量 m₂", min: 0.20, max: 1.20, step: 0.01, value: 0.70, unit: "kg" },
+      { key: "cartSpeedA", label: "车 A 初速度 v₁", min: 0.30, max: 2.50, step: 0.05, value: 1.20, unit: "m/s" }
+    ],
+    overview: {
+      title: "让一辆车撞上另一辆静止小车",
+      body: "在水平低摩擦轨道上，系统所受外力冲量很小，碰撞前后两车总动量近似保持不变。光电门可测碰前碰后速度。",
+      formula: "m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'"
+    },
+    conclusion: "系统所受合外力冲量可忽略时，总动量守恒。弹性碰撞中动量守恒且机械能近似守恒；非弹性碰撞中动量仍守恒但机械能不一定守恒。",
+    cards: {
+      cartA: {
+        label: "车 A",
+        title: "碰前动量来自质量和速度",
+        body: "动量是矢量，同方向取正。车 A 质量或速度越大，碰前总动量越大。",
+        formula: "p = mv"
+      },
+      cartB: {
+        label: "车 B",
+        title: "碰后两车重新分配速度",
+        body: "车 B 从静止到运动，是因为碰撞过程中获得了车 A 传来的冲量。",
+        formula: "I = Δp"
+      },
+      momentumVector: {
+        label: "动量箭头",
+        title: "比较的是总动量，不是单个小车",
+        body: "单个小车动量会改变，但如果外力冲量可忽略，两车动量的矢量和保持不变。",
+        formula: "Σp前 = Σp后"
+      },
+      momentumGraph: {
+        label: "守恒条",
+        title: "碰撞前后总动量应接近相等",
+        body: "实验中把碰前总动量和碰后总动量画成条形图，差值越小说明验证越好。",
+        formula: "误差率 = |p后-p前|/p前"
+      }
+    }
+  },
+  {
+    id: "transformer",
+    icon: "N",
+    chapter: "电磁学",
+    course: "selective2",
+    title: "探究变压器原、副线圈电压与匝数的关系",
+    mood: "交流电在铁芯里变成看不见的磁通，副线圈用匝数把电压重新唱出来。",
+    accent: "#427aa1",
+    controls: [
+      { key: "primaryVoltage", label: "原线圈电压 U₁", min: 2, max: 24, step: 1, value: 12, unit: "V" },
+      { key: "primaryTurns", label: "原线圈匝数 N₁", min: 100, max: 800, step: 10, value: 400, unit: "匝" },
+      { key: "secondaryTurns", label: "副线圈匝数 N₂", min: 100, max: 1200, step: 10, value: 800, unit: "匝" }
+    ],
+    overview: {
+      title: "改变匝数，比较原副线圈电压",
+      body: "理想变压器中，原副线圈电压比等于匝数比。实验必须使用交流电，直流不能持续产生变化磁通。",
+      formula: "U₂/U₁ = N₂/N₁"
+    },
+    conclusion: "理想变压器满足 U₂/U₁=N₂/N₁。副线圈匝数多于原线圈时升压，少于原线圈时降压；能量守恒要求输出功率不能超过输入功率。",
+    cards: {
+      primaryCoil: {
+        label: "原线圈",
+        title: "交流电产生变化磁通",
+        body: "原线圈接交流电后，铁芯中磁通量随时间变化，副线圈才会感应电压。",
+        formula: "E = -NΔΦ/Δt"
+      },
+      secondaryCoil: {
+        label: "副线圈",
+        title: "匝数决定感应电压大小",
+        body: "每一匝都贡献感应电动势，匝数越多，同样磁通变化下总电压越高。",
+        formula: "U ∝ N"
+      },
+      ironCore: {
+        label: "铁芯",
+        title: "铁芯让磁通更多穿过副线圈",
+        body: "闭合铁芯增强磁耦合，减少漏磁，使电压比更接近匝数比。",
+        formula: "磁通耦合"
+      },
+      voltageRatio: {
+        label: "电压比",
+        title: "升压不等于凭空得到能量",
+        body: "理想情况下 U₂I₂≈U₁I₁。升高电压时，输出电流能力会相应降低。",
+        formula: "P₁ ≈ P₂"
+      }
+    }
+  },
+  {
+    id: "sensorControl",
+    icon: "S",
+    chapter: "电磁学",
+    course: "selective2",
+    title: "利用传感器制作简单的自动控制装置",
+    mood: "温度探头、比较器和继电器搭成小小自动系统，让风扇自己判断什么时候醒来。",
+    accent: "#2f958e",
+    controls: [
+      { key: "temperature", label: "环境温度", min: 15, max: 60, step: 1, value: 32, unit: "℃" },
+      { key: "thresholdTemp", label: "启动阈值", min: 20, max: 50, step: 1, value: 35, unit: "℃" },
+      { key: "ambientLight", label: "环境光照", min: 0, max: 100, step: 1, value: 42, unit: "%" }
+    ],
+    overview: {
+      title: "让传感器信号控制执行器开关",
+      body: "温度传感器把温度变化转化为电压信号。比较器判断信号是否超过阈值，再通过继电器或晶体管控制风扇、灯等执行器。",
+      formula: "输入量 → 电信号 → 控制输出"
+    },
+    conclusion: "自动控制装置由传感器、处理电路和执行器组成。阈值设置决定启动条件，反馈和滞后设计能避免执行器频繁抖动。",
+    cards: {
+      sensorProbe: {
+        label: "传感器",
+        title: "非电学量先转化为电信号",
+        body: "热敏电阻、光敏电阻等元件的电阻会随外界条件变化，再通过电路转成电压信号。",
+        formula: "T 或 E光 → U信号"
+      },
+      comparator: {
+        label: "比较器",
+        title: "阈值决定是否触发",
+        body: "比较器把传感器电压与参考电压比较，高于阈值时输出控制信号。",
+        formula: "U信号 > U阈值"
+      },
+      actuator: {
+        label: "执行器",
+        title: "小信号控制大功率装置",
+        body: "继电器或晶体管可以用弱电信号控制风扇、电灯等负载。",
+        formula: "控制端 → 负载端"
+      },
+      feedback: {
+        label: "反馈",
+        title: "现实装置需要避免频繁开关",
+        body: "加入滞后区间后，温度在阈值附近小幅波动时，风扇不会快速开关。",
+        formula: "滞后控制"
+      }
+    }
+  },
+  {
+    id: "oilFilm",
+    icon: "d",
+    chapter: "热学",
+    course: "selective3",
+    title: "用油膜法估测油酸分子的大小",
+    mood: "一滴稀释油酸在水面铺成单分子薄膜，宏观圆斑悄悄量出了微观尺度。",
+    accent: "#8c6dd7",
+    controls: [
+      { key: "dropVolume", label: "一滴溶液体积", min: 0.5, max: 5.0, step: 0.1, value: 2.0, unit: "μL" },
+      { key: "dilutionRatio", label: "稀释倍数", min: 200, max: 1000, step: 10, value: 500, unit: "倍" },
+      { key: "filmDiameter", label: "油膜直径", min: 10, max: 40, step: 0.5, value: 24, unit: "cm" }
+    ],
+    overview: {
+      title: "把一滴油酸看作铺成单分子油膜",
+      body: "已知一滴稀释油酸溶液中纯油酸体积，测出水面油膜面积，假设油膜为单分子层，则膜厚近似等于分子直径。",
+      formula: "d ≈ V / S"
+    },
+    conclusion: "油膜法把微小分子尺寸转化为可测的体积和面积之比。若油膜近似单分子层，分子直径数量级约为 10⁻¹⁰ m。",
+    cards: {
+      oilDrop: {
+        label: "油酸滴",
+        title: "先算一滴中的纯油酸体积",
+        body: "稀释溶液的一滴体积不是纯油酸体积，要除以稀释倍数。",
+        formula: "V纯 = V滴 / 稀释倍数"
+      },
+      oilFilmSpot: {
+        label: "油膜",
+        title: "油酸在水面铺成很薄的一层",
+        body: "撒上痱子粉后，油膜边界更容易观察。面积越大，估算出的厚度越小。",
+        formula: "S = πD²/4"
+      },
+      filmArea: {
+        label: "面积",
+        title: "不规则油膜要用方格估算",
+        body: "真实油膜并不总是圆形，可用方格纸数格求面积，这也是主要误差来源之一。",
+        formula: "S ≈ 方格面积之和"
+      },
+      moleculeSize: {
+        label: "分子直径",
+        title: "厚度就是分子尺度的入口",
+        body: "单分子层假设下，油膜厚度近似为油酸分子长度，得到的是数量级估算。",
+        formula: "d ≈ V/S"
+      }
+    }
+  }
+);
+
 const futureExperiments = [
   ["智能题目", "导入题目并匹配实验模型（下一阶段）"]
 ];
@@ -946,6 +1317,222 @@ function photoelectricState() {
     stoppingVoltage: maxKineticEv,
     photocurrent: emits ? intensity / 100 * (0.45 + maxKineticEv * 0.12) : 0,
     emits
+  };
+}
+
+function instantSpeedState() {
+  const T = S.values.dotInterval;
+  const a = S.values.instantAccel;
+  const sampleTime = S.values.sampleTime;
+  const centerIndex = Math.max(1, Math.round(sampleTime / T));
+  const centerTime = centerIndex * T;
+  const xPrev = 0.5 * a * Math.pow(centerTime - T, 2);
+  const xCenter = 0.5 * a * centerTime * centerTime;
+  const xNext = 0.5 * a * Math.pow(centerTime + T, 2);
+  const measuredDx = xNext - xPrev;
+  const approxSpeed = measuredDx / (2 * T);
+  const actualSpeed = a * centerTime;
+  const shownTime = clamp(S.t, 0, Math.max(2.8, centerTime + 0.7));
+  return {
+    T,
+    a,
+    sampleTime: centerTime,
+    centerIndex,
+    xPrev,
+    xCenter,
+    xNext,
+    measuredDx,
+    approxSpeed,
+    actualSpeed,
+    shownTime,
+    shownX: 0.5 * a * shownTime * shownTime,
+    shownV: a * shownTime
+  };
+}
+
+function capacitorState() {
+  const C = S.values.capacitance * 1e-6;
+  const R = S.values.resistanceRC * 1000;
+  const U = S.values.supplyVoltage;
+  const tau = R * C;
+  const chargeDuration = 5.2;
+  const dischargeDuration = 4.8;
+  const cycleTime = clamp(S.t, 0, chargeDuration + dischargeDuration);
+  const charging = cycleTime <= chargeDuration;
+  const normalizedTau = charging
+    ? cycleTime / chargeDuration * 5
+    : (cycleTime - chargeDuration) / dischargeDuration * 5;
+  const physicalTime = normalizedTau * tau;
+  const chargeEndVoltage = U * (1 - Math.exp(-5));
+  const capacitorVoltage = charging
+    ? U * (1 - Math.exp(-normalizedTau))
+    : chargeEndVoltage * Math.exp(-normalizedTau);
+  const current = charging
+    ? U / R * Math.exp(-normalizedTau)
+    : -chargeEndVoltage / R * Math.exp(-normalizedTau);
+  return {
+    C,
+    R,
+    U,
+    tau,
+    charging,
+    normalizedTau,
+    physicalTime,
+    capacitorVoltage,
+    current,
+    charge: C * capacitorVoltage,
+    storedEnergy: 0.5 * C * capacitorVoltage * capacitorVoltage,
+    progress: capacitorVoltage / Math.max(U, 0.001)
+  };
+}
+
+function lengthToolsState() {
+  const objectLength = S.values.objectLength;
+  const cylinderDiameter = S.values.cylinderDiameter;
+  const zeroError = S.values.zeroError;
+  const rulerReading = objectLength + zeroError;
+  const vernierPrecision = 0.02;
+  const vernierReading = Math.round((objectLength + zeroError) / vernierPrecision) * vernierPrecision;
+  const micrometerPrecision = 0.01;
+  const micrometerReading = Math.round((cylinderDiameter + zeroError) / micrometerPrecision) * micrometerPrecision;
+  const correctedLength = vernierReading - zeroError;
+  const correctedDiameter = micrometerReading - zeroError;
+  return {
+    objectLength,
+    cylinderDiameter,
+    zeroError,
+    rulerReading,
+    vernierReading,
+    micrometerReading,
+    correctedLength,
+    correctedDiameter,
+    area: Math.PI * Math.pow(correctedDiameter / 1000, 2) / 4
+  };
+}
+
+function multimeterState() {
+  const modeIndex = Math.round(S.values.meterMode);
+  const mode = ["voltage", "ohm", "current"][modeIndex] || "voltage";
+  const voltage = S.values.meterVoltage;
+  const resistance = S.values.meterResistance;
+  const current = voltage / Math.max(resistance, 0.001);
+  const ohmInternal = 500;
+  const ohmDeflection = ohmInternal / (ohmInternal + resistance);
+  const deflection = mode === "voltage"
+    ? clamp(voltage / 12, 0, 1)
+    : mode === "current"
+      ? clamp(current / 0.05, 0, 1)
+      : clamp(ohmDeflection, 0, 1);
+  const reading = mode === "voltage"
+    ? `${fmt(voltage)} V`
+    : mode === "current"
+      ? `${fmt(current * 1000)} mA`
+      : `${fmt(resistance, 0)} Ω`;
+  return {
+    modeIndex,
+    mode,
+    voltage,
+    resistance,
+    current,
+    deflection,
+    reading,
+    range: mode === "voltage" ? "DCV 12V" : mode === "current" ? "DCA 50mA" : "Ω ×10"
+  };
+}
+
+function momentumState() {
+  const m1 = S.values.cartMassA;
+  const m2 = S.values.cartMassB;
+  const u1 = S.values.cartSpeedA;
+  const u2 = 0;
+  const v1 = (m1 - m2) / (m1 + m2) * u1;
+  const v2 = 2 * m1 / (m1 + m2) * u1;
+  const pBefore = m1 * u1 + m2 * u2;
+  const pAfter = m1 * v1 + m2 * v2;
+  const eBefore = 0.5 * m1 * u1 * u1;
+  const eAfter = 0.5 * m1 * v1 * v1 + 0.5 * m2 * v2 * v2;
+  const collideAt = 2.1;
+  const afterT = Math.max(0, S.t - collideAt);
+  return {
+    m1,
+    m2,
+    u1,
+    u2,
+    v1,
+    v2,
+    pBefore,
+    pAfter,
+    eBefore,
+    eAfter,
+    collideAt,
+    afterT,
+    beforePhase: clamp(S.t / collideAt, 0, 1),
+    afterPhase: clamp(afterT / 2.4, 0, 1)
+  };
+}
+
+function transformerState() {
+  const primaryVoltage = S.values.primaryVoltage;
+  const primaryTurns = S.values.primaryTurns;
+  const secondaryTurns = S.values.secondaryTurns;
+  const ratio = secondaryTurns / primaryTurns;
+  const secondaryVoltage = primaryVoltage * ratio;
+  const nominalLoad = 120;
+  const secondaryCurrent = secondaryVoltage / nominalLoad;
+  const primaryCurrent = secondaryVoltage * secondaryCurrent / Math.max(primaryVoltage, 0.001);
+  return {
+    primaryVoltage,
+    primaryTurns,
+    secondaryTurns,
+    ratio,
+    secondaryVoltage,
+    primaryCurrent,
+    secondaryCurrent,
+    mode: ratio > 1.02 ? "升压" : ratio < 0.98 ? "降压" : "等压",
+    phase: Math.sin(S.t * TAU * 0.9)
+  };
+}
+
+function sensorControlState() {
+  const temperature = S.values.temperature;
+  const threshold = S.values.thresholdTemp;
+  const ambientLight = S.values.ambientLight;
+  const tempSignal = map(temperature, 15, 60, 0.6, 4.8);
+  const thresholdSignal = map(threshold, 20, 50, 1.0, 4.2);
+  const fanOn = temperature >= threshold;
+  const lampOn = ambientLight < 35;
+  const hysteresisLow = threshold - 2;
+  return {
+    temperature,
+    threshold,
+    ambientLight,
+    tempSignal,
+    thresholdSignal,
+    fanOn,
+    lampOn,
+    hysteresisLow,
+    output: fanOn ? "风扇启动" : "风扇待机"
+  };
+}
+
+function oilFilmState() {
+  const dropVolume = S.values.dropVolume;
+  const dilutionRatio = S.values.dilutionRatio;
+  const filmDiameter = S.values.filmDiameter;
+  const pureVolumeMicroL = dropVolume / dilutionRatio;
+  const pureVolumeM3 = pureVolumeMicroL * 1e-9;
+  const diameterM = filmDiameter / 100;
+  const area = Math.PI * Math.pow(diameterM / 2, 2);
+  const moleculeDiameterM = pureVolumeM3 / Math.max(area, 1e-12);
+  return {
+    dropVolume,
+    dilutionRatio,
+    filmDiameter,
+    pureVolumeMicroL,
+    pureVolumeM3,
+    area,
+    moleculeDiameterM,
+    moleculeDiameterNm: moleculeDiameterM * 1e9
   };
 }
 
@@ -1147,6 +1734,111 @@ const MANUAL_GUIDES = {
   magneticForce: ["把直导线水平放入匀强磁场区域，使导线尽量垂直磁场。", "接通电路，记录电流 I、有效长度 L、磁感应强度 B 和力的读数。", "保持两个变量不变，分别改变 I、B 或 L，比较安培力变化。", "必要时反接电源，观察电流反向时受力方向是否反向。"],
   photoelectric: ["选择金属板并遮光，先检查背景电流。", "照射不同频率的单色光，判断是否出现光电子。", "在 ν>ν₀ 时调节反向电压，找到光电流刚为零的截止电压。", "用 eUc=hν-W₀ 或 Ek-ν 图像分析临界频率和逸出功。"]
 };
+
+Object.assign(STEP_GUIDES, {
+  tickerTape: ["先确认打点计时器频率稳定，纸带穿过限位孔时不要受额外摩擦。", "相邻点时间间隔相等，点距增大说明速度增大。", "纸带倾斜、点迹过淡或复写纸摩擦都会影响读数。"],
+  dotPair: ["取目标点前后相邻点之间的距离，比只取一边更接近该点瞬时速度。", "用 x_{n+1}-x_{n-1} 除以 2T，T 是打点周期。", "若点距太小，相对误差会明显增大。"],
+  speedValue: ["瞬时速度不能直接用尺子量，只能由短时间平均速度近似。", "取样时间越短，近似越好，但读数相对误差也可能更大。", "现实模式会加入纸带点位和读尺估计误差。"],
+  speedGraph: ["把多个取样点的速度画成 v-t 图像。", "匀加速运动中图像近似直线，斜率就是加速度。", "异常点通常来自某段点距读错或小车受阻。"],
+  capacitorPlate: ["确认电容器极性，电解电容不能反接。", "观察充电时 Uc 从 0 逐渐接近电源电压。", "漏电、电容标称误差会让曲线偏离理想指数。"],
+  rcSwitch: ["充电时接电源，放电时断开电源并通过电阻回路放电。", "不要让电容直接短路放电，以免电流过大。", "开关接触抖动会影响最初一段曲线。"],
+  rcCurrent: ["电流方向在充电和放电阶段相反。", "电流大小按指数规律逐渐减小。", "电流表内阻会改变真实时间常量。"],
+  rcGraph: ["读出 Uc-t 或 I-t 曲线，比较不同 R、C 下曲线快慢。", "τ=RC 越大，充放电越慢。", "采样频率太低会丢失初始快速变化。"],
+  rulerTool: ["把被测物一端对齐刻度线，视线垂直尺面。", "普通刻度尺适合毫米级长度。", "起点磨损时不要从零刻度开始量。"],
+  vernierTool: ["先读主尺，再找游标哪一刻线与主尺对齐。", "游标卡尺适合测外径、内径和深度。", "量爪倾斜会让外径读数偏大。"],
+  micrometerTool: ["用棘轮轻夹被测物，听到轻响后读数。", "多处测量细丝直径再取平均。", "过度旋紧会压扁材料，使读数偏小。"],
+  zeroTool: ["测量前闭合量爪检查零点。", "零点误差为正时，真实值等于读数减去正误差。", "零点误差不修正会造成系统偏差。"],
+  meterBody: ["先确认旋钮挡位，再看对应刻度线。", "读数要乘以挡位倍率。", "指针太靠左说明量程偏大，读数相对误差较大。"],
+  probes: ["红表笔接正端或高电势端，黑表笔接负端或低电势端。", "测电阻前被测元件必须离开带电电路。", "表笔接触不良会造成读数跳动。"],
+  selector: ["未知大小先选大量程，保护表头。", "再逐步换小量程提高读数精度。", "换挡前最好断开表笔，避免误接。"],
+  meterReading: ["欧姆挡刻度左密右疏，要在中间区域读数更可靠。", "欧姆挡测量前短接表笔调零。", "内部电池电压不足会让电阻读数偏大。"],
+  cartA: ["让车 A 以已知速度撞向静止车 B。", "光电门记录碰前和碰后速度。", "轨道不水平会让外力冲量不可忽略。"],
+  cartB: ["车 B 由静止开始，碰后获得速度。", "比较车 B 获得的动量与车 A 损失的动量。", "碰撞端松动或黏连会改变能量损失。"],
+  momentumVector: ["动量是矢量，先统一正方向。", "比较系统总动量，而不是只看单个小车。", "速度方向判断错误会让符号出错。"],
+  momentumGraph: ["把碰前总动量与碰后总动量并排比较。", "差值越小，说明外力冲量和测量误差越小。", "多次实验取平均可减小偶然误差。"],
+  primaryCoil: ["原线圈必须接交流电。", "匝数和输入电压共同决定铁芯中的磁通变化。", "线圈电阻和电源内阻会让实际电压略低。"],
+  secondaryCoil: ["副线圈开路时可测感应电压。", "N₂ 越大，理想副边电压越高。", "负载过重时输出电压会下降。"],
+  ironCore: ["闭合铁芯能减少漏磁，使电压比更接近匝数比。", "铁芯没有插紧会削弱耦合。", "铁芯发热说明存在能量损耗。"],
+  voltageRatio: ["记录 U₁、U₂、N₁、N₂，比较 U₂/U₁ 与 N₂/N₁。", "升压时输出电流能力下降。", "不要把电压升高误解成能量增加。"],
+  sensorProbe: ["传感器把温度或光照转成电信号。", "先观察输入量变化，再看信号电压变化。", "传感器有响应时间，读数不会瞬间稳定。"],
+  comparator: ["比较器把传感器信号与阈值信号比较。", "高于阈值时输出控制信号。", "阈值设置过近会导致频繁开关。"],
+  actuator: ["执行器由控制信号驱动，完成风扇转动或灯亮。", "小电流控制大负载时常用继电器或晶体管。", "负载反接或电流过大会损坏元件。"],
+  feedback: ["加入滞后区间可减少临界点附近的抖动。", "启动阈值和关闭阈值可以不同。", "没有反馈时系统容易在阈值附近来回跳变。"],
+  oilDrop: ["先用滴管统计多滴总体积，再算一滴平均体积。", "稀释倍数越大，一滴中纯油酸体积越小。", "滴管口残留会影响每滴体积。"],
+  oilFilmSpot: ["在水面撒粉后滴入油酸溶液，观察粉末被排开的区域。", "油膜应尽量铺展成单分子层。", "油膜未完全展开会让估算直径偏大。"],
+  filmArea: ["规则近圆形油膜可用直径算面积。", "不规则油膜应用方格纸数格估算面积。", "边界模糊是主要读数误差。"],
+  moleculeSize: ["用纯油酸体积除以油膜面积得到膜厚。", "单分子层假设下，膜厚近似分子长度。", "结果重点看数量级，通常约 10⁻¹⁰ m。"]
+});
+
+Object.assign(ERROR_GUIDES, {
+  instantSpeed: {
+    title: "瞬时速度测量的误差",
+    real: "现实模式会加入纸带点位、计时周期和刻度估读误差，短时间间隔越小，相对读数误差越明显。",
+    formula: "v测 ≈ (x_{n+1}-x_{n-1})/2T",
+    sources: ["打点计时器周期不稳", "纸带与限位孔摩擦", "点迹中心判断不准"],
+    reduce: ["让纸带运动顺畅", "选点迹清晰的一段", "多取几个点计算并作 v-t 图像"]
+  },
+  capacitor: {
+    title: "RC 充放电实验的误差",
+    real: "现实模式会加入电容漏电、电阻标称误差和仪表内阻，曲线会偏离完美指数。",
+    formula: "τ测 ≈ R实C实",
+    sources: ["电容标称值偏差", "电压表分流", "开关接触抖动"],
+    reduce: ["选用合适量程", "多次采样拟合曲线", "避免电容反接或直接短路"]
+  },
+  lengthTools: {
+    title: "长度测量的误差",
+    real: "现实模式突出零点误差、视差和工具分度值限制，修正后读数仍会有估读波动。",
+    formula: "L真 = L读 - L0",
+    sources: ["视线不垂直", "量爪未夹正", "零点未校正"],
+    reduce: ["读数前检查零点", "多次不同位置测量取平均", "按精度选择合适工具"]
+  },
+  multimeter: {
+    title: "多用电表读数误差",
+    real: "现实模式会加入量程选择、表笔接触和欧姆挡内部电池状态的影响。",
+    formula: "读数 = 刻度值 × 倍率",
+    sources: ["挡位选错", "未欧姆调零", "表笔接触电阻"],
+    reduce: ["未知量先大量程", "欧姆挡先短接调零", "读对应刻度线并乘倍率"]
+  },
+  momentum: {
+    title: "动量守恒验证误差",
+    real: "现实模式会加入轨道摩擦、碰撞非理想和速度测量误差，总动量前后会有小差值。",
+    formula: "Σp后 ≈ Σp前",
+    sources: ["轨道不水平", "光电门测速误差", "碰撞时外力冲量不可忽略"],
+    reduce: ["调平气垫或低摩擦轨道", "多次测量速度取平均", "比较系统总动量而非单车动量"]
+  },
+  transformer: {
+    title: "变压器实验的误差",
+    real: "现实模式会加入线圈电阻、漏磁和铁芯损耗，使 U₂/U₁ 略小于 N₂/N₁。",
+    formula: "U₂/U₁ ≈ N₂/N₁",
+    sources: ["铁芯漏磁", "线圈电阻压降", "负载过重"],
+    reduce: ["使用闭合铁芯", "副线圈轻载测电压", "分别记录实际原副线圈端电压"]
+  },
+  sensorControl: {
+    title: "自动控制装置的误差",
+    real: "现实模式会加入传感器响应延迟、阈值漂移和执行器惯性，输出不会完全瞬时切换。",
+    formula: "U信号 与 U阈值 比较",
+    sources: ["传感器标定不准", "阈值设置过近", "继电器吸合释放滞后"],
+    reduce: ["先标定传感器", "设置合理滞后区间", "让负载电流不超过器件额定值"]
+  },
+  oilFilm: {
+    title: "油膜法估测分子大小的误差",
+    real: "现实模式会加入一滴体积、稀释比例和油膜面积估算误差，结果重点看数量级。",
+    formula: "d测 = V纯/S测",
+    sources: ["油膜不是完美单分子层", "边界面积估算不准", "一滴溶液体积不稳定"],
+    reduce: ["多滴求平均滴体积", "用方格法估算面积", "等油膜充分铺展后再读数"]
+  }
+});
+
+Object.assign(MANUAL_GUIDES, {
+  instantSpeed: ["安装打点计时器并让纸带穿过限位孔。", "释放小车，选取点迹清晰且运动稳定的一段纸带。", "以目标点前后相邻点为界量出位移，并除以对应时间。", "计算多个点的速度，作 v-t 图像验证匀加速关系。"],
+  capacitor: ["按电源、电阻、电容器和开关连接 RC 电路，确认电容极性。", "切到充电回路，记录电容电压和电流随时间变化。", "再切到放电回路，观察电压和电流反向衰减。", "改变 R 或 C，比较时间常量 τ=RC 对曲线快慢的影响。"],
+  lengthTools: ["根据被测对象选择刻度尺、游标卡尺或螺旋测微器。", "测量前检查零点并记录零点误差。", "按工具读数规则读出主尺、游标或微分筒数值。", "用真实值=读数-零点误差修正，并多次测量取平均。"],
+  multimeter: ["估计被测量大小，先把多用电表调到合适的大量程。", "测电压并联，测电流串联，测电阻时断开外电源。", "欧姆挡使用前短接表笔调零。", "读取对应刻度并乘以挡位倍率，必要时换小量程复测。"],
+  momentum: ["调平低摩擦轨道，测出两车质量。", "让车 A 撞向静止车 B，用光电门测碰前、碰后速度。", "统一正方向，分别计算碰前和碰后总动量。", "比较总动量差异，并分析摩擦和碰撞非理想影响。"],
+  transformer: ["把原线圈接入低压交流电源，副线圈接交流电压表。", "记录 N₁、N₂、U₁ 和 U₂。", "改变副线圈匝数，比较 U₂/U₁ 与 N₂/N₁。", "保持轻载，避免把变压器输出短接。"],
+  sensorControl: ["选择温度或光敏传感器，搭建分压或信号转换电路。", "用比较器设置启动阈值，观察信号是否超过阈值。", "通过继电器或晶体管驱动风扇、灯等执行器。", "加入滞后或反馈，观察临界点附近是否稳定。"],
+  oilFilm: ["配制已知稀释倍数的油酸酒精溶液，并测一滴平均体积。", "在水面撒粉，滴入一滴溶液，等待油膜充分铺展。", "测油膜直径或用方格法估算面积 S。", "用 d=V纯/S 估算分子直径，并判断数量级。"]
+});
 
 function stableNoise(key) {
   let hash = 0;
@@ -1428,6 +2120,14 @@ function updatePhysics(dt) {
   if (id === "battery") updateBattery(dt);
   if (id === "magneticForce") updateMagneticForce(dt);
   if (id === "photoelectric") updatePhotoelectric(dt);
+  if (id === "instantSpeed") updateInstantSpeed(dt);
+  if (id === "capacitor") updateCapacitor(dt);
+  if (id === "lengthTools") updateLengthTools(dt);
+  if (id === "multimeter") updateMultimeter(dt);
+  if (id === "momentum") updateMomentum(dt);
+  if (id === "transformer") updateTransformer(dt);
+  if (id === "sensorControl") updateSensorControl(dt);
+  if (id === "oilFilm") updateOilFilm(dt);
 }
 
 function updateNewton() {
@@ -1513,6 +2213,38 @@ function updatePhotoelectric() {
   if (S.t >= 5.5) markDone();
 }
 
+function updateInstantSpeed() {
+  if (S.t >= Math.max(3.2, S.values.sampleTime + 1.0)) markDone();
+}
+
+function updateCapacitor() {
+  if (S.t >= 10.0) markDone();
+}
+
+function updateLengthTools() {
+  if (S.t >= 5.0) markDone();
+}
+
+function updateMultimeter() {
+  if (S.t >= 4.8) markDone();
+}
+
+function updateMomentum() {
+  if (S.t >= 4.8) markDone();
+}
+
+function updateTransformer() {
+  if (S.t >= 5.4) markDone();
+}
+
+function updateSensorControl() {
+  if (S.t >= 5.0) markDone();
+}
+
+function updateOilFilm() {
+  if (S.t >= 5.0) markDone();
+}
+
 function renderExperimentTabs() {
   experimentList.innerHTML = COURSE_SECTIONS.map(section => {
     const sectionExperiments = experiments.filter(exp => exp.course === section.id);
@@ -1568,6 +2300,7 @@ function renderControls() {
 }
 
 function formatControl(control, value) {
+  if (control.options) return control.options[Math.round(value)] || control.options[0];
   const decimals = String(control.step).includes(".") ? String(control.step).split(".")[1].length : 0;
   return `${Number(value).toFixed(decimals)} ${control.unit}`.trim();
 }
@@ -1760,6 +2493,78 @@ function getLiveData() {
       ["光电流", `${fmt(p.photocurrent)} μA`]
     ];
   }
+  if (id === "instantSpeed") {
+    const v = instantSpeedState();
+    return [
+      ["取样时刻 t", `${fmt(v.sampleTime)} s`],
+      ["相邻位移 Δx", `${fmt(v.measuredDx * 100)} cm`],
+      ["瞬时速度 v", `${fmt(v.approxSpeed)} m/s`],
+      ["加速度 a", `${fmt(v.a)} m/s²`]
+    ];
+  }
+  if (id === "capacitor") {
+    const c = capacitorState();
+    return [
+      ["时间常量 τ", `${fmt(c.tau)} s`],
+      ["电容电压 Uc", `${fmt(c.capacitorVoltage)} V`],
+      ["电流 I", `${fmt(c.current * 1000)} mA`],
+      ["储能 E", `${fmt(c.storedEnergy * 1000)} mJ`]
+    ];
+  }
+  if (id === "lengthTools") {
+    const l = lengthToolsState();
+    return [
+      ["游标读数", `${fmt(l.vernierReading)} mm`],
+      ["零点误差", `${fmt(l.zeroError)} mm`],
+      ["修正长度", `${fmt(l.correctedLength)} mm`],
+      ["修正直径", `${fmt(l.correctedDiameter)} mm`]
+    ];
+  }
+  if (id === "multimeter") {
+    const m = multimeterState();
+    return [
+      ["当前挡位", m.range],
+      ["指针读数", m.reading],
+      ["电压 U", `${fmt(m.voltage)} V`],
+      ["电流 I", `${fmt(m.current * 1000)} mA`]
+    ];
+  }
+  if (id === "momentum") {
+    const p = momentumState();
+    return [
+      ["碰前总动量", `${fmt(p.pBefore)} kg·m/s`],
+      ["碰后总动量", `${fmt(p.pAfter)} kg·m/s`],
+      ["车 A 末速", `${fmt(p.v1)} m/s`],
+      ["车 B 末速", `${fmt(p.v2)} m/s`]
+    ];
+  }
+  if (id === "transformer") {
+    const t = transformerState();
+    return [
+      ["匝数比 N₂/N₁", `${fmt(t.ratio)} `],
+      ["原边电压 U₁", `${fmt(t.primaryVoltage)} V`],
+      ["副边电压 U₂", `${fmt(t.secondaryVoltage)} V`],
+      ["工作方式", t.mode]
+    ];
+  }
+  if (id === "sensorControl") {
+    const s = sensorControlState();
+    return [
+      ["温度信号", `${fmt(s.tempSignal)} V`],
+      ["阈值信号", `${fmt(s.thresholdSignal)} V`],
+      ["环境光照", `${fmt(s.ambientLight, 0)}%`],
+      ["控制输出", s.output]
+    ];
+  }
+  if (id === "oilFilm") {
+    const o = oilFilmState();
+    return [
+      ["纯油酸体积", `${fmt(o.pureVolumeMicroL, 3)} μL`],
+      ["油膜面积 S", `${fmt(o.area * 10000)} cm²`],
+      ["分子直径 d", `${fmt(o.moleculeDiameterNm, 2)} nm`],
+      ["数量级", `${o.moleculeDiameterM.toExponential(1)} m`]
+    ];
+  }
   return [];
 }
 
@@ -1858,6 +2663,14 @@ function draw() {
   if (id === "battery") drawBatteryExperiment();
   if (id === "magneticForce") drawMagneticForce();
   if (id === "photoelectric") drawPhotoelectric();
+  if (id === "instantSpeed") drawInstantSpeed();
+  if (id === "capacitor") drawCapacitor();
+  if (id === "lengthTools") drawLengthTools();
+  if (id === "multimeter") drawMultimeter();
+  if (id === "momentum") drawMomentum();
+  if (id === "transformer") drawTransformer();
+  if (id === "sensorControl") drawSensorControl();
+  if (id === "oilFilm") drawOilFilm();
 }
 
 function roundRect(x, y, w, h, r = 8) {
@@ -4198,6 +5011,507 @@ function drawPhotoelectricPanel(x, y, w, h, p) {
   ctx.restore();
 }
 
+function drawInstantSpeed() {
+  const W = S.cssW, H = S.cssH;
+  const v = instantSpeedState();
+  const tapeX = W * 0.13;
+  const tapeY = H * 0.37;
+  const tapeW = W * 0.62;
+  const tapeH = 72;
+  const maxTime = Math.max(2.8, v.sampleTime + 0.75);
+  const maxX = 0.5 * v.a * maxTime * maxTime;
+  const currentX = tapeX + clamp(v.shownX / maxX, 0, 1) * tapeW;
+
+  drawToyBase(W * 0.09, H * 0.68, W * 0.64, 46, "#427aa1");
+  drawSlotMarks(W * 0.14, H * 0.708, W * 0.54, 10);
+  drawTrack3D(W * 0.13, H * 0.66, W * 0.74);
+  drawCart3D(currentX, H * 0.64, 78, 44);
+
+  drawChunkRect(tapeX - 16, tapeY - 10, tapeW + 32, tapeH + 20, 8, "#fff8ea", "#d5c39f", "rgba(101,76,45,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "rgba(84,96,109,.12)";
+  for (let i = 0; i <= 30; i++) {
+    const t = i * v.T;
+    const x = tapeX + clamp((0.5 * v.a * t * t) / maxX, 0, 1) * tapeW;
+    ctx.beginPath();
+    ctx.arc(x, tapeY + tapeH / 2 + Math.sin(i * 1.7) * 4, i === v.centerIndex ? 5 : 3, 0, TAU);
+    ctx.fillStyle = i === v.centerIndex ? "#e86f61" : "rgba(36,50,64,.62)";
+    ctx.fill();
+  }
+  const px1 = tapeX + clamp(v.xPrev / maxX, 0, 1) * tapeW;
+  const px2 = tapeX + clamp(v.xNext / maxX, 0, 1) * tapeW;
+  const pc = tapeX + clamp(v.xCenter / maxX, 0, 1) * tapeW;
+  ctx.strokeStyle = "#e86f61";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(px1, tapeY + tapeH + 4);
+  ctx.lineTo(px2, tapeY + tapeH + 4);
+  ctx.stroke();
+  drawArrow(px1, tapeY + tapeH + 18, px2, tapeY + tapeH + 18, "#e86f61", 2);
+  ctx.restore();
+
+  drawLabel(`v≈${fmt(v.approxSpeed)} m/s`, pc + 16, tapeY - 18, "#7d3e38");
+  drawLabel(`T=${fmt(v.T)} s`, tapeX, tapeY - 18, "#236e69");
+  drawSimplePanel(W * 0.72, H * 0.18, W * 0.20, H * 0.34, "中心差分", [
+    `n=${v.centerIndex}`,
+    `Δx=${fmt(v.measuredDx * 100)} cm`,
+    `v=Δx/2T`,
+    `a=${fmt(v.a)} m/s²`
+  ], "#427aa1");
+  drawHotspotHints([
+    { key: "tickerTape", x: tapeX + tapeW * 0.35, y: tapeY + tapeH * 0.48, text: "长按纸带" },
+    { key: "dotPair", x: pc, y: tapeY + tapeH + 18, text: "拖动取样" },
+    { key: "speedValue", x: currentX + 64, y: H * 0.60, text: "长按速度" },
+    { key: "speedGraph", x: W * 0.81, y: H * 0.31, text: "长按图像" }
+  ]);
+}
+
+function drawCapacitor() {
+  const W = S.cssW, H = S.cssH;
+  const c = capacitorState();
+  const left = W * 0.16;
+  const right = W * 0.63;
+  const top = H * 0.28;
+  const bottom = H * 0.62;
+  const capX = W * 0.47;
+  const capY = top;
+
+  drawToyBase(W * 0.10, H * 0.69, W * 0.58, 46, "#6f6aa8");
+  drawSlotMarks(W * 0.15, H * 0.718, W * 0.48, 8);
+  drawCircuitWire([[left, bottom], [left, top], [W * 0.31, top], [W * 0.39, top]], Math.abs(c.current));
+  drawCircuitWire([[capX + 42, top], [right, top], [right, bottom], [left, bottom]], Math.abs(c.current));
+  drawBattery(left, bottom, c.U);
+  drawResistor(W * 0.34, top, S.values.resistanceRC * 1000);
+  drawCapacitorSymbol(capX, capY, c.progress);
+  drawSwitch3D(W * 0.56, bottom, c.charging);
+  drawRoundMeter(W * 0.22, H * 0.23, "V", c.capacitorVoltage, "V", 9, "#6f6aa8");
+  drawRoundMeter(W * 0.62, H * 0.50, "mA", Math.abs(c.current * 1000), "mA", 9, "#2f958e");
+  drawRCGraph(W * 0.70, H * 0.17, W * 0.22, H * 0.35, c);
+  drawLabel(c.charging ? "充电中" : "放电中", W * 0.10, H * 0.19, c.charging ? "#236e69" : "#7d3e38");
+  drawLabel(`τ=RC=${fmt(c.tau)} s`, W * 0.10, H * 0.31, "#4d3d86");
+  drawHotspotHints([
+    { key: "capacitorPlate", x: capX, y: capY, text: "拖动电容" },
+    { key: "rcSwitch", x: W * 0.56, y: bottom, text: "长按开关" },
+    { key: "rcCurrent", x: W * 0.62, y: H * 0.50, text: "长按电流" },
+    { key: "rcGraph", x: W * 0.81, y: H * 0.33, text: "长按曲线" }
+  ]);
+}
+
+function drawLengthTools() {
+  const W = S.cssW, H = S.cssH;
+  const l = lengthToolsState();
+  drawToyBase(W * 0.09, H * 0.69, W * 0.70, 46, "#d6a744");
+  drawSlotMarks(W * 0.14, H * 0.718, W * 0.60, 12);
+  drawRulerBench(W * 0.13, H * 0.26, W * 0.58, l);
+  drawVernierCaliper(W * 0.18, H * 0.48, W * 0.42, l);
+  drawLengthMicrometer(W * 0.76, H * 0.29, l);
+  drawSimplePanel(W * 0.66, H * 0.50, W * 0.25, H * 0.22, "零点修正", [
+    `L读=${fmt(l.vernierReading)} mm`,
+    `x0=${fmt(l.zeroError)} mm`,
+    `L真=${fmt(l.correctedLength)} mm`,
+    `d真=${fmt(l.correctedDiameter)} mm`
+  ], "#d6a744");
+  drawHotspotHints([
+    { key: "rulerTool", x: W * 0.30, y: H * 0.28, text: "拖动直尺" },
+    { key: "vernierTool", x: W * 0.40, y: H * 0.50, text: "长按游标" },
+    { key: "micrometerTool", x: W * 0.76, y: H * 0.30, text: "拖动测微器" },
+    { key: "zeroTool", x: W * 0.78, y: H * 0.61, text: "拖动零点" }
+  ]);
+}
+
+function drawMultimeter() {
+  const W = S.cssW, H = S.cssH;
+  const m = multimeterState();
+  drawToyBase(W * 0.12, H * 0.69, W * 0.56, 46, "#2f958e");
+  drawSlotMarks(W * 0.17, H * 0.718, W * 0.46, 8);
+  drawMultimeterBody(W * 0.42, H * 0.40, m);
+  drawChunkRect(W * 0.17, H * 0.55, W * 0.18, H * 0.12, 12, "#f4e7d0", "#b99768", "rgba(101,76,45,.28)", 7);
+  drawLabel(m.mode === "ohm" ? `${fmt(m.resistance, 0)} Ω` : `${fmt(m.voltage)} V`, W * 0.19, H * 0.60, "#236e69");
+  drawGlowLine(W * 0.38, H * 0.51, W * 0.25, H * 0.55, "rgba(232,111,97,.72)", 4);
+  drawGlowLine(W * 0.46, H * 0.53, W * 0.31, H * 0.67, "rgba(36,50,64,.42)", 4);
+  drawSimplePanel(W * 0.70, H * 0.20, W * 0.21, H * 0.28, "读数", [
+    m.range,
+    m.reading,
+    m.mode === "ohm" ? "先欧姆调零" : "量程先大后小",
+    `I=${fmt(m.current * 1000)} mA`
+  ], "#2f958e");
+  drawHotspotHints([
+    { key: "meterBody", x: W * 0.42, y: H * 0.31, text: "长按表盘" },
+    { key: "probes", x: W * 0.31, y: H * 0.61, text: "长按表笔" },
+    { key: "selector", x: W * 0.42, y: H * 0.48, text: "拖动旋钮" },
+    { key: "meterReading", x: W * 0.80, y: H * 0.34, text: "长按读数" }
+  ]);
+}
+
+function drawMomentum() {
+  const W = S.cssW, H = S.cssH;
+  const p = momentumState();
+  const trackY = H * 0.62;
+  const collideX = W * 0.48;
+  const startA = W * 0.16;
+  const startB = collideX + 80;
+  let xA, xB;
+  if (S.t <= p.collideAt) {
+    xA = lerp(startA, collideX - 34, p.beforePhase);
+    xB = startB;
+  } else {
+    xA = collideX - 34 + p.v1 * p.afterPhase * W * 0.18;
+    xB = startB + p.v2 * p.afterPhase * W * 0.18;
+  }
+  drawToyBase(W * 0.09, H * 0.69, W * 0.72, 46, "#e86f61");
+  drawSlotMarks(W * 0.14, H * 0.718, W * 0.62, 12);
+  drawTrack3D(W * 0.12, trackY, W * 0.82);
+  drawCart3D(xA, trackY - 3, map(p.m1, 0.2, 1.2, 62, 92), 43);
+  drawCart3D(xB, trackY - 3, map(p.m2, 0.2, 1.2, 62, 96), 43);
+  drawArrow(xA + 50, trackY - 54, xA + 50 + p.u1 * 36, trackY - 54, "#2f958e", 3);
+  if (S.t > p.collideAt) {
+    drawArrow(xB + 44, trackY - 82, xB + 44 + p.v2 * 28, trackY - 82, "#d6a744", 3);
+    if (p.v1 < 0) drawArrow(xA - 46, trackY - 82, xA - 46 + p.v1 * 48, trackY - 82, "#6f6aa8", 3);
+  }
+  drawMomentumPanel(W * 0.70, H * 0.17, W * 0.23, H * 0.36, p);
+  drawLabel(`p前=${fmt(p.pBefore)} kg·m/s`, W * 0.10, H * 0.19, "#7d3e38");
+  drawLabel(`p后=${fmt(p.pAfter)} kg·m/s`, W * 0.10, H * 0.27, "#236e69");
+  drawHotspotHints([
+    { key: "cartA", x: xA, y: trackY - 38, text: "拖动车A" },
+    { key: "cartB", x: xB, y: trackY - 38, text: "拖动车B" },
+    { key: "momentumVector", x: collideX, y: trackY - 92, text: "长按动量" },
+    { key: "momentumGraph", x: W * 0.81, y: H * 0.35, text: "长按守恒条" }
+  ]);
+}
+
+function drawTransformer() {
+  const W = S.cssW, H = S.cssH;
+  const t = transformerState();
+  const coreX = W * 0.43;
+  const coreY = H * 0.24;
+  const coreW = W * 0.22;
+  const coreH = H * 0.38;
+  drawToyBase(W * 0.12, H * 0.69, W * 0.58, 46, "#427aa1");
+  drawSlotMarks(W * 0.17, H * 0.718, W * 0.48, 9);
+  drawTransformerCore(coreX, coreY, coreW, coreH);
+  drawCoilWrap(coreX - 24, coreY + coreH * 0.50, t.primaryTurns, "#2f958e", "N₁");
+  drawCoilWrap(coreX + coreW + 24, coreY + coreH * 0.50, t.secondaryTurns, "#e86f61", "N₂");
+  drawRoundMeter(W * 0.20, H * 0.28, "V₁", t.primaryVoltage, "V", 24, "#2f958e");
+  drawRoundMeter(W * 0.77, H * 0.28, "V₂", t.secondaryVoltage, "V", 72, "#e86f61");
+  drawGlowLine(W * 0.25, H * 0.43, coreX - 58, coreY + coreH * 0.50, "rgba(47,149,142,.68)", 4);
+  drawGlowLine(coreX + coreW + 58, coreY + coreH * 0.50, W * 0.72, H * 0.43, "rgba(232,111,97,.68)", 4);
+  drawSimplePanel(W * 0.70, H * 0.47, W * 0.22, H * 0.18, "电压比", [
+    `U₂/U₁=${fmt(t.secondaryVoltage / t.primaryVoltage)}`,
+    `N₂/N₁=${fmt(t.ratio)}`,
+    t.mode
+  ], "#427aa1");
+  drawHotspotHints([
+    { key: "primaryCoil", x: coreX - 38, y: coreY + coreH * 0.50, text: "拖动原线圈" },
+    { key: "secondaryCoil", x: coreX + coreW + 38, y: coreY + coreH * 0.50, text: "拖动副线圈" },
+    { key: "ironCore", x: coreX + coreW / 2, y: coreY + coreH * 0.50, text: "长按铁芯" },
+    { key: "voltageRatio", x: W * 0.81, y: H * 0.55, text: "长按电压比" }
+  ]);
+}
+
+function drawSensorControl() {
+  const W = S.cssW, H = S.cssH;
+  const s = sensorControlState();
+  drawToyBase(W * 0.10, H * 0.69, W * 0.62, 46, "#2f958e");
+  drawSlotMarks(W * 0.15, H * 0.718, W * 0.52, 10);
+  drawSensorProbe(W * 0.20, H * 0.42, s);
+  drawComparatorBlock(W * 0.43, H * 0.36, s);
+  drawActuatorFan(W * 0.64, H * 0.43, s.fanOn);
+  drawGlowLine(W * 0.26, H * 0.42, W * 0.39, H * 0.42, "rgba(47,149,142,.62)", 4);
+  drawGlowLine(W * 0.51, H * 0.42, W * 0.58, H * 0.42, s.fanOn ? "rgba(232,111,97,.75)" : "rgba(84,96,109,.30)", 4);
+  drawSimplePanel(W * 0.72, H * 0.18, W * 0.20, H * 0.32, "自动控制", [
+    `T=${fmt(s.temperature, 0)}℃`,
+    `阈值=${fmt(s.threshold, 0)}℃`,
+    `U信=${fmt(s.tempSignal)} V`,
+    s.output
+  ], "#2f958e");
+  drawHotspotHints([
+    { key: "sensorProbe", x: W * 0.20, y: H * 0.42, text: "拖动温度" },
+    { key: "comparator", x: W * 0.47, y: H * 0.42, text: "拖动阈值" },
+    { key: "actuator", x: W * 0.64, y: H * 0.43, text: "长按执行器" },
+    { key: "feedback", x: W * 0.82, y: H * 0.32, text: "长按反馈" }
+  ]);
+}
+
+function drawOilFilm() {
+  const W = S.cssW, H = S.cssH;
+  const o = oilFilmState();
+  const basinX = W * 0.22;
+  const basinY = H * 0.30;
+  const basinW = W * 0.42;
+  const basinH = H * 0.30;
+  const filmR = map(o.filmDiameter, 10, 40, Math.min(basinW, basinH) * 0.14, Math.min(basinW, basinH) * 0.43);
+  drawToyBase(W * 0.10, H * 0.69, W * 0.62, 46, "#8c6dd7");
+  drawSlotMarks(W * 0.15, H * 0.718, W * 0.52, 10);
+  drawChunkRect(basinX, basinY, basinW, basinH, 22, "#d8eef5", "#8fb9c7", "rgba(36,50,64,.22)", 10);
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.26)";
+  ctx.beginPath();
+  ctx.ellipse(basinX + basinW / 2, basinY + basinH / 2, basinW * 0.44, basinH * 0.36, 0, 0, TAU);
+  ctx.fill();
+  const grad = ctx.createRadialGradient(basinX + basinW / 2, basinY + basinH / 2, 0, basinX + basinW / 2, basinY + basinH / 2, filmR);
+  grad.addColorStop(0, "rgba(214,167,68,.42)");
+  grad.addColorStop(0.68, "rgba(140,109,215,.32)");
+  grad.addColorStop(1, "rgba(140,109,215,.02)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(basinX + basinW / 2, basinY + basinH / 2, filmR, 0, TAU);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(140,109,215,.62)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  for (let i = 0; i < 48; i++) {
+    const a = i * 2.399;
+    const rr = filmR + 8 + (i % 5) * 7;
+    ctx.fillStyle = "rgba(255,255,255,.58)";
+    ctx.fillRect(basinX + basinW / 2 + Math.cos(a) * rr, basinY + basinH / 2 + Math.sin(a) * rr * 0.72, 3, 3);
+  }
+  ctx.restore();
+  drawDropper(W * 0.24, H * 0.20, o);
+  drawSimplePanel(W * 0.70, H * 0.20, W * 0.22, H * 0.34, "d = V/S", [
+    `V纯=${fmt(o.pureVolumeMicroL, 3)} μL`,
+    `S=${fmt(o.area * 10000)} cm²`,
+    `d=${fmt(o.moleculeDiameterNm, 2)} nm`,
+    o.moleculeDiameterM.toExponential(1) + " m"
+  ], "#8c6dd7");
+  drawHotspotHints([
+    { key: "oilDrop", x: W * 0.24, y: H * 0.24, text: "拖动滴管" },
+    { key: "oilFilmSpot", x: basinX + basinW / 2, y: basinY + basinH / 2, text: "拖动油膜" },
+    { key: "filmArea", x: basinX + basinW / 2 + filmR, y: basinY + basinH / 2, text: "长按面积" },
+    { key: "moleculeSize", x: W * 0.81, y: H * 0.36, text: "长按分子" }
+  ]);
+}
+
+function drawSimplePanel(x, y, w, h, title, lines, accent) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = accent;
+  ctx.font = "bold 13px Microsoft YaHei";
+  ctx.fillText(title, x + 14, y + 27);
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  lines.forEach((line, i) => ctx.fillText(line, x + 14, y + 52 + i * 21));
+  ctx.restore();
+}
+
+function drawCapacitorSymbol(x, y, progress) {
+  drawOvalShadow(x + 18, y + 78, 130, 24, 0.16);
+  drawChunkRect(x - 18, y - 58, 20, 116, 8, "#758795", "#46545e", "rgba(36,50,64,.24)", 6);
+  drawChunkRect(x + 34, y - 58, 20, 116, 8, "#758795", "#46545e", "rgba(36,50,64,.24)", 6);
+  ctx.save();
+  ctx.fillStyle = `rgba(111,106,168,${0.14 + progress * .38})`;
+  roundRect(x - 14, y - 50, 64, 100, 12);
+  ctx.fill();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("C", x + 7, y + 5);
+  ctx.restore();
+}
+
+function drawSwitch3D(x, y, closed) {
+  drawChunkRect(x - 44, y - 18, 88, 28, 10, "#f4e7d0", "#b99768", "rgba(101,76,45,.28)", 5);
+  drawBeveledCircle(x - 25, y - 2, 7, "#263241", "#111922", "rgba(255,255,255,.18)");
+  drawBeveledCircle(x + 25, y - 2, 7, "#263241", "#111922", "rgba(255,255,255,.18)");
+  ctx.save();
+  ctx.strokeStyle = closed ? "#2f958e" : "#e86f61";
+  ctx.lineWidth = 5;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(x - 25, y - 2);
+  ctx.lineTo(x + (closed ? 25 : 12), y - (closed ? 2 : 34));
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawRCGraph(x, y, w, h, c) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  const ox = x + 34, oy = y + h - 34, pw = w - 56, ph = h - 76;
+  ctx.save();
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(ox, oy - ph);
+  ctx.lineTo(ox, oy);
+  ctx.lineTo(ox + pw, oy);
+  ctx.stroke();
+  ctx.strokeStyle = "#6f6aa8";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const p = i / 80;
+    const v = 1 - Math.exp(-p * 5);
+    const px = ox + p * pw * .52;
+    const py = oy - v * ph;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  for (let i = 0; i <= 80; i++) {
+    const p = i / 80;
+    const v = Math.exp(-p * 5);
+    const px = ox + pw * .52 + p * pw * .46;
+    const py = oy - v * ph;
+    ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  const markerX = ox + clamp(S.t / 10, 0, 1) * pw;
+  drawBeveledCircle(markerX, oy - clamp(c.capacitorVoltage / c.U, 0, 1) * ph, 6, "#e86f61", "#9f3f3c", "#7d3e38");
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("Uc-t", x + w - 48, y + h - 12);
+  ctx.restore();
+}
+
+function drawRulerBench(x, y, w, l) {
+  drawChunkRect(x, y, w, 52, 8, "#fbf4df", "#c8ad7a", "rgba(101,76,45,.25)", 6);
+  ctx.save();
+  ctx.strokeStyle = "#8a6826";
+  ctx.fillStyle = "#8a6826";
+  ctx.font = "10px Microsoft YaHei";
+  for (let i = 0; i <= 16; i++) {
+    const xx = x + i / 16 * w;
+    ctx.beginPath();
+    ctx.moveTo(xx, y + 4);
+    ctx.lineTo(xx, y + (i % 2 === 0 ? 24 : 16));
+    ctx.stroke();
+    if (i % 4 === 0) ctx.fillText(String(i * 10), xx - 6, y + 42);
+  }
+  const lenW = map(l.objectLength, 20, 160, w * .14, w * .86);
+  drawChunkRect(x + 18, y + 58, lenW, 24, 8, "#427aa1", "#2e536e", "rgba(36,50,64,.22)", 5);
+  ctx.restore();
+}
+
+function drawVernierCaliper(x, y, w, l) {
+  drawPill3D(x, y, w, 18, "#758795", "#46545e");
+  const jawX = x + map(l.objectLength, 20, 160, w * .18, w * .86);
+  drawChunkRect(x + 28, y - 36, 18, 82, 5, "#d6a744", "#8f6725", "rgba(101,76,45,.3)", 5);
+  drawChunkRect(jawX, y - 36, 18, 82, 5, "#d6a744", "#8f6725", "rgba(101,76,45,.3)", 5);
+  drawChunkRect(jawX - 28, y + 10, 86, 34, 7, "#f4e7d0", "#b99768", "rgba(101,76,45,.24)", 5);
+  drawLabel(`${fmt(l.vernierReading)} mm`, x + w * .42, y - 46, "#8a6826");
+}
+
+function drawLengthMicrometer(x, y, l) {
+  drawOvalShadow(x, y + 84, 190, 30, 0.16);
+  drawChunkRect(x - 78, y + 18, 156, 34, 12, "#758795", "#46545e", "rgba(36,50,64,.25)", 7);
+  drawChunkRect(x - 76, y - 22, 40, 82, 12, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 7);
+  drawPill3D(x - 16, y + 2, 92, 18, "#f4e7d0", "#b99768");
+  drawChunkRect(x + 48, y - 14, 60, 48, 12, "#d6a744", "#8f6725", "rgba(101,76,45,.32)", 7);
+  drawBeveledCircle(x - 14, y + 11, map(l.correctedDiameter, 2, 30, 5, 13), "#d6a744", "#8f6725", "rgba(101,76,45,.3)");
+  drawLabel(`d=${fmt(l.micrometerReading)} mm`, x - 48, y - 34, "#8a6826");
+  drawLabel(`修正后 ${fmt(l.correctedDiameter)} mm`, x - 58, y + 82, "#236e69");
+}
+
+function drawMultimeterBody(x, y, m) {
+  drawOvalShadow(x, y + 132, 210, 34, 0.18);
+  drawChunkRect(x - 96, y - 116, 192, 240, 20, "#f7f1e8", "#bba17a", "rgba(84,96,109,.28)", 14);
+  drawRoundMeter(x, y - 40, m.mode === "ohm" ? "Ω" : m.mode === "current" ? "mA" : "V", m.deflection, "", 1, "#2f958e");
+  drawBeveledCircle(x, y + 48, 38, "#536170", "#263241", "rgba(255,255,255,.18)");
+  ctx.save();
+  ctx.fillStyle = "#fff";
+  ctx.font = "11px Microsoft YaHei";
+  ctx.textAlign = "center";
+  ["V", "Ω", "A"].forEach((label, i) => {
+    const a = -Math.PI * 0.78 + i * Math.PI * .78;
+    ctx.fillText(label, x + Math.cos(a) * 58, y + 50 + Math.sin(a) * 48);
+  });
+  ctx.rotate(0);
+  const angle = -Math.PI * .78 + m.modeIndex * Math.PI * .78;
+  drawArrow(x, y + 48, x + Math.cos(angle) * 34, y + 48 + Math.sin(angle) * 34, "#e86f61", 3);
+  ctx.restore();
+}
+
+function drawMomentumPanel(x, y, w, h, p) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  const base = y + h - 34;
+  const max = Math.max(p.pBefore, p.pAfter, 0.1);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("总动量比较", x + 16, y + 28);
+  [["前", p.pBefore, "#e86f61"], ["后", p.pAfter, "#2f958e"]].forEach(([label, value, color], i) => {
+    const bx = x + 34 + i * 58;
+    const bh = value / max * (h - 84);
+    roundRect(bx, base - bh, 30, bh, 6);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.fillStyle = "#536170";
+    ctx.fillText(label, bx + 8, base + 18);
+  });
+  ctx.restore();
+}
+
+function drawTransformerCore(x, y, w, h) {
+  drawChunkRect(x, y, w, h, 18, "#8a98a4", "#586771", "rgba(36,50,64,.28)", 10);
+  roundRect(x + w * .27, y + h * .18, w * .46, h * .64, 12);
+  ctx.fillStyle = "rgba(220,232,238,.80)";
+  ctx.fill();
+}
+
+function drawCoilWrap(x, y, turns, color, label) {
+  const count = Math.round(map(turns, 100, 1200, 5, 15));
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 4;
+  for (let i = 0; i < count; i++) {
+    const yy = y - 72 + i * (144 / Math.max(count - 1, 1));
+    ctx.beginPath();
+    ctx.ellipse(x, yy, 24, 9, 0, 0, TAU);
+    ctx.stroke();
+  }
+  drawLabel(`${label}=${fmt(turns, 0)}`, x - 38, y + 104, color);
+  ctx.restore();
+}
+
+function drawSensorProbe(x, y, s) {
+  drawChunkRect(x - 42, y - 58, 84, 116, 14, "#f7f1e8", "#bba17a", "rgba(101,76,45,.22)", 8);
+  const level = map(s.temperature, 15, 60, 0.15, 0.90);
+  roundRect(x - 9, y + 44 - 88 * level, 18, 88 * level, 8);
+  ctx.fillStyle = s.fanOn ? "#e86f61" : "#2f958e";
+  ctx.fill();
+  drawBeveledCircle(x, y + 54, 16, s.fanOn ? "#e86f61" : "#2f958e", s.fanOn ? "#9f3f3c" : "#236e69", "rgba(255,255,255,.18)");
+  drawLabel(`${fmt(s.temperature, 0)}℃`, x - 27, y - 74, "#236e69");
+}
+
+function drawComparatorBlock(x, y, s) {
+  drawChunkRect(x - 62, y - 50, 124, 100, 12, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 8);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "13px Microsoft YaHei";
+  ctx.fillText("+", x - 40, y - 12);
+  ctx.fillText("-", x - 40, y + 28);
+  ctx.fillText(s.tempSignal > s.thresholdSignal ? "HIGH" : "LOW", x + 4, y + 8);
+  ctx.strokeStyle = s.fanOn ? "#e86f61" : "#536170";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x - 20, y - 28);
+  ctx.lineTo(x + 34, y);
+  ctx.lineTo(x - 20, y + 28);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawActuatorFan(x, y, on) {
+  drawChunkRect(x - 54, y - 54, 108, 108, 18, on ? "#e6fff9" : "#eef3f6", on ? "#9fcfc3" : "#b8c5d0", "rgba(84,96,109,.24)", 8);
+  drawBeveledCircle(x, y, 14, "#536170", "#263241", "rgba(255,255,255,.18)");
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(on ? S.t * 8 : 0.4);
+  for (let i = 0; i < 3; i++) {
+    ctx.rotate(TAU / 3);
+    roundRect(6, -9, 42, 18, 9);
+    ctx.fillStyle = on ? "#2f958e" : "#9ba8b2";
+    ctx.fill();
+  }
+  ctx.restore();
+  drawLabel(on ? "ON" : "OFF", x - 14, y + 82, on ? "#236e69" : "#536170");
+}
+
+function drawDropper(x, y, o) {
+  drawPill3D(x - 10, y - 70, 22, 94, "#758795", "#46545e");
+  drawChunkRect(x - 20, y - 92, 42, 30, 12, "#6f6aa8", "#403d73", "rgba(77,61,134,.25)", 6);
+  const falling = (S.t * 0.55) % 1;
+  drawBeveledCircle(x + Math.sin(S.t) * 4, y + 36 + falling * 54, 7 - falling * 2, "#d6a744", "#8f6725", "rgba(101,76,45,.22)");
+  drawLabel(`${fmt(o.dropVolume)} μL`, x - 38, y - 106, "#4d3d86");
+}
+
 function drawHotspotHints(items) {
   ctx.save();
   ctx.font = "12px Microsoft YaHei";
@@ -4403,6 +5717,95 @@ function getHotspotAt(x, y) {
       ["metal", metalX, axisY, 92],
       ["electrons", lerp(metalX, collectorX, .58), axisY - 38, 92],
       ["photoGraph", W * 0.81, H * 0.31, 90]
+    );
+  }
+  if (id === "instantSpeed") {
+    const v = instantSpeedState();
+    const tapeX = W * 0.13;
+    const tapeY = H * 0.37;
+    const tapeW = W * 0.62;
+    const maxTime = Math.max(2.8, v.sampleTime + 0.75);
+    const maxX = 0.5 * v.a * maxTime * maxTime;
+    const pc = tapeX + clamp(v.xCenter / maxX, 0, 1) * tapeW;
+    const currentX = tapeX + clamp(v.shownX / maxX, 0, 1) * tapeW;
+    spots.push(
+      ["tickerTape", tapeX + tapeW * 0.35, tapeY + 36, 90],
+      ["dotPair", pc, tapeY + 90, 78],
+      ["speedValue", currentX + 64, H * 0.60, 82],
+      ["speedGraph", W * 0.81, H * 0.31, 88]
+    );
+  }
+  if (id === "capacitor") {
+    spots.push(
+      ["capacitorPlate", W * 0.47, H * 0.28, 92],
+      ["rcSwitch", W * 0.56, H * 0.62, 82],
+      ["rcCurrent", W * 0.62, H * 0.50, 86],
+      ["rcGraph", W * 0.81, H * 0.33, 90]
+    );
+  }
+  if (id === "lengthTools") {
+    spots.push(
+      ["rulerTool", W * 0.30, H * 0.28, 92],
+      ["vernierTool", W * 0.40, H * 0.50, 94],
+      ["micrometerTool", W * 0.76, H * 0.30, 94],
+      ["zeroTool", W * 0.78, H * 0.61, 88]
+    );
+  }
+  if (id === "multimeter") {
+    spots.push(
+      ["meterBody", W * 0.42, H * 0.31, 96],
+      ["probes", W * 0.31, H * 0.61, 90],
+      ["selector", W * 0.42, H * 0.48, 86],
+      ["meterReading", W * 0.80, H * 0.34, 86]
+    );
+  }
+  if (id === "momentum") {
+    const p = momentumState();
+    const trackY = H * 0.62;
+    const collideX = W * 0.48;
+    const startA = W * 0.16;
+    const startB = collideX + 80;
+    const xA = S.t <= p.collideAt ? lerp(startA, collideX - 34, p.beforePhase) : collideX - 34 + p.v1 * p.afterPhase * W * 0.18;
+    const xB = S.t <= p.collideAt ? startB : startB + p.v2 * p.afterPhase * W * 0.18;
+    spots.push(
+      ["cartA", xA, trackY - 38, 88],
+      ["cartB", xB, trackY - 38, 88],
+      ["momentumVector", collideX, trackY - 92, 86],
+      ["momentumGraph", W * 0.81, H * 0.35, 92]
+    );
+  }
+  if (id === "transformer") {
+    const coreX = W * 0.43;
+    const coreY = H * 0.24;
+    const coreW = W * 0.22;
+    const coreH = H * 0.38;
+    spots.push(
+      ["primaryCoil", coreX - 38, coreY + coreH * 0.50, 96],
+      ["secondaryCoil", coreX + coreW + 38, coreY + coreH * 0.50, 96],
+      ["ironCore", coreX + coreW / 2, coreY + coreH * 0.50, 100],
+      ["voltageRatio", W * 0.81, H * 0.55, 86]
+    );
+  }
+  if (id === "sensorControl") {
+    spots.push(
+      ["sensorProbe", W * 0.20, H * 0.42, 92],
+      ["comparator", W * 0.47, H * 0.42, 92],
+      ["actuator", W * 0.64, H * 0.43, 94],
+      ["feedback", W * 0.82, H * 0.32, 88]
+    );
+  }
+  if (id === "oilFilm") {
+    const o = oilFilmState();
+    const basinX = W * 0.22;
+    const basinY = H * 0.30;
+    const basinW = W * 0.42;
+    const basinH = H * 0.30;
+    const filmR = map(o.filmDiameter, 10, 40, Math.min(basinW, basinH) * 0.14, Math.min(basinW, basinH) * 0.43);
+    spots.push(
+      ["oilDrop", W * 0.24, H * 0.24, 86],
+      ["oilFilmSpot", basinX + basinW / 2, basinY + basinH / 2, Math.max(88, filmR)],
+      ["filmArea", basinX + basinW / 2 + filmR, basinY + basinH / 2, 82],
+      ["moleculeSize", W * 0.81, H * 0.36, 90]
     );
   }
   const hit = spots
@@ -4611,6 +6014,52 @@ function inferDragTarget(x, y, hot = getHotspotAt(x, y)) {
     if (hot === "electrons") return "lightIntensity";
     return null;
   }
+  if (id === "instantSpeed") {
+    if (hot === "tickerTape") return "dotInterval";
+    if (hot === "dotPair" || hot === "speedGraph") return "sampleTime";
+    if (hot === "speedValue") return "instantAccel";
+    return null;
+  }
+  if (id === "capacitor") {
+    if (hot === "capacitorPlate" || hot === "rcGraph") return "capacitance";
+    if (hot === "rcCurrent") return "resistanceRC";
+    if (hot === "rcSwitch") return "supplyVoltage";
+    return null;
+  }
+  if (id === "lengthTools") {
+    if (hot === "rulerTool" || hot === "vernierTool") return "objectLength";
+    if (hot === "micrometerTool") return "cylinderDiameter";
+    if (hot === "zeroTool") return "zeroError";
+    return null;
+  }
+  if (id === "multimeter") {
+    if (hot === "selector" || hot === "meterBody") return "meterMode";
+    if (hot === "probes") return "meterVoltage";
+    if (hot === "meterReading") return "meterResistance";
+    return null;
+  }
+  if (id === "momentum") {
+    if (hot === "cartA" || hot === "momentumVector") return "cartSpeedA";
+    if (hot === "cartB") return "cartMassB";
+    if (hot === "momentumGraph") return "cartMassA";
+    return null;
+  }
+  if (id === "transformer") {
+    if (hot === "primaryCoil" || hot === "ironCore") return "primaryTurns";
+    if (hot === "secondaryCoil" || hot === "voltageRatio") return "secondaryTurns";
+    return null;
+  }
+  if (id === "sensorControl") {
+    if (hot === "sensorProbe" || hot === "actuator") return "temperature";
+    if (hot === "comparator" || hot === "feedback") return "thresholdTemp";
+    return null;
+  }
+  if (id === "oilFilm") {
+    if (hot === "oilDrop") return "dropVolume";
+    if (hot === "oilFilmSpot" || hot === "filmArea") return "filmDiameter";
+    if (hot === "moleculeSize") return "dilutionRatio";
+    return null;
+  }
   return null;
 }
 
@@ -4618,8 +6067,8 @@ function applyDrag(key, x, y) {
   const control = S.current.controls.find(item => item.key === key);
   if (!control) return;
   let ratio = clamp(x / S.cssW, 0, 1);
-  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength", "slitDistance", "refractive", "emf", "internalResistance", "magneticField", "current", "workFunction", "lightIntensity"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
-  if (["angle", "wavelength", "screenDistance", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset", "radius", "angularSpeed", "loadResistance", "conductorLength", "frequency"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
+  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength", "slitDistance", "refractive", "emf", "internalResistance", "magneticField", "current", "workFunction", "lightIntensity", "instantAccel", "capacitance", "resistanceRC", "supplyVoltage", "cylinderDiameter", "meterVoltage", "meterResistance", "cartMassA", "cartMassB", "primaryVoltage", "primaryTurns", "secondaryTurns", "temperature", "thresholdTemp", "dropVolume", "dilutionRatio"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
+  if (["angle", "wavelength", "screenDistance", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset", "radius", "angularSpeed", "loadResistance", "conductorLength", "frequency", "dotInterval", "sampleTime", "objectLength", "zeroError", "meterMode", "cartSpeedA", "ambientLight", "filmDiameter"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
   let value = control.min + ratio * (control.max - control.min);
   value = Math.round(value / control.step) * control.step;
   S.values[key] = clamp(value, control.min, control.max);
