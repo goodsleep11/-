@@ -411,7 +411,11 @@ button {
 }
 
 .shelf {
+  position: sticky;
+  top: 76px;
+  height: calc(100vh - 94px);
   min-height: calc(100vh - 94px);
+  overflow-y: auto;
   padding: 16px;
   border: 1px solid rgba(63, 76, 89, .14);
   border-radius: var(--radius);
@@ -677,6 +681,13 @@ button {
     inset 0 2px 0 rgba(255,255,255,.78);
 }
 
+.canvas-wrap.orbiting {
+  box-shadow:
+    0 13px 0 rgba(105, 91, 71, .28),
+    0 32px 52px rgba(65, 75, 85, .23),
+    inset 0 2px 0 rgba(255,255,255,.82);
+}
+
 #sceneCanvas {
   position: relative;
   z-index: 1;
@@ -684,11 +695,21 @@ button {
   width: 100%;
   aspect-ratio: 1.58 / 1;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
   transform: translateZ(10px);
+}
+
+#sceneCanvas.hotspot {
+  cursor: pointer;
 }
 
 #sceneCanvas.dragging {
   cursor: grabbing;
+}
+
+#sceneCanvas.orbiting {
+  cursor: move;
 }
 
 .pause-badge {
@@ -1022,6 +1043,9 @@ button {
   }
 
   .shelf {
+    position: static;
+    height: auto;
+    overflow: visible;
     min-height: 0;
     display: none;
   }
