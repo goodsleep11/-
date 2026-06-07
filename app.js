@@ -1,5 +1,6 @@
 const canvas = document.getElementById("sceneCanvas");
 const ctx = canvas.getContext("2d");
+const canvasWrap = canvas.closest(".canvas-wrap");
 
 const intro = document.getElementById("intro");
 const labApp = document.getElementById("labApp");
@@ -250,6 +251,7 @@ const S = {
   longPressTimer: null,
   activeHotspot: null,
   dragTarget: null,
+  pointer: { x: 0.5, y: 0.5 },
   toastTimer: null,
   dpr: 1,
   cssW: 980,
@@ -303,6 +305,7 @@ function selectExperiment(id) {
   renderExperimentTabs();
   renderControls();
   renderStaticText();
+  if (window.matchMedia("(max-width: 1120px)").matches) shelf.classList.remove("open");
   draw();
 }
 
@@ -542,6 +545,7 @@ function resizeCanvas() {
   canvas.width = Math.round(S.cssW * S.dpr);
   canvas.height = Math.round(S.cssH * S.dpr);
   ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
+  resetCanvasTilt();
   draw();
 }
 
@@ -582,10 +586,21 @@ function drawWindowLight(W, H) {
 }
 
 function drawDesk(W, H) {
-  ctx.fillStyle = "rgba(166, 120, 78, .62)";
-  ctx.fillRect(0, H * 0.76, W, H * 0.24);
-  ctx.fillStyle = "rgba(255,255,255,.18)";
-  ctx.fillRect(0, H * 0.76, W, 2);
+  const y = H * 0.76;
+  const grad = ctx.createLinearGradient(0, y, 0, H);
+  grad.addColorStop(0, "rgba(202, 158, 111, .74)");
+  grad.addColorStop(0.22, "rgba(176, 127, 82, .70)");
+  grad.addColorStop(1, "rgba(128, 87, 58, .78)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, y, W, H - y);
+
+  ctx.fillStyle = "rgba(255,255,255,.24)";
+  ctx.fillRect(0, y, W, 3);
+  ctx.fillStyle = "rgba(86, 58, 36, .16)";
+  for (let i = 0; i < 5; i++) {
+    const yy = y + 22 + i * 18;
+    ctx.fillRect(0, yy, W, 1);
+  }
 }
 
 function draw() {
@@ -609,6 +624,191 @@ function roundRect(x, y, w, h, r = 8) {
   ctx.closePath();
 }
 
+function drawOvalShadow(x, y, w, h, alpha = 0.24) {
+  ctx.save();
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, Math.max(w, h) / 2);
+  grad.addColorStop(0, `rgba(30, 32, 34, ${alpha})`);
+  grad.addColorStop(0.72, `rgba(30, 32, 34, ${alpha * 0.38})`);
+  grad.addColorStop(1, "rgba(30, 32, 34, 0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(x, y, w / 2, h / 2, 0, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawChunkRect(x, y, w, h, r, topColor, sideColor, strokeColor = "rgba(36,50,64,.34)", depth = 8) {
+  ctx.save();
+  drawOvalShadow(x + w / 2, y + h + depth + 8, w * 0.92, h * 0.36, 0.18);
+
+  roundRect(x, y + depth, w, h, r);
+  ctx.fillStyle = sideColor;
+  ctx.fill();
+
+  roundRect(x, y, w, h, r);
+  const grad = ctx.createLinearGradient(x, y, x, y + h);
+  grad.addColorStop(0, "rgba(255,255,255,.36)");
+  grad.addColorStop(0.12, topColor);
+  grad.addColorStop(1, shadeColor(topColor, -12));
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.strokeStyle = "rgba(255,255,255,.52)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r + 4, y + 6);
+  ctx.lineTo(x + w - r - 4, y + 6);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBeveledCircle(x, y, r, color, sideColor, strokeColor = "rgba(36,50,64,.34)") {
+  ctx.save();
+  drawOvalShadow(x, y + r * 0.68, r * 2.05, r * 0.72, 0.22);
+  ctx.fillStyle = sideColor;
+  ctx.beginPath();
+  ctx.ellipse(x, y + 5, r, r * 0.95, 0, 0, TAU);
+  ctx.fill();
+  const grad = ctx.createRadialGradient(x - r * .35, y - r * .45, r * .08, x, y, r * 1.18);
+  grad.addColorStop(0, "rgba(255,255,255,.82)");
+  grad.addColorStop(0.22, color);
+  grad.addColorStop(1, shadeColor(color, -20));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPill3D(x, y, w, h, color, sideColor) {
+  drawChunkRect(x, y, w, h, h / 2, color, sideColor, "rgba(36,50,64,.28)", Math.max(5, h * .14));
+}
+
+function drawToyBase(x, y, w, h, accent = "#2f958e") {
+  ctx.save();
+  drawOvalShadow(x + w / 2, y + h + 22, w * 1.02, h * 1.1, 0.20);
+  drawChunkRect(x, y, w, h, 12, "#f4e7d0", "#b99768", "rgba(101,76,45,.26)", 14);
+
+  ctx.globalAlpha = 0.72;
+  ctx.fillStyle = accent;
+  roundRect(x + 18, y + h - 13, w - 36, 5, 3);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.strokeStyle = "rgba(255,255,255,.46)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + 20, y + 9);
+  ctx.lineTo(x + w - 20, y + 9);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawSlotMarks(x, y, w, count = 8) {
+  ctx.save();
+  ctx.strokeStyle = "rgba(82,69,52,.20)";
+  ctx.lineWidth = 2;
+  for (let i = 1; i < count; i++) {
+    const xx = x + w * i / count;
+    ctx.beginPath();
+    ctx.moveTo(xx, y);
+    ctx.lineTo(xx + 8, y + 15);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawTrack3D(x1, y, x2) {
+  ctx.save();
+  drawOvalShadow((x1 + x2) / 2, y + 20, x2 - x1 + 80, 28, 0.16);
+  drawPill3D(x1, y - 7, x2 - x1, 12, "#71808d", "#4e5a65");
+  ctx.fillStyle = "rgba(255,255,255,.28)";
+  ctx.fillRect(x1 + 12, y - 4, x2 - x1 - 24, 2);
+  ctx.fillStyle = "rgba(67,72,78,.18)";
+  for (let x = x1 + 16; x <= x2 - 18; x += 30) {
+    roundRect(x, y + 13, 15, 7, 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawWheel3D(x, y, r = 12) {
+  drawBeveledCircle(x, y, r, "#263241", "#111922", "rgba(255,255,255,.18)");
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.34)";
+  ctx.beginPath();
+  ctx.arc(x - r * .25, y - r * .28, r * .24, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawCart3D(x, y, w, h) {
+  const bodyX = x - w / 2;
+  const bodyY = y - h - 8;
+  drawChunkRect(bodyX, bodyY, w, h, 10, "#e86f61", "#a94843", "#783d3b", 10);
+  drawChunkRect(bodyX + 18, bodyY - 15, w * .48, 24, 12, "#f7efe5", "#c9bba5", "rgba(70,70,72,.32)", 5);
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.42)";
+  roundRect(bodyX + 12, bodyY + 8, w * .42, 8, 4);
+  ctx.fill();
+  ctx.restore();
+  drawWheel3D(x - 25, y + 2, 12);
+  drawWheel3D(x + 25, y + 2, 12);
+}
+
+function drawLauncher3D(x, y) {
+  drawChunkRect(x - 62, y - 24, 62, 42, 9, "#f7f1e8", "#b7aa95", "#7b8790", 8);
+  drawChunkRect(x - 54, y - 8, 68, 18, 9, "#5f6f7b", "#3f4c55", "#536170", 5);
+  drawBeveledCircle(x - 46, y + 17, 8, "#2f3a45", "#121820", "rgba(255,255,255,.18)");
+}
+
+function drawGlassBlock3D(x, y, w, h) {
+  ctx.save();
+  drawOvalShadow(x + w / 2, y + h + 18, w * 1.05, 36, 0.17);
+  ctx.fillStyle = "rgba(72, 132, 164, .18)";
+  ctx.beginPath();
+  ctx.moveTo(x + 18, y);
+  ctx.lineTo(x + w, y);
+  ctx.lineTo(x + w - 18, y + h);
+  ctx.lineTo(x, y + h);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74, 103, 122, .42)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.30)";
+  ctx.beginPath();
+  ctx.moveTo(x + 18, y);
+  ctx.lineTo(x + w, y);
+  ctx.lineTo(x + w - 8, y + 18);
+  ctx.lineTo(x + 8, y + 18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.42)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + 28, y + 12);
+  ctx.lineTo(x + w - 34, y + 12);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function shadeColor(hex, percent) {
+  if (!hex.startsWith("#")) return hex;
+  const n = parseInt(hex.slice(1), 16);
+  const amt = Math.round(2.55 * percent);
+  const r = clamp((n >> 16) + amt, 0, 255);
+  const g = clamp(((n >> 8) & 255) + amt, 0, 255);
+  const b = clamp((n & 255) + amt, 0, 255);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 function drawArrow(x1, y1, x2, y2, color = "#243240", width = 2) {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   ctx.save();
@@ -628,13 +828,39 @@ function drawArrow(x1, y1, x2, y2, color = "#243240", width = 2) {
   ctx.restore();
 }
 
+function drawGlowLine(x1, y1, x2, y2, color, width = 4) {
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 14;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width + 4;
+  ctx.globalAlpha = 0.26;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawLabel(text, x, y, color = "#243240") {
   ctx.save();
   ctx.font = "13px Microsoft YaHei, sans-serif";
   const metrics = ctx.measureText(text);
   roundRect(x - 8, y - 18, metrics.width + 16, 25, 6);
-  ctx.fillStyle = "rgba(255,255,255,.78)";
+  ctx.fillStyle = "rgba(255,255,255,.88)";
   ctx.fill();
+  ctx.strokeStyle = "rgba(84,96,109,.12)";
+  ctx.stroke();
+  ctx.shadowColor = "rgba(50,45,38,.12)";
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetY = 2;
   ctx.fillStyle = color;
   ctx.fillText(text, x, y);
   ctx.restore();
@@ -647,14 +873,12 @@ function drawNewton() {
   const a = S.values.force / S.values.mass;
   const xWorld = clamp(0.5 * a * S.t * S.t, 0, 2.2);
   const cartX = map(xWorld, 0, 2.2, left, right);
-  const cartW = 78, cartH = 44;
+  const cartW = map(S.values.mass, 0.3, 1.5, 72, 100);
+  const cartH = map(S.values.mass, 0.3, 1.5, 40, 50);
 
-  ctx.strokeStyle = "#65717e";
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(left - 40, trackY);
-  ctx.lineTo(right + 66, trackY);
-  ctx.stroke();
+  drawToyBase(left - 72, trackY + 23, right - left + 168, 44, "#2f958e");
+  drawSlotMarks(left - 40, trackY + 48, right - left + 106, 10);
+  drawTrack3D(left - 40, trackY, right + 66);
 
   ctx.fillStyle = "rgba(60,70,80,.16)";
   for (let x = left - 25; x <= right + 45; x += 30) {
@@ -670,19 +894,7 @@ function drawNewton() {
     ctx.fill();
   });
 
-  ctx.fillStyle = "#e86f61";
-  roundRect(cartX - cartW / 2, trackY - cartH - 4, cartW, cartH, 8);
-  ctx.fill();
-  ctx.strokeStyle = "#7d3e38";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  ctx.fillStyle = "#243240";
-  for (const dx of [-24, 24]) {
-    ctx.beginPath();
-    ctx.arc(cartX + dx, trackY + 2, 11, 0, TAU);
-    ctx.fill();
-  }
+  drawCart3D(cartX, trackY, cartW, cartH);
 
   drawArrow(cartX + cartW / 2 + 8, trackY - 28, cartX + cartW / 2 + 78, trackY - 28, "#2f958e", 3);
   drawLabel(`F = ${fmt(S.values.force)} N`, cartX + cartW / 2 + 18, trackY - 42, "#236e69");
@@ -697,11 +909,7 @@ function drawNewton() {
 
 function drawNewtonGraph(x, y, w, h, a) {
   ctx.save();
-  roundRect(x, y, w, h, 8);
-  ctx.fillStyle = "rgba(255,255,255,.72)";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(84,96,109,.25)";
-  ctx.stroke();
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
   ctx.strokeStyle = "#536170";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -736,6 +944,10 @@ function drawProjectile() {
   const y = 0.5 * G * t * t;
   const px = startX + x * W * 0.075;
   const py = startY + y * scale;
+  const targetX = startX + S.values.speed * flight * W * 0.075;
+
+  drawToyBase(startX - 94, ground + 8, Math.min(W * 0.80, targetX - startX + 190), 42, "#e86f61");
+  drawSlotMarks(startX - 54, ground + 34, Math.min(W * 0.72, targetX - startX + 110), 9);
 
   ctx.strokeStyle = "rgba(83,97,112,.35)";
   ctx.lineWidth = 2;
@@ -747,6 +959,17 @@ function drawProjectile() {
   ctx.stroke();
   ctx.setLineDash([]);
 
+  ctx.strokeStyle = "rgba(232,111,97,.42)";
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const tt = flight * i / 80;
+    const tx = startX + S.values.speed * tt * W * 0.075;
+    const ty = startY + 0.5 * G * tt * tt * scale;
+    if (i === 0) ctx.moveTo(tx, ty);
+    else ctx.lineTo(tx, ty);
+  }
+  ctx.stroke();
   ctx.strokeStyle = "#e86f61";
   ctx.lineWidth = 3;
   ctx.beginPath();
@@ -759,24 +982,16 @@ function drawProjectile() {
   }
   ctx.stroke();
 
-  ctx.fillStyle = "#f5f1e8";
-  roundRect(startX - 54, startY - 18, 54, 36, 8);
-  ctx.fill();
-  ctx.strokeStyle = "#7b8790";
-  ctx.stroke();
+  drawLauncher3D(startX, startY);
   drawArrow(startX, startY, startX + 76, startY, "#2f958e", 3);
   drawArrow(px, py, px, py + 62, "#d6a744", 3);
   drawArrow(px, py, px + 58, py, "#427aa1", 3);
 
-  ctx.fillStyle = "#e86f61";
-  ctx.beginPath();
-  ctx.arc(px, py, 14, 0, TAU);
-  ctx.fill();
-  ctx.strokeStyle = "#7d3e38";
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  const shadowAlpha = clamp((ground - py) / (H * 0.45), 0.08, 0.24);
+  drawOvalShadow(px, ground + 8, 34 + shadowAlpha * 70, 9, shadowAlpha);
+  drawBeveledCircle(px, py, 15, "#e86f61", "#9f3f3c", "#7d3e38");
 
-  const targetX = startX + S.values.speed * flight * W * 0.075;
+  drawChunkRect(targetX - 36, ground + 5, 72, 15, 8, "#f4e7d0", "#bba17a", "rgba(117,93,54,.28)", 5);
   drawLabel(`R = ${fmt(S.values.speed * flight)} m`, targetX - 42, ground - 14, "#7d3e38");
   drawLabel("vₓ 不变", startX + 56, startY - 16, "#236e69");
   drawLabel("vᵧ = gt", px + 18, py + 54, "#8a6826");
@@ -803,6 +1018,13 @@ function drawPendulum() {
   const bobY = pivotY + Math.cos(theta) * lenPx;
   const period = TAU * Math.sqrt(S.values.length / G);
 
+  drawToyBase(pivotX - 166, H * 0.74, 332, 44, "#d6a744");
+  drawSlotMarks(pivotX - 128, H * 0.765, 256, 8);
+  drawChunkRect(pivotX - 118, pivotY - 34, 236, 18, 9, "#6b7e8e", "#41505c", "rgba(36,50,64,.32)", 6);
+  drawChunkRect(pivotX - 126, H * 0.73, 252, 22, 11, "#7b8b97", "#4b5963", "rgba(36,50,64,.28)", 7);
+  drawChunkRect(pivotX - 112, pivotY - 22, 20, H * 0.56, 10, "#758795", "#46545e", "rgba(36,50,64,.26)", 6);
+  drawChunkRect(pivotX + 92, pivotY - 22, 20, H * 0.56, 10, "#758795", "#46545e", "rgba(36,50,64,.26)", 6);
+
   ctx.strokeStyle = "rgba(83,97,112,.28)";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -816,18 +1038,10 @@ function drawPendulum() {
   ctx.lineTo(bobX, bobY);
   ctx.stroke();
 
-  ctx.fillStyle = "#d6a744";
-  ctx.beginPath();
-  ctx.arc(bobX, bobY, 21, 0, TAU);
-  ctx.fill();
-  ctx.strokeStyle = "#735d2e";
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  drawOvalShadow(bobX, H * 0.755, 46, 10, 0.12);
+  drawBeveledCircle(bobX, bobY, 22, "#d6a744", "#8f6725", "#735d2e");
 
-  ctx.fillStyle = "#243240";
-  ctx.beginPath();
-  ctx.arc(pivotX, pivotY, 7, 0, TAU);
-  ctx.fill();
+  drawBeveledCircle(pivotX, pivotY, 8, "#263241", "#111922", "rgba(255,255,255,.18)");
 
   drawArrow(pivotX, pivotY + 36, pivotX, pivotY + 110, "#e86f61", 3);
   drawLabel("mg", pivotX + 10, pivotY + 86, "#7d3e38");
@@ -849,13 +1063,11 @@ function drawOptics() {
   const r = Math.asin(Math.sin(i) / S.values.refractive);
   const lambdaColor = wavelengthToColor(S.values.wavelength);
 
-  ctx.fillStyle = "rgba(255,255,255,.36)";
-  ctx.fillRect(0, cy, W * 0.62, H * 0.32);
-  ctx.fillStyle = "rgba(124,190,220,.22)";
-  ctx.fillRect(W * 0.14, cy, W * 0.48, H * 0.30);
-  ctx.strokeStyle = "#536170";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(W * 0.14, cy, W * 0.48, H * 0.30);
+  drawToyBase(W * 0.09, H * 0.735, W * 0.82, 42, "#6f6aa8");
+  drawSlotMarks(W * 0.13, H * 0.76, W * 0.72, 10);
+  ctx.fillStyle = "rgba(255,255,255,.28)";
+  ctx.fillRect(0, cy + H * 0.03, W * 0.62, H * 0.29);
+  drawGlassBlock3D(W * 0.14, cy, W * 0.48, H * 0.30);
 
   ctx.setLineDash([6, 6]);
   ctx.strokeStyle = "rgba(36,50,64,.42)";
@@ -871,8 +1083,10 @@ function drawOptics() {
   const iy = cy - Math.cos(i) * inLen;
   const rx = cx + Math.sin(r) * outLen;
   const ry = cy + Math.cos(r) * outLen;
-  drawArrow(ix, iy, cx, cy, lambdaColor, 4);
-  drawArrow(cx, cy, rx, ry, lambdaColor, 4);
+  drawGlowLine(ix, iy, cx, cy, lambdaColor, 4);
+  drawGlowLine(cx, cy, rx, ry, lambdaColor, 4);
+  drawArrow(ix, iy, cx, cy, lambdaColor, 3);
+  drawArrow(cx, cy, rx, ry, lambdaColor, 3);
 
   ctx.strokeStyle = "rgba(232,111,97,.35)";
   ctx.lineWidth = 2;
@@ -896,9 +1110,7 @@ function drawOptics() {
 }
 
 function drawFringes(x, y, w, h, color) {
-  roundRect(x, y, w, h, 8);
-  ctx.fillStyle = "rgba(35,40,54,.86)";
-  ctx.fill();
+  drawChunkRect(x, y, w, h, 10, "#30384f", "#1c2230", "rgba(255,255,255,.18)", 9);
   const spacing = map(S.values.wavelength, 420, 680, 18, 32);
   for (let yy = y + h / 2; yy < y + h - 10; yy += spacing) drawFringeLine(x, yy, w, color);
   for (let yy = y + h / 2 - spacing; yy > y + 10; yy -= spacing) drawFringeLine(x, yy, w, color);
@@ -942,6 +1154,8 @@ function drawInduction() {
   const emf = inducedEmf();
   const dir = speed >= 0 ? 1 : -1;
 
+  drawToyBase(W * 0.12, H * 0.66, W * 0.76, 44, "#427aa1");
+  drawSlotMarks(W * 0.17, H * 0.688, W * 0.66, 9);
   drawFieldLines(magnetX, magnetY, coilX, coilY, dir);
   drawMagnet(magnetX, magnetY);
   drawCoil(coilX, coilY);
@@ -962,12 +1176,27 @@ function drawInduction() {
 
 function drawFieldLines(mx, my, cx, cy, dir) {
   ctx.save();
-  ctx.strokeStyle = "rgba(66,122,161,.32)";
-  ctx.lineWidth = 2;
   for (let i = -2; i <= 2; i++) {
+    const startY = my + i * 18;
+    const endY = cy + i * 14;
+    const controlA = { x: lerp(mx, cx, .35), y: my - 110 + i * 20 };
+    const controlB = { x: lerp(mx, cx, .72), y: cy + 110 - i * 20 };
+    ctx.save();
+    ctx.shadowColor = "rgba(66,122,161,.7)";
+    ctx.shadowBlur = 12;
+    ctx.strokeStyle = "rgba(66,122,161,.18)";
+    ctx.lineWidth = 7;
     ctx.beginPath();
-    ctx.moveTo(mx + 48, my + i * 18);
-    ctx.bezierCurveTo(lerp(mx, cx, .35), my - 110 + i * 20, lerp(mx, cx, .72), cy + 110 - i * 20, cx - 60, cy + i * 14);
+    ctx.moveTo(mx + 48, startY);
+    ctx.bezierCurveTo(controlA.x, controlA.y, controlB.x, controlB.y, cx - 60, endY);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(66,122,161,.42)";
+    ctx.lineWidth = 2.3;
+    ctx.beginPath();
+    ctx.moveTo(mx + 48, startY);
+    ctx.bezierCurveTo(controlA.x, controlA.y, controlB.x, controlB.y, cx - 60, endY);
     ctx.stroke();
   }
   ctx.restore();
@@ -975,34 +1204,83 @@ function drawFieldLines(mx, my, cx, cy, dir) {
 
 function drawMagnet(x, y) {
   ctx.save();
-  roundRect(x - 62, y - 34, 124, 68, 8);
-  const grad = ctx.createLinearGradient(x - 62, y, x + 62, y);
-  grad.addColorStop(0, "#e86f61");
-  grad.addColorStop(.5, "#f6f1e8");
-  grad.addColorStop(1, "#427aa1");
-  ctx.fillStyle = grad;
+  drawOvalShadow(x, y + 48, 150, 34, 0.22);
+
+  roundRect(x - 62, y - 24, 124, 68, 10);
+  ctx.fillStyle = "#5a6570";
   ctx.fill();
+
+  roundRect(x - 62, y - 34, 124, 68, 10);
+  ctx.save();
+  ctx.clip();
+
+  let grad = ctx.createLinearGradient(x - 62, y - 34, x, y + 34);
+  grad.addColorStop(0, "#e86f61");
+  grad.addColorStop(.55, "#d9534e");
+  grad.addColorStop(1, "#9d3e3c");
+  ctx.fillStyle = grad;
+  ctx.fillRect(x - 62, y - 34, 62, 68);
+
+  grad = ctx.createLinearGradient(x, y - 34, x + 62, y + 34);
+  grad.addColorStop(0, "#5da0c8");
+  grad.addColorStop(.55, "#427aa1");
+  grad.addColorStop(1, "#2e536e");
+  ctx.fillStyle = grad;
+  ctx.fillRect(x, y - 34, 62, 68);
+
+  const center = ctx.createLinearGradient(x - 9, y, x + 9, y);
+  center.addColorStop(0, "rgba(255,255,255,.08)");
+  center.addColorStop(.5, "rgba(255,255,255,.88)");
+  center.addColorStop(1, "rgba(255,255,255,.08)");
+  ctx.fillStyle = center;
+  ctx.fillRect(x - 9, y - 34, 18, 68);
+  ctx.restore();
+
   ctx.strokeStyle = "rgba(36,50,64,.45)";
   ctx.lineWidth = 3;
   ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,.45)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x - 47, y - 23);
+  ctx.lineTo(x + 47, y - 23);
+  ctx.stroke();
+
   ctx.fillStyle = "#fff";
-  ctx.font = "bold 17px Microsoft YaHei";
-  ctx.fillText("N", x - 42, y + 6);
-  ctx.fillText("S", x + 32, y + 6);
+  ctx.font = "bold 18px Microsoft YaHei";
+  ctx.fillText("N", x - 44, y + 7);
+  ctx.fillText("S", x + 32, y + 7);
   ctx.restore();
 }
 
 function drawCoil(x, y) {
   ctx.save();
-  ctx.strokeStyle = "#d6a744";
-  ctx.lineWidth = 4;
+  drawOvalShadow(x + 16, y + 70, 170, 34, 0.18);
+  drawChunkRect(x - 72, y + 58, 176, 18, 9, "#758795", "#46545e", "rgba(36,50,64,.24)", 5);
+
+  ctx.strokeStyle = "rgba(139, 91, 28, .62)";
+  ctx.lineWidth = 8;
   for (let i = 0; i < 9; i++) {
+    ctx.beginPath();
+    ctx.ellipse(x + i * 9 - 36, y + 5, 19, 58, 0, 0, TAU);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = "#d6a744";
+  ctx.lineWidth = 5;
+  for (let i = 0; i < 9; i++) {
+    const grad = ctx.createLinearGradient(x - 50, y - 52, x + 50, y + 52);
+    grad.addColorStop(0, "#f5d983");
+    grad.addColorStop(.55, "#d6a744");
+    grad.addColorStop(1, "#9c6d22");
+    ctx.strokeStyle = grad;
     ctx.beginPath();
     ctx.ellipse(x + i * 9 - 36, y, 18, 58, 0, 0, TAU);
     ctx.stroke();
   }
+
   ctx.strokeStyle = "#536170";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.moveTo(x + 54, y - 28);
   ctx.lineTo(x + 120, y - 80);
@@ -1016,20 +1294,34 @@ function drawCoil(x, y) {
 
 function drawGalvanometer(x, y, emf, dir) {
   ctx.save();
-  roundRect(x - 64, y - 52, 128, 104, 10);
-  ctx.fillStyle = "rgba(255,255,255,.76)";
+  drawChunkRect(x - 64, y - 52, 128, 104, 12, "#f7fbff", "#cbd5dc", "rgba(84,96,109,.28)", 8);
+  ctx.fillStyle = "rgba(255,255,255,.72)";
+  ctx.beginPath();
+  ctx.arc(x, y + 14, 45, Math.PI, TAU);
+  ctx.lineTo(x + 45, y + 14);
+  ctx.lineTo(x - 45, y + 14);
+  ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = "rgba(84,96,109,.28)";
-  ctx.stroke();
   ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.arc(x, y + 14, 42, Math.PI, TAU);
   ctx.stroke();
+
+  for (let i = -2; i <= 2; i++) {
+    const a = -Math.PI / 2 + i * 0.34;
+    ctx.beginPath();
+    ctx.moveTo(x + Math.cos(a) * 32, y + 14 + Math.sin(a) * 32);
+    ctx.lineTo(x + Math.cos(a) * 39, y + 14 + Math.sin(a) * 39);
+    ctx.stroke();
+  }
+
   const needle = clamp(emf / 12, 0, 1) * dir;
   const angle = -Math.PI / 2 + needle * 0.85;
   drawArrow(x, y + 16, x + Math.cos(angle) * 38, y + 16 + Math.sin(angle) * 38, "#e86f61", 3);
+  drawBeveledCircle(x, y + 16, 5, "#263241", "#111922", "rgba(255,255,255,.18)");
   ctx.fillStyle = "#536170";
-  ctx.font = "12px Microsoft YaHei";
+  ctx.font = "bold 12px Microsoft YaHei";
   ctx.fillText("G", x - 5, y + 42);
   ctx.restore();
 }
@@ -1103,8 +1395,25 @@ function canvasPoint(evt) {
   };
 }
 
+function updateCanvasTilt(x, y) {
+  S.pointer.x = clamp(x / S.cssW, 0, 1);
+  S.pointer.y = clamp(y / S.cssH, 0, 1);
+  if (!canvasWrap) return;
+  const tiltX = (0.5 - S.pointer.y) * 2.4;
+  const tiltY = (S.pointer.x - 0.5) * 3.0;
+  canvasWrap.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+  canvasWrap.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+  canvasWrap.style.setProperty("--light-x", `${(S.pointer.x * 100).toFixed(1)}%`);
+  canvasWrap.style.setProperty("--light-y", `${(S.pointer.y * 100).toFixed(1)}%`);
+}
+
+function resetCanvasTilt() {
+  updateCanvasTilt(S.cssW / 2, S.cssH / 2);
+}
+
 function beginPointer(evt) {
   const p = canvasPoint(evt);
+  updateCanvasTilt(p.x, p.y);
   const hot = getHotspotAt(p.x, p.y);
   if (hot) {
     clearTimeout(S.longPressTimer);
@@ -1121,8 +1430,9 @@ function beginPointer(evt) {
 }
 
 function movePointer(evt) {
-  if (!S.dragTarget) return;
   const p = canvasPoint(evt);
+  updateCanvasTilt(p.x, p.y);
+  if (!S.dragTarget) return;
   applyDrag(S.dragTarget, p.x, p.y);
   updateControlOutputs();
   resetSoft();
@@ -1135,6 +1445,7 @@ function endPointer() {
   S.longPressTimer = null;
   S.dragTarget = null;
   canvas.classList.remove("dragging");
+  resetCanvasTilt();
 }
 
 function inferDragTarget(x, y) {
@@ -1208,6 +1519,7 @@ function bindEvents() {
 
   canvas.addEventListener("mousedown", beginPointer);
   canvas.addEventListener("mousemove", movePointer);
+  canvas.addEventListener("mouseleave", resetCanvasTilt);
   window.addEventListener("mouseup", endPointer);
   canvas.addEventListener("touchstart", event => { beginPointer(event); }, { passive: true });
   canvas.addEventListener("touchmove", event => { movePointer(event); }, { passive: true });

@@ -13,6 +13,9 @@
   --gold: #d6a744;
   --violet: #6f6aa8;
   --shadow: rgba(52, 48, 43, .24);
+  --chunk-edge: rgba(31, 45, 58, .18);
+  --chunk-bottom: rgba(31, 45, 58, .24);
+  --chunk-light: rgba(255, 255, 255, .72);
   --radius: 8px;
 }
 
@@ -281,17 +284,35 @@ button {
   border: 1px solid rgba(255, 255, 255, .62);
   border-radius: 999px;
   color: #fffaf0;
-  background: rgba(36, 50, 64, .68);
-  box-shadow: 0 12px 28px rgba(36, 50, 64, .22);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,.34), transparent 26%),
+    linear-gradient(180deg, rgba(69, 95, 119, .88), rgba(36, 50, 64, .82));
+  box-shadow:
+    0 7px 0 rgba(23, 34, 45, .52),
+    0 18px 34px rgba(36, 50, 64, .24),
+    inset 0 1px 0 rgba(255, 255, 255, .35);
   cursor: pointer;
   transition: .22s ease;
 }
 
-.open-book-btn:hover,
+.open-book-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+}
+
 .tool-btn:hover,
 .icon-btn:hover,
 .experiment-tab:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+.open-book-btn:active {
+  transform: translateX(-50%) translateY(3px);
+}
+
+.tool-btn:active,
+.icon-btn:active,
+.experiment-tab:active {
+  transform: translateY(3px);
 }
 
 .btn-icon {
@@ -333,9 +354,13 @@ button {
   height: 42px;
   border-radius: 12px 12px 5px 5px;
   background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.52), transparent 28%),
     linear-gradient(90deg, transparent 47%, rgba(255,255,255,.5) 47% 53%, transparent 53%),
     linear-gradient(135deg, var(--blue), var(--violet));
-  box-shadow: 0 10px 24px rgba(45, 65, 88, .24);
+  box-shadow:
+    0 5px 0 rgba(45, 65, 88, .34),
+    0 14px 24px rgba(45, 65, 88, .22),
+    inset 0 2px 0 rgba(255,255,255,.28);
 }
 
 .eyebrow {
@@ -367,8 +392,12 @@ button {
   border: 1px solid rgba(63, 76, 89, .16);
   border-radius: 8px;
   color: var(--ink);
-  background: rgba(255, 255, 255, .72);
-  box-shadow: 0 10px 24px rgba(64, 74, 84, .1);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.95), rgba(235, 242, 246, .84));
+  box-shadow:
+    0 4px 0 rgba(70, 85, 96, .20),
+    0 12px 22px rgba(64, 74, 84, .12),
+    inset 0 1px 0 rgba(255,255,255,.85);
   cursor: pointer;
   transition: .18s ease;
 }
@@ -410,7 +439,12 @@ button {
   border: 1px solid rgba(84, 96, 109, .14);
   border-radius: 8px;
   color: var(--ink);
-  background: rgba(255, 255, 255, .66);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .91), rgba(246, 240, 228, .76));
+  box-shadow:
+    0 4px 0 rgba(96, 83, 62, .12),
+    0 10px 20px rgba(64, 74, 84, .08),
+    inset 0 1px 0 rgba(255,255,255,.9);
   text-align: left;
   cursor: pointer;
   transition: .2s ease;
@@ -418,8 +452,12 @@ button {
 
 .experiment-tab.active {
   border-color: rgba(47, 149, 142, .5);
-  background: rgba(236, 252, 248, .9);
-  box-shadow: 0 10px 24px rgba(47, 149, 142, .12);
+  background:
+    linear-gradient(180deg, rgba(244, 255, 252, .96), rgba(220, 247, 241, .9));
+  box-shadow:
+    0 4px 0 rgba(38, 116, 110, .26),
+    0 14px 28px rgba(47, 149, 142, .14),
+    inset 0 1px 0 rgba(255,255,255,.9);
 }
 
 .tab-icon {
@@ -429,13 +467,40 @@ button {
   place-items: center;
   border-radius: 8px;
   color: white;
-  background: var(--blue);
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.46), transparent 27%),
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08)),
+    var(--blue);
+  box-shadow:
+    0 4px 0 rgba(31, 45, 58, .22),
+    inset 0 1px 0 rgba(255,255,255,.38);
+  text-shadow: 0 1px 0 rgba(0,0,0,.18);
 }
 
-.experiment-tab:nth-child(2) .tab-icon { background: var(--coral); }
-.experiment-tab:nth-child(3) .tab-icon { background: var(--gold); }
-.experiment-tab:nth-child(4) .tab-icon { background: var(--violet); }
-.experiment-tab:nth-child(5) .tab-icon { background: var(--teal); }
+.experiment-tab:nth-child(2) .tab-icon {
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.46), transparent 27%),
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08)),
+    var(--coral);
+}
+.experiment-tab:nth-child(3) .tab-icon {
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.46), transparent 27%),
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08)),
+    var(--gold);
+}
+.experiment-tab:nth-child(4) .tab-icon {
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.46), transparent 27%),
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08)),
+    var(--violet);
+}
+.experiment-tab:nth-child(5) .tab-icon {
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.46), transparent 27%),
+    linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.08)),
+    var(--teal);
+}
 
 .tab-title {
   display: block;
@@ -483,7 +548,11 @@ button {
   grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr);
   gap: 0;
   min-height: calc(100vh - 94px);
-  filter: drop-shadow(0 26px 40px rgba(61, 55, 47, .23));
+  transform: perspective(1600px) rotateX(1.4deg);
+  transform-origin: center top;
+  filter:
+    drop-shadow(0 16px 0 rgba(116, 88, 57, .18))
+    drop-shadow(0 34px 42px rgba(61, 55, 47, .26));
 }
 
 .book-spread::before {
@@ -507,6 +576,9 @@ button {
   background:
     linear-gradient(90deg, rgba(255,255,255,.5), rgba(255,255,255,0) 18%),
     linear-gradient(180deg, #fffaf0, #f5e7ce);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.92),
+    inset 0 -10px 18px rgba(161, 129, 82, .08);
 }
 
 .scene-page {
@@ -553,6 +625,10 @@ button {
 }
 
 .canvas-wrap {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --light-x: 50%;
+  --light-y: 32%;
   position: relative;
   z-index: 2;
   border: 1px solid rgba(93, 106, 116, .13);
@@ -561,13 +637,54 @@ button {
   background:
     linear-gradient(180deg, rgba(191, 231, 248, .74), rgba(255, 240, 213, .58) 56%, rgba(218, 228, 233, .8)),
     #e7f2f7;
+  box-shadow:
+    0 10px 0 rgba(105, 91, 71, .24),
+    0 24px 38px rgba(65, 75, 85, .18),
+    inset 0 2px 0 rgba(255,255,255,.75);
+  transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.canvas-wrap::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--light-x) var(--light-y), rgba(255,255,255,.36), transparent 21%),
+    linear-gradient(135deg, rgba(255,255,255,.22), transparent 34%, rgba(36,50,64,.08));
+  mix-blend-mode: screen;
+}
+
+.canvas-wrap::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.46),
+    inset 0 -13px 18px rgba(70,52,34,.12);
+}
+
+.canvas-wrap:hover {
+  box-shadow:
+    0 11px 0 rgba(105, 91, 71, .26),
+    0 28px 44px rgba(65, 75, 85, .20),
+    inset 0 2px 0 rgba(255,255,255,.78);
 }
 
 #sceneCanvas {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   aspect-ratio: 1.58 / 1;
   cursor: grab;
+  transform: translateZ(10px);
 }
 
 #sceneCanvas.dragging {
@@ -576,6 +693,7 @@ button {
 
 .pause-badge {
   position: absolute;
+  z-index: 5;
   top: 14px;
   right: 14px;
   display: none;
@@ -605,7 +723,12 @@ button {
   padding: 9px 10px;
   border: 1px solid rgba(84, 96, 109, .13);
   border-radius: 8px;
-  background: rgba(255, 255, 255, .66);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.9), rgba(247, 241, 230, .8));
+  box-shadow:
+    0 4px 0 rgba(96, 83, 62, .12),
+    0 10px 18px rgba(65, 75, 85, .08),
+    inset 0 1px 0 rgba(255,255,255,.9);
 }
 
 .live-item span {
@@ -657,15 +780,45 @@ button {
   border: 1px solid rgba(63, 76, 89, .14);
   border-radius: 8px;
   color: var(--ink);
-  background: rgba(255, 255, 255, .72);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(244, 238, 228, .88));
+  box-shadow:
+    0 5px 0 rgba(92, 82, 66, .18),
+    0 12px 20px rgba(64, 74, 84, .10),
+    inset 0 1px 0 rgba(255,255,255,.95);
   cursor: pointer;
-  transition: .18s ease;
+  transform: translateY(0);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  will-change: transform;
 }
 
 .tool-btn.primary {
   color: #fff;
-  background: linear-gradient(135deg, var(--teal), #4d8db2);
-  box-shadow: 0 12px 26px rgba(47, 149, 142, .22);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,.34), transparent 26%),
+    linear-gradient(180deg, #4aaeb2, #2f958e);
+  box-shadow:
+    0 6px 0 #236d68,
+    0 16px 26px rgba(47, 149, 142, .24),
+    inset 0 1px 0 rgba(255,255,255,.34);
+}
+
+.tool-btn:hover {
+  filter: saturate(1.04);
+}
+
+.tool-btn:active {
+  box-shadow:
+    0 2px 0 rgba(92, 82, 66, .20),
+    0 7px 13px rgba(64, 74, 84, .11),
+    inset 0 1px 0 rgba(255,255,255,.88);
+}
+
+.tool-btn.primary:active {
+  box-shadow:
+    0 2px 0 #236d68,
+    0 8px 14px rgba(47, 149, 142, .18),
+    inset 0 1px 0 rgba(255,255,255,.30);
 }
 
 .panel {
@@ -675,7 +828,24 @@ button {
   padding: 12px;
   border: 1px solid rgba(84, 96, 109, .13);
   border-radius: 8px;
-  background: rgba(255, 255, 255, .58);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.82), rgba(247, 239, 224, .68));
+  box-shadow:
+    0 5px 0 rgba(96, 83, 62, .10),
+    0 14px 24px rgba(65, 75, 85, .08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 7px;
+  height: 2px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.62);
+  pointer-events: none;
 }
 
 .panel-head {
@@ -713,6 +883,13 @@ button {
 .control {
   display: grid;
   gap: 5px;
+  padding: 7px 8px 9px;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.46), rgba(240,232,216,.32));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.72),
+    inset 0 -1px 0 rgba(119,96,62,.10);
 }
 
 .control label {
@@ -733,6 +910,52 @@ button {
 .control input[type="range"] {
   width: 100%;
   accent-color: var(--teal);
+  height: 18px;
+  cursor: ew-resize;
+}
+
+.control input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(84,96,109,.16);
+  background:
+    linear-gradient(180deg, rgba(121,143,153,.26), rgba(255,255,255,.72)),
+    linear-gradient(90deg, rgba(47,149,142,.28), rgba(214,167,68,.20));
+  box-shadow:
+    inset 0 2px 3px rgba(43,54,62,.18),
+    0 1px 0 rgba(255,255,255,.72);
+}
+
+.control input[type="range"]::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -7px;
+  border-radius: 8px;
+  border: 1px solid rgba(31,45,58,.22);
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.84), transparent 31%),
+    linear-gradient(180deg, #ffffff, #dce7ec);
+  box-shadow:
+    0 4px 0 rgba(70,85,96,.24),
+    0 9px 13px rgba(64,74,84,.15),
+    inset 0 1px 0 rgba(255,255,255,.92);
+  appearance: none;
+}
+
+.control input[type="range"]::-moz-range-track {
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(84,96,109,.16);
+  background: linear-gradient(180deg, rgba(121,143,153,.26), rgba(255,255,255,.72));
+}
+
+.control input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(31,45,58,.22);
+  background: linear-gradient(180deg, #ffffff, #dce7ec);
+  box-shadow: 0 4px 0 rgba(70,85,96,.24);
 }
 
 .knowledge-card {
