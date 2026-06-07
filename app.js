@@ -39,11 +39,21 @@ const toast = document.getElementById("toast");
 const TAU = Math.PI * 2;
 const G = 9.8;
 
+const COURSE_SECTIONS = [
+  { id: "required1", title: "必修一", subtitle: "运动、相互作用与牛顿定律" },
+  { id: "required2", title: "必修二", subtitle: "曲线运动、万有引力与机械能" },
+  { id: "required3", title: "必修三", subtitle: "静电场、电路与电磁初步" },
+  { id: "selective1", title: "选择性必修一", subtitle: "动量、振动、波与光学" },
+  { id: "selective2", title: "选择性必修二", subtitle: "电磁感应、交流电与传感器" },
+  { id: "selective3", title: "选择性必修三", subtitle: "热学、原子物理与近代物理" }
+];
+
 const experiments = [
   {
     id: "newton",
     icon: "F",
     chapter: "力学",
+    course: "required1",
     title: "探究加速度与力、质量的关系",
     mood: "纸带、轨迹和图像一起写下牛顿第二定律。",
     accent: "#2f958e",
@@ -82,6 +92,7 @@ const experiments = [
     id: "projectile",
     icon: "↘",
     chapter: "力学",
+    course: "required2",
     title: "探究平抛运动的特点",
     mood: "把一个弯曲轨迹拆成水平方向和竖直方向的两首歌。",
     accent: "#e86f61",
@@ -120,6 +131,7 @@ const experiments = [
     id: "pendulum",
     icon: "◷",
     chapter: "力学",
+    course: "selective1",
     title: "用单摆测量重力加速度",
     mood: "摆球在黄昏里来回，周期把重力加速度轻轻量出来。",
     accent: "#d6a744",
@@ -158,6 +170,7 @@ const experiments = [
     id: "optics",
     icon: "n",
     chapter: "光学",
+    course: "selective1",
     title: "探究光的折射定律",
     mood: "一束细光穿过玻璃砖，把法线、角度和折射率照得清清楚楚。",
     accent: "#5e79b8",
@@ -196,6 +209,7 @@ const experiments = [
     id: "interference",
     icon: "λ",
     chapter: "光学",
+    course: "selective1",
     title: "用双缝干涉测波长",
     mood: "细小的双缝把光变成一排明暗相间的节拍，屏幕就是它的乐谱。",
     accent: "#8c6dd7",
@@ -247,6 +261,7 @@ const experiments = [
     id: "induction",
     icon: "B",
     chapter: "电磁学",
+    course: "selective2",
     title: "探究感应电流方向",
     mood: "把看不见的磁通量变化画成能被看懂的风。",
     accent: "#427aa1",
@@ -286,6 +301,7 @@ const experiments = [
     id: "spring",
     icon: "k",
     chapter: "力学",
+    course: "required1",
     title: "探究弹簧弹力与伸长量的关系",
     mood: "把砝码轻轻挂上去，弹簧用等距刻度写出胡克定律。",
     accent: "#d6a744",
@@ -325,6 +341,7 @@ const experiments = [
     id: "energy",
     icon: "E",
     chapter: "力学",
+    course: "required2",
     title: "验证机械能守恒定律",
     mood: "小球从高处滑下，势能在轨道上变成速度的光。",
     accent: "#e86f61",
@@ -364,6 +381,7 @@ const experiments = [
     id: "resistance",
     icon: "Ω",
     chapter: "电学",
+    course: "required3",
     title: "伏安法测电阻",
     mood: "电压表和电流表像两只小眼睛，一起读出未知电阻。",
     accent: "#2f958e",
@@ -409,6 +427,7 @@ const experiments = [
     id: "force",
     icon: "Σ",
     chapter: "力学",
+    course: "required1",
     title: "探究互成角度两个力的合成",
     mood: "两个弹簧测力计轻轻拉住圆环，平行四边形把合力画出来。",
     accent: "#6f6aa8",
@@ -454,6 +473,7 @@ const experiments = [
     id: "gas",
     icon: "pV",
     chapter: "热学",
+    course: "selective3",
     title: "探究气体等温变化规律",
     mood: "活塞慢慢压下，气体把 pV = 常量写在透明针筒里。",
     accent: "#e86f61",
@@ -493,6 +513,7 @@ const experiments = [
     id: "resistivity",
     icon: "ρ",
     chapter: "电学",
+    course: "required3",
     title: "测量金属丝电阻率",
     mood: "把细金属丝拉直，长度、直径和伏安读数共同给出材料的性格。",
     accent: "#d6a744",
@@ -538,6 +559,7 @@ const experiments = [
     id: "lens",
     icon: "f",
     chapter: "光学",
+    course: "selective1",
     title: "测定凸透镜焦距",
     mood: "烛焰、透镜和光屏在一条光轨上移动，清晰像像一小片晨光落在屏上。",
     accent: "#427aa1",
@@ -578,14 +600,195 @@ const experiments = [
         formula: "f = uv/(u+v)"
       }
     }
+  },
+  {
+    id: "centripetal",
+    icon: "ω",
+    chapter: "力学",
+    course: "required2",
+    title: "探究向心力大小的影响因素",
+    mood: "小球绕着圆心转动，半径、角速度和质量把看不见的向心力变成可读的圆。",
+    accent: "#6f6aa8",
+    controls: [
+      { key: "mass", label: "小球质量 m", min: 0.05, max: 0.50, step: 0.01, value: 0.18, unit: "kg" },
+      { key: "radius", label: "转动半径 r", min: 0.15, max: 0.80, step: 0.01, value: 0.42, unit: "m" },
+      { key: "angularSpeed", label: "角速度 ω", min: 1.0, max: 8.0, step: 0.1, value: 4.2, unit: "rad/s" }
+    ],
+    overview: {
+      title: "让小球在水平圆周上匀速转动",
+      body: "只改变质量、半径或角速度中的一个量，观察保持圆周运动所需向心力的变化。理想模型中，向心力始终指向圆心，不改变速度大小，只改变速度方向。",
+      formula: "F = mω²r = mv²/r"
+    },
+    conclusion: "匀速圆周运动中，向心力方向始终指向圆心；m、r 一定时 F 与 ω² 成正比，m、ω 一定时 F 与 r 成正比，r、ω 一定时 F 与 m 成正比。",
+    cards: {
+      rotor: {
+        label: "转台",
+        title: "向心力不是额外的一种力",
+        body: "绳子拉力、轨道支持力或摩擦力都可能提供向心力。向心力描述的是合力沿半径指向圆心的作用效果。",
+        formula: "F向 = 合力的径向分量"
+      },
+      radius: {
+        label: "半径",
+        title: "半径变大时，保持同样角速度需要更大力",
+        body: "角速度不变时，小球离圆心越远，速度 v=ωr 越大，方向变化所需的向心力也随 r 增大。",
+        formula: "F = mω²r"
+      },
+      centripetalForce: {
+        label: "向心力",
+        title: "力指向圆心，速度沿切线",
+        body: "向心力垂直于瞬时速度方向，因此它主要改变速度方向，而不是直接让速度大小变大或变小。",
+        formula: "a向 = v²/r = ω²r"
+      },
+      cGraph: {
+        label: "F-ω² 图像",
+        title: "看平方关系要换横轴",
+        body: "若横轴直接取 ω，图像不是直线；把横轴换成 ω²，F-ω² 图像近似为直线，斜率为 mr。",
+        formula: "斜率 = mr"
+      }
+    }
+  },
+  {
+    id: "battery",
+    icon: "E",
+    chapter: "电学",
+    course: "required3",
+    title: "测定电源电动势和内阻",
+    mood: "一节电池也有自己的脾气，端电压会随着电流轻轻下降。",
+    accent: "#2f958e",
+    controls: [
+      { key: "emf", label: "电动势 E", min: 1.0, max: 6.0, step: 0.1, value: 3.0, unit: "V" },
+      { key: "internalResistance", label: "内阻 r", min: 0.2, max: 5.0, step: 0.1, value: 1.0, unit: "Ω" },
+      { key: "loadResistance", label: "外电阻 R", min: 2, max: 40, step: 0.5, value: 12, unit: "Ω" }
+    ],
+    overview: {
+      title: "改变外电阻，记录端电压和电流",
+      body: "电源内部可看作理想电源 E 与内阻 r 串联。改变外电阻得到多组 U、I 数据，作 U-I 图像，纵截距为 E，斜率绝对值为 r。",
+      formula: "U = E - Ir"
+    },
+    conclusion: "闭合电路中 I=E/(R+r)，外电路端电压 U=IR=E-Ir。U-I 图像为下降直线，纵截距表示电动势 E，斜率的绝对值表示内阻 r。",
+    cards: {
+      battery: {
+        label: "电源",
+        title: "电动势表示电源把其他能转化为电能的本领",
+        body: "电动势不是外电路两端总能直接读到的电压。电流越大，内阻上分去的电压 Ir 越多，端电压就越低。",
+        formula: "E = U + Ir"
+      },
+      loadResistor: {
+        label: "外电阻",
+        title: "调节外电阻可以得到多组 U-I 数据",
+        body: "外电阻越小，总电流越大，端电压下降越明显。实验中要避免电流过大导致电源发热。",
+        formula: "I = E/(R+r)"
+      },
+      batteryMeters: {
+        label: "电压表与电流表",
+        title: "电压表测端电压，电流表测干路电流",
+        body: "电流表串联在电路中，电压表并联在电源或外电阻两端。读数稳定后再记录。",
+        formula: "U端 = IR"
+      },
+      batteryGraph: {
+        label: "U-I 图像",
+        title: "截距和斜率直接给出电源参数",
+        body: "把多组端电压 U 与电流 I 描点，延长直线到 I=0 时的电压近似为 E，直线下降斜率的绝对值为 r。",
+        formula: "r = -ΔU/ΔI"
+      }
+    }
+  },
+  {
+    id: "magneticForce",
+    icon: "F",
+    chapter: "电磁学",
+    course: "selective2",
+    title: "探究通电导线在磁场中受力",
+    mood: "通电导线横在磁场里，电流、磁场和长度共同托起一支细小的力箭头。",
+    accent: "#427aa1",
+    controls: [
+      { key: "current", label: "电流 I", min: 0.2, max: 5.0, step: 0.1, value: 2.0, unit: "A" },
+      { key: "magneticField", label: "磁感应强度 B", min: 0.10, max: 1.20, step: 0.01, value: 0.45, unit: "T" },
+      { key: "conductorLength", label: "有效长度 L", min: 0.10, max: 0.60, step: 0.01, value: 0.32, unit: "m" }
+    ],
+    overview: {
+      title: "让导线垂直放入匀强磁场",
+      body: "当导线方向与磁场方向垂直时，安培力大小为 BIL。只改变一个变量，观察力的大小变化；方向由电流方向和磁场方向共同决定。",
+      formula: "F = BIL"
+    },
+    conclusion: "通电导线垂直于匀强磁场时，所受安培力 F 与磁感应强度 B、电流 I、导线有效长度 L 均成正比。若导线与磁场不垂直，应取垂直分量。",
+    cards: {
+      magneticWire: {
+        label: "通电导线",
+        title: "只有处在磁场中的有效长度参与受力",
+        body: "公式中的 L 是导线在匀强磁场区域内、与磁场垂直的有效长度，不是整根导线的总长度。",
+        formula: "F = BIL"
+      },
+      magneticField: {
+        label: "磁场",
+        title: "磁感应强度越大，导线受力越大",
+        body: "磁场越强，对运动电荷的作用越明显，宏观看就是通电导线受到更大的安培力。",
+        formula: "F ∝ B"
+      },
+      magneticCurrent: {
+        label: "电流方向",
+        title: "改变电流方向会改变受力方向",
+        body: "保持磁场方向不变时，电流反向，安培力也反向。判断方向时要同时看 I 与 B。",
+        formula: "F方向由 I 与 B 决定"
+      },
+      ampereForce: {
+        label: "安培力",
+        title: "垂直时力最大，不垂直要乘 sinθ",
+        body: "高中实验常让导线与磁场垂直，使关系最清楚。一般情形下，F=BILsinθ。",
+        formula: "F = BILsinθ"
+      }
+    }
+  },
+  {
+    id: "photoelectric",
+    icon: "hν",
+    chapter: "近代物理",
+    course: "selective3",
+    title: "光电效应与临界频率",
+    mood: "一束光照在金属表面，频率越过门槛时，电子像被清晨唤醒一样飞出。",
+    accent: "#d6a744",
+    controls: [
+      { key: "frequency", label: "入射光频率 ν", min: 4.0, max: 10.0, step: 0.1, value: 7.0, unit: "×10¹⁴ Hz" },
+      { key: "workFunction", label: "逸出功 W₀", min: 1.6, max: 3.4, step: 0.1, value: 2.2, unit: "eV" },
+      { key: "lightIntensity", label: "光强", min: 10, max: 100, step: 1, value: 58, unit: "%" }
+    ],
+    overview: {
+      title: "先看频率是否超过临界频率",
+      body: "光电效应中，单个光子的能量由频率决定。只有 hν 大于金属逸出功 W₀，才会有光电子逸出；光强主要影响光电子数目。",
+      formula: "Ek = hν - W₀"
+    },
+    conclusion: "当 ν≤ν₀ 时，即使增大光强也不能产生光电子；当 ν>ν₀ 时，最大初动能 Ek=hν-W₀，截止电压满足 eUc=Ek。光强增大主要使光电流增大，不改变最大初动能。",
+    cards: {
+      light: {
+        label: "入射光",
+        title: "频率决定单个光子的能量",
+        body: "光强可以看作单位时间到达的光子数变多，但每个光子的能量仍由 hν 决定。",
+        formula: "ε = hν"
+      },
+      metal: {
+        label: "金属板",
+        title: "逸出功决定临界频率",
+        body: "不同金属把电子束缚在表面的能力不同。逸出功越大，需要更高频率的光才能打出电子。",
+        formula: "ν₀ = W₀/h"
+      },
+      electrons: {
+        label: "光电子",
+        title: "超过阈值才会逸出",
+        body: "若光子能量不足，电子无法逸出；若能量足够，多余能量转化为光电子最大初动能。",
+        formula: "Ekmax = hν - W₀"
+      },
+      photoGraph: {
+        label: "Ek-ν 图像",
+        title: "斜率是普朗克常量",
+        body: "最大初动能随频率线性增大，图线与频率轴交点是临界频率。光强变化不会改变这条线的斜率。",
+        formula: "Ek = hν - W₀"
+      }
+    }
   }
 ];
 
 const futureExperiments = [
-  ["力学", "探究向心力大小的影响因素"],
-  ["电学", "测定电源电动势和内阻"],
-  ["电磁学", "探究通电导线在磁场中受力"],
-  ["近代物理", "光电效应与临界频率"]
+  ["智能题目", "导入题目并匹配实验模型（下一阶段）"]
 ];
 
 const S = {
@@ -669,6 +872,83 @@ function interferenceState() {
   };
 }
 
+function centripetalState() {
+  const mass = S.values.mass;
+  const radius = S.values.radius;
+  const omega = S.values.angularSpeed;
+  const speed = omega * radius;
+  const acceleration = omega * omega * radius;
+  const force = mass * acceleration;
+  const period = TAU / omega;
+  return {
+    mass,
+    radius,
+    omega,
+    speed,
+    acceleration,
+    force,
+    period,
+    phase: (S.t * omega) % TAU
+  };
+}
+
+function batteryState() {
+  const emf = S.values.emf;
+  const internalResistance = S.values.internalResistance;
+  const loadResistance = S.values.loadResistance;
+  const totalResistance = internalResistance + loadResistance;
+  const current = emf / Math.max(totalResistance, 0.001);
+  const terminalVoltage = current * loadResistance;
+  const internalDrop = current * internalResistance;
+  return {
+    emf,
+    internalResistance,
+    loadResistance,
+    totalResistance,
+    current,
+    terminalVoltage,
+    internalDrop,
+    power: terminalVoltage * current,
+    shortCurrent: emf / Math.max(internalResistance, 0.001)
+  };
+}
+
+function magneticForceState() {
+  const current = S.values.current;
+  const field = S.values.magneticField;
+  const length = S.values.conductorLength;
+  const force = field * current * length;
+  return {
+    current,
+    field,
+    length,
+    force,
+    deflection: clamp(force / 0.32, 0, 1)
+  };
+}
+
+function photoelectricState() {
+  const hEvPer1e14Hz = 0.4135667696;
+  const frequency = S.values.frequency;
+  const workFunction = S.values.workFunction;
+  const intensity = S.values.lightIntensity;
+  const photonEnergy = hEvPer1e14Hz * frequency;
+  const thresholdFrequency = workFunction / hEvPer1e14Hz;
+  const maxKineticEv = Math.max(0, photonEnergy - workFunction);
+  const emits = maxKineticEv > 0;
+  return {
+    frequency,
+    workFunction,
+    intensity,
+    photonEnergy,
+    thresholdFrequency,
+    maxKineticEv,
+    stoppingVoltage: maxKineticEv,
+    photocurrent: emits ? intensity / 100 * (0.45 + maxKineticEv * 0.12) : 0,
+    emits
+  };
+}
+
 const STEP_GUIDES = {
   cart: ["释放小车前先确认轨道水平，拖动车身或拉力箭头可以改变合外力。", "看小车位置、纸带点距和 a 的实时读数是否同步变大。", "现实中轨道摩擦和纸带阻力会让测得加速度偏小。"],
   force: ["改变拉力大小时，只保留一个变量明显变化。", "F/M 的比值决定加速度，不能只看 F 的数字。", "滑轮摩擦、细线质量和轨道未调平都会带来系统偏差。"],
@@ -707,7 +987,23 @@ const STEP_GUIDES = {
   formula: ["把测得的 R、S、L 代入公式，比较材料属性。", "电阻率应尽量与导线形状无关。", "温度升高会改变金属材料的电阻率。"],
   candle: ["移动烛焰相当于改变物距 u。", "u>f 时光屏上才能接到倒立实像。", "烛焰不在主光轴上会让像偏移或变形。"],
   lens: ["透镜位置确定后，再分别调物距和像距。", "凸透镜把平行主轴的光线会聚到焦点。", "透镜焦距标称值和实际值可能略有差别。"],
-  screen: ["左右移动光屏，找到最清晰的像。", "屏距等于像距 v 时，像最清楚。", "判断清晰位置带有主观性，是成像实验的重要误差。"]
+  screen: ["左右移动光屏，找到最清晰的像。", "屏距等于像距 v 时，像最清楚。", "判断清晰位置带有主观性，是成像实验的重要误差。"],
+  rotor: ["先让小球在水平面内匀速转动，观察力箭头始终指向圆心。", "只改变一个量时再比较向心力，避免把质量、半径和角速度混在一起。", "现实中转轴摩擦和半径估读会让力的读数偏离理想值。"],
+  radius: ["拖动半径相当于改变小球离圆心的距离。", "角速度不变时，半径越大，线速度 v=ωr 越大。", "半径应量到小球圆心，量到边缘会带来系统误差。"],
+  centripetalForce: ["先判断哪一个真实力在提供向心力，再代入 F=mω²r。", "速度方向沿切线，向心力方向指向圆心，两者互相垂直。", "转动不均匀时还会出现切向加速度，不能只用匀速圆周模型。"],
+  cGraph: ["把横轴换成 ω²，F-ω² 图像才接近直线。", "直线斜率为 mr，可用来检查质量和半径是否设置正确。", "读图时要避免只看单个点，多组数据趋势更可靠。"],
+  battery: ["先断开开关检查量程，再闭合电路记录端电压。", "电动势 E 是 U-I 图像在 I=0 处的纵截距。", "电池发热和极化会让端电压随时间缓慢变化。"],
+  loadResistor: ["改变外电阻得到不同电流，外电阻越小电流越大。", "每次读数要等待电表稳定，避免短路或过大电流。", "滑片接触不良会让 U-I 图像点分散。"],
+  batteryMeters: ["电流表串联在干路，电压表并联在电源两端或外电阻两端。", "端电压 U 随电流 I 增大而下降。", "电表内阻会带来细小系统误差，作图能减小偶然误差。"],
+  batteryGraph: ["用多组 U、I 描点并拟合直线。", "纵截距读 E，斜率绝对值读 r。", "不要只用一组数据直接算，图像法能更清楚地暴露异常点。"],
+  magneticWire: ["把导线放在匀强磁场区域内，并尽量与磁场垂直。", "有效长度 L 指处在磁场中的那一段导线。", "导线松动或不水平会影响力的方向与大小读数。"],
+  magneticField: ["磁场越强，单位电流和单位长度导线受到的力越大。", "改变 B 时保持 I 和 L 不变，才能验证 F 与 B 成正比。", "磁场边缘不均匀会让有效 B 小于标称值。"],
+  magneticCurrent: ["改变电流大小观察安培力大小变化。", "电流反向时，安培力方向反向。", "电流过大可能使导线发热，真实读数会不稳定。"],
+  ampereForce: ["垂直放置时用 F=BIL，斜放时应乘 sinθ。", "力的方向同时垂直于电流方向和磁场方向。", "用力传感器或天平读微小力时要先校零。"],
+  light: ["先判断入射光频率是否超过金属临界频率。", "增大光强会增加单位时间逸出的电子数，不会降低临界频率。", "环境杂散光可能产生背景电流。"],
+  metal: ["改变逸出功相当于更换金属材料。", "逸出功越大，临界频率越高。", "金属表面氧化或污染会改变有效逸出功。"],
+  electrons: ["频率超过阈值后才会出现光电子。", "最大初动能由 hν-W₀ 决定，与光强无关。", "真实实验中收集效率和空间电荷会影响光电流读数。"],
+  photoGraph: ["画 Ek-ν 图像时，斜率对应普朗克常量 h。", "图线与频率轴交点是临界频率 ν₀。", "截止电压读数不准会影响最大初动能的反推。"]
 };
 
 const ERROR_GUIDES = {
@@ -801,6 +1097,34 @@ const ERROR_GUIDES = {
     formula: "1/f测 = 1/u测 + 1/v测",
     sources: ["最清晰位置判断主观", "烛焰和透镜未共轴", "刻度起点读数不准"],
     reduce: ["左右移动光屏找最清晰区间中点", "保持三者共轴", "多组 u、v 反推 f"]
+  },
+  centripetal: {
+    title: "向心力实验的误差",
+    real: "现实模式会加入半径估读、转轴摩擦和转速不均匀，使测得向心力略偏离 mω²r。",
+    formula: "F测 ≈ mω²r + ΔF",
+    sources: ["半径没有量到小球圆心", "转速不稳定", "转轴摩擦或细绳弹性影响"],
+    reduce: ["用频闪或计时法校准角速度", "半径量到圆心", "每次只改变一个变量并取多组数据"]
+  },
+  battery: {
+    title: "测电源电动势和内阻的误差",
+    real: "现实模式会加入电表内阻、电池极化和读数估计，U-I 图像点会有轻微散布。",
+    formula: "U测 = E - I测r + ΔU",
+    sources: ["电压表分流", "电池发热或极化", "滑动变阻器接触不稳"],
+    reduce: ["控制电流不过大", "快速稳定读数", "用多组 U-I 数据拟合直线"]
+  },
+  magneticForce: {
+    title: "安培力实验的误差",
+    real: "现实模式会加入磁场不完全均匀、导线有效长度读数和力传感器零点误差。",
+    formula: "F测 ≈ BILsinθ",
+    sources: ["导线不完全垂直磁场", "磁场边缘较弱", "天平或力传感器未校零"],
+    reduce: ["让导线处在匀强磁场中央", "校零后再通电", "分别改变 B、I、L 验证比例关系"]
+  },
+  photoelectric: {
+    title: "光电效应实验的误差",
+    real: "现实模式会加入金属表面状态、背景电流和截止电压判断误差，但不会把光强误判成改变最大初动能。",
+    formula: "eUc测 ≈ hν - W₀",
+    sources: ["金属表面氧化或污染", "暗电流和杂散光", "截止电压读数判断不准"],
+    reduce: ["清洁金属表面并遮光", "先测背景电流", "改变频率作 Ek-ν 图像"]
   }
 };
 
@@ -817,7 +1141,11 @@ const MANUAL_GUIDES = {
   force: ["固定圆环位置，用两只测力计沿不同方向拉住。", "记录两个分力大小和夹角，按比例画出两条矢量。", "作平行四边形，对角线表示合力。", "改变夹角或分力，比较合力变化。"],
   gas: ["检查针筒密封，缓慢推动活塞以接近等温。", "每次体积改变后等待压强计稳定。", "记录多组 p 和 V，计算 pV。", "作 p-V 或 p-1/V 图像判断反比例关系。"],
   resistivity: ["把金属丝拉直，量出接线柱间有效长度 L。", "用螺旋测微器在多处测直径 d 并取平均。", "用伏安法测金属丝电阻 R，尽量避免温升。", "代入 ρ=Rπd²/(4L)，分析直径误差的影响。"],
-  lens: ["让烛焰、凸透镜和光屏中心在同一主光轴上。", "固定透镜，移动烛焰得到物距 u。", "移动光屏找到最清晰倒立实像，记录像距 v。", "代入 1/f=1/u+1/v，多组数据求平均焦距。"]
+  lens: ["让烛焰、凸透镜和光屏中心在同一主光轴上。", "固定透镜，移动烛焰得到物距 u。", "移动光屏找到最清晰倒立实像，记录像距 v。", "代入 1/f=1/u+1/v，多组数据求平均焦距。"],
+  centripetal: ["安装水平转台、小球和半径标尺，确认小球做近似匀速圆周运动。", "保持质量和半径不变，改变角速度，记录向心力并作 F-ω² 图像。", "保持角速度和质量不变，改变半径，观察 F 与 r 的关系。", "保持角速度和半径不变，改变质量，观察 F 与 m 的关系。"],
+  battery: ["按电流表串联、电压表并联连接电源、开关和可变外电阻。", "改变外电阻，分别记录多组端电压 U 和电流 I。", "以 I 为横轴、U 为纵轴作图并拟合直线。", "由纵截距读电动势 E，由斜率绝对值读内阻 r。"],
+  magneticForce: ["把直导线水平放入匀强磁场区域，使导线尽量垂直磁场。", "接通电路，记录电流 I、有效长度 L、磁感应强度 B 和力的读数。", "保持两个变量不变，分别改变 I、B 或 L，比较安培力变化。", "必要时反接电源，观察电流反向时受力方向是否反向。"],
+  photoelectric: ["选择金属板并遮光，先检查背景电流。", "照射不同频率的单色光，判断是否出现光电子。", "在 ν>ν₀ 时调节反向电压，找到光电流刚为零的截止电压。", "用 eUc=hν-W₀ 或 Ek-ν 图像分析临界频率和逸出功。"]
 };
 
 function stableNoise(key) {
@@ -859,7 +1187,19 @@ function realityRule(label) {
     ["电阻率", 0.032, 0],
     ["像距", 0, 0.7],
     ["焦距", 0.012, 0],
-    ["清晰度", -0.12, 0]
+    ["清晰度", -0.12, 0],
+    ["向心力", -0.026, 0],
+    ["角速度", 0.01, 0],
+    ["半径", 0.012, 0],
+    ["端电压", -0.014, 0],
+    ["电动势", 0.01, 0],
+    ["内阻", 0.026, 0],
+    ["安培力", -0.022, 0],
+    ["磁感应强度", -0.012, 0],
+    ["截止电压", 0.018, 0],
+    ["最大初动能", 0.018, 0],
+    ["临界频率", 0.01, 0],
+    ["光电流", -0.018, 0]
   ];
   const found = rules.find(([needle]) => label.includes(needle));
   return found ? { rel: found[1], abs: found[2] } : { rel: 0.008, abs: 0 };
@@ -1084,6 +1424,10 @@ function updatePhysics(dt) {
   if (id === "gas") updateGas(dt);
   if (id === "resistivity") updateResistivity(dt);
   if (id === "lens") updateLens(dt);
+  if (id === "centripetal") updateCentripetal(dt);
+  if (id === "battery") updateBattery(dt);
+  if (id === "magneticForce") updateMagneticForce(dt);
+  if (id === "photoelectric") updatePhotoelectric(dt);
 }
 
 function updateNewton() {
@@ -1153,16 +1497,49 @@ function updateLens() {
   if (S.t >= 5.0) markDone();
 }
 
+function updateCentripetal() {
+  if (S.t >= 6.0) markDone();
+}
+
+function updateBattery() {
+  if (S.t >= 5.2) markDone();
+}
+
+function updateMagneticForce() {
+  if (S.t >= 5.2) markDone();
+}
+
+function updatePhotoelectric() {
+  if (S.t >= 5.5) markDone();
+}
+
 function renderExperimentTabs() {
-  experimentList.innerHTML = experiments.map(exp => `
-    <button class="experiment-tab ${exp.id === S.current.id ? "active" : ""}" type="button" data-exp="${exp.id}">
-      <span class="tab-icon">${exp.icon}</span>
-      <span>
-        <span class="tab-title">${exp.title}</span>
-        <span class="tab-meta">${exp.chapter}</span>
-      </span>
-    </button>
-  `).join("");
+  experimentList.innerHTML = COURSE_SECTIONS.map(section => {
+    const sectionExperiments = experiments.filter(exp => exp.course === section.id);
+    if (!sectionExperiments.length) return "";
+    return `
+      <section class="course-section" aria-label="${section.title}">
+        <div class="course-head">
+          <span>
+            <strong>${section.title}</strong>
+            <small>${section.subtitle}</small>
+          </span>
+          <em>${sectionExperiments.length} 个</em>
+        </div>
+        <div class="course-experiment-list">
+          ${sectionExperiments.map(exp => `
+            <button class="experiment-tab ${exp.id === S.current.id ? "active" : ""}" type="button" data-exp="${exp.id}" style="--tab-accent:${exp.accent}">
+              <span class="tab-icon">${exp.icon}</span>
+              <span>
+                <span class="tab-title">${exp.title}</span>
+                <span class="tab-meta">${exp.chapter}</span>
+              </span>
+            </button>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }).join("");
 }
 
 function renderFutureList() {
@@ -1346,6 +1723,43 @@ function getLiveData() {
       ["清晰度", l.realImage ? `${fmt(l.sharpness, 0)}%` : "0%"]
     ];
   }
+  if (id === "centripetal") {
+    const c = centripetalState();
+    return [
+      ["质量 m", `${fmt(c.mass, 2)} kg`],
+      ["半径 r", `${fmt(c.radius, 2)} m`],
+      ["角速度 ω", `${fmt(c.omega)} rad/s`],
+      ["向心力 F", `${fmt(c.force)} N`]
+    ];
+  }
+  if (id === "battery") {
+    const b = batteryState();
+    return [
+      ["电流 I", `${fmt(b.current)} A`],
+      ["端电压 U", `${fmt(b.terminalVoltage)} V`],
+      ["电动势 E", `${fmt(b.emf)} V`],
+      ["内阻 r", `${fmt(b.internalResistance)} Ω`]
+    ];
+  }
+  if (id === "magneticForce") {
+    const m = magneticForceState();
+    return [
+      ["磁感应强度 B", `${fmt(m.field)} T`],
+      ["电流 I", `${fmt(m.current)} A`],
+      ["有效长度 L", `${fmt(m.length)} m`],
+      ["安培力 F", `${fmt(m.force)} N`]
+    ];
+  }
+  if (id === "photoelectric") {
+    const p = photoelectricState();
+    return [
+      ["光子能量 hν", `${fmt(p.photonEnergy)} eV`],
+      ["临界频率 ν₀", `${fmt(p.thresholdFrequency)}×10¹⁴ Hz`],
+      ["最大初动能 Ek", `${fmt(p.maxKineticEv)} eV`],
+      ["截止电压 Uc", `${fmt(p.stoppingVoltage)} V`],
+      ["光电流", `${fmt(p.photocurrent)} μA`]
+    ];
+  }
   return [];
 }
 
@@ -1359,7 +1773,7 @@ function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   S.cssW = Math.max(320, rect.width);
   S.cssH = Math.max(220, rect.height);
-  S.dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1.5), 2);
+  S.dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 2.35);
   canvas.width = Math.round(S.cssW * S.dpr);
   canvas.height = Math.round(S.cssH * S.dpr);
   ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
@@ -1440,6 +1854,10 @@ function draw() {
   if (id === "gas") drawGas();
   if (id === "resistivity") drawResistivity();
   if (id === "lens") drawLens();
+  if (id === "centripetal") drawCentripetal();
+  if (id === "battery") drawBatteryExperiment();
+  if (id === "magneticForce") drawMagneticForce();
+  if (id === "photoelectric") drawPhotoelectric();
 }
 
 function roundRect(x, y, w, h, r = 8) {
@@ -2001,12 +2419,12 @@ function drawInterference() {
   ]);
 }
 
-function drawLaserSource(x, y, color) {
+function drawLaserSource(x, y, color, label = `${fmt(S.values.wavelength, 0)} nm`) {
   drawChunkRect(x - 62, y - 26, 74, 48, 10, "#f8f1e6", "#b9a988", "rgba(77,61,134,.25)", 8);
   drawPill3D(x - 22, y - 12, 76, 24, "#6b617e", "#40384d");
   drawBeveledCircle(x + 50, y, 13, "#f7fbff", "#b8c5d0", "rgba(77,61,134,.22)");
   drawGlowLine(x + 49, y, x + 88, y, color, 5);
-  drawLabel(`${fmt(S.values.wavelength, 0)} nm`, x - 56, y + 58, "#4d3d86");
+  drawLabel(label, x - 56, y + 58, "#4d3d86");
 }
 
 function drawDoubleSlitPlate(x, y) {
@@ -2710,7 +3128,7 @@ function drawResistor(x, y, resistance) {
   ctx.restore();
 }
 
-function drawRheostat(x, y, w, value) {
+function drawRheostat(x, y, w, value, min = 0, max = 20) {
   drawChunkRect(x - 18, y - 26, w + 36, 52, 12, "#758795", "#46545e", "rgba(36,50,64,.25)", 8);
   ctx.save();
   ctx.strokeStyle = "#d6a744";
@@ -2722,7 +3140,7 @@ function drawRheostat(x, y, w, value) {
     ctx.lineTo(xx + 8, y + 8);
     ctx.stroke();
   }
-  const knobX = x + map(value, 0, 20, 8, w - 8);
+  const knobX = x + map(clamp(value, min, max), min, max, 8, w - 8);
   drawChunkRect(knobX - 14, y - 42, 28, 30, 8, "#e86f61", "#9f3f3c", "rgba(101,76,45,.34)", 6);
   drawLabel(`${fmt(value)} Ω`, knobX - 22, y - 55, "#7d3e38");
   ctx.restore();
@@ -3417,6 +3835,369 @@ function drawLensPanel(x, y, w, h, g) {
   ctx.restore();
 }
 
+function centripetalGeometry() {
+  const W = S.cssW, H = S.cssH;
+  const state = centripetalState();
+  const cx = W * 0.40;
+  const cy = H * 0.44;
+  const rx = map(state.radius, 0.15, 0.80, W * 0.07, W * 0.24);
+  const ry = rx * 0.54;
+  const ballX = cx + Math.cos(state.phase) * rx;
+  const ballY = cy + Math.sin(state.phase) * ry;
+  const tangent = {
+    x: -Math.sin(state.phase),
+    y: Math.cos(state.phase) * 0.54
+  };
+  return { ...state, cx, cy, rx, ry, ballX, ballY, tangent };
+}
+
+function drawCentripetal() {
+  const W = S.cssW, H = S.cssH;
+  const g = centripetalGeometry();
+  const ballR = map(g.mass, 0.05, 0.50, 13, 27);
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.60, 46, "#6f6aa8");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.50, 9);
+  drawOvalShadow(g.cx, g.cy + g.ry + 62, g.rx * 2.2, 36, 0.18);
+
+  ctx.save();
+  const tableGrad = ctx.createRadialGradient(g.cx - g.rx * .35, g.cy - g.ry * .55, 12, g.cx, g.cy, g.rx * 1.18);
+  tableGrad.addColorStop(0, "rgba(255,255,255,.78)");
+  tableGrad.addColorStop(.26, "#f7f1e8");
+  tableGrad.addColorStop(1, "#bba17a");
+  ctx.fillStyle = "#7d6d92";
+  ctx.beginPath();
+  ctx.ellipse(g.cx, g.cy + 16, g.rx + 70, g.ry + 38, 0, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = tableGrad;
+  ctx.beginPath();
+  ctx.ellipse(g.cx, g.cy, g.rx + 70, g.ry + 38, 0, 0, TAU);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(36,50,64,.28)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(111,106,168,.42)";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([9, 8]);
+  ctx.beginPath();
+  ctx.ellipse(g.cx, g.cy, g.rx, g.ry, 0, 0, TAU);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  drawChunkRect(g.cx - 18, g.cy + 34, 36, 82, 11, "#758795", "#46545e", "rgba(36,50,64,.25)", 8);
+  drawBeveledCircle(g.cx, g.cy, 18, "#6f6aa8", "#403d73", "rgba(255,255,255,.22)");
+  drawGlowLine(g.cx, g.cy, g.ballX, g.ballY, "rgba(111,106,168,.62)", 5);
+  drawBeveledCircle(g.ballX, g.ballY, ballR, "#e86f61", "#9f3f3c", "#7d3e38");
+
+  const vLen = clamp(g.speed * 15, 32, 88);
+  drawArrow(g.ballX, g.ballY, g.ballX + g.tangent.x * vLen, g.ballY + g.tangent.y * vLen, "#2f958e", 3);
+  drawArrow(g.ballX, g.ballY, lerp(g.ballX, g.cx, .54), lerp(g.ballY, g.cy, .54), "#e86f61", 4);
+  drawLabel(`F=${fmt(g.force)} N`, W * 0.10, H * 0.20, "#7d3e38");
+  drawLabel(`v=ωr=${fmt(g.speed)} m/s`, W * 0.10, H * 0.27, "#236e69");
+  drawLabel(`r=${fmt(g.radius)} m`, lerp(g.cx, g.ballX, .52) - 28, lerp(g.cy, g.ballY, .52) - 20, "#4d3d86");
+
+  drawCentripetalPanel(W * 0.70, H * 0.16, W * 0.22, H * 0.36, g);
+  drawHotspotHints([
+    { key: "rotor", x: g.cx, y: g.cy, text: "拖动转台" },
+    { key: "radius", x: lerp(g.cx, g.ballX, .52), y: lerp(g.cy, g.ballY, .52), text: "拖动半径" },
+    { key: "centripetalForce", x: g.ballX, y: g.ballY, text: "长按向心力" },
+    { key: "cGraph", x: W * 0.81, y: H * 0.34, text: "长按图像" }
+  ]);
+}
+
+function drawCentripetalPanel(x, y, w, h, g) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  const originX = x + 34;
+  const originY = y + h - 34;
+  const plotW = w - 58;
+  const plotH = h - 82;
+  const maxOmega2 = 64;
+  const maxF = Math.max(0.01, g.mass * g.radius * maxOmega2);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("F = mω²r", x + 16, y + 28);
+  ctx.fillText("横轴取 ω²", x + 16, y + 52);
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, y + 70);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(x + w - 18, originY);
+  ctx.stroke();
+  ctx.strokeStyle = "#6f6aa8";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX + plotW, originY - plotH);
+  ctx.stroke();
+  const px = originX + clamp(g.omega * g.omega / maxOmega2, 0, 1) * plotW;
+  const py = originY - clamp(g.force / maxF, 0, 1) * plotH;
+  drawBeveledCircle(px, py, 6, "#e86f61", "#9f3f3c", "#7d3e38");
+  ctx.fillStyle = "#536170";
+  ctx.fillText("F-ω²", x + w - 54, y + h - 12);
+  ctx.restore();
+}
+
+function drawBatteryExperiment() {
+  const W = S.cssW, H = S.cssH;
+  const b = batteryState();
+  const left = W * 0.16;
+  const right = W * 0.64;
+  const top = H * 0.28;
+  const bottom = H * 0.62;
+
+  drawToyBase(W * 0.10, H * 0.69, W * 0.58, 46, "#2f958e");
+  drawSlotMarks(W * 0.15, H * 0.718, W * 0.48, 8);
+  drawCircuitWire([
+    [left, bottom], [left, top], [W * 0.31, top], [W * 0.45, top],
+    [right, top], [right, bottom], [W * 0.43, bottom], [W * 0.28, bottom], [left, bottom]
+  ], b.current);
+  drawBattery(left, bottom, b.emf);
+  drawAmmeter(W * 0.33, top, b.current);
+  drawResistor(W * 0.51, top, b.loadResistance);
+  drawVoltmeter(W * 0.57, H * 0.43, b.terminalVoltage);
+  drawRheostat(W * 0.40, bottom, W * 0.22, b.loadResistance, 2, 40);
+  drawCurrentDots(left, right, top, bottom, b.current);
+  drawBatteryPanel(W * 0.70, H * 0.16, W * 0.22, H * 0.36, b);
+
+  drawLabel(`U = ${fmt(b.terminalVoltage)} V`, W * 0.10, H * 0.20, "#236e69");
+  drawLabel(`Ir = ${fmt(b.internalDrop)} V`, W * 0.10, H * 0.27, "#7d3e38");
+  drawLabel(`E = U + Ir`, W * 0.10, H * 0.34, "#536170");
+  drawHotspotHints([
+    { key: "battery", x: left, y: bottom, text: "拖动电源" },
+    { key: "loadResistor", x: W * 0.51, y: top, text: "拖动外阻" },
+    { key: "batteryMeters", x: W * 0.47, y: H * 0.35, text: "长按电表" },
+    { key: "batteryGraph", x: W * 0.81, y: H * 0.34, text: "长按图像" }
+  ]);
+}
+
+function drawBatteryPanel(x, y, w, h, b) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  const originX = x + 34;
+  const originY = y + h - 34;
+  const plotW = w - 58;
+  const plotH = h - 82;
+  const maxI = Math.max(0.8, b.shortCurrent * 1.08);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("U = E - Ir", x + 16, y + 28);
+  ctx.fillText(`截距 E=${fmt(b.emf)}V`, x + 16, y + 52);
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, y + 70);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(x + w - 18, originY);
+  ctx.stroke();
+  ctx.strokeStyle = "#2f958e";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY - plotH);
+  ctx.lineTo(originX + plotW, originY - clamp((b.emf - maxI * b.internalResistance) / b.emf, 0, 1) * plotH);
+  ctx.stroke();
+  const px = originX + clamp(b.current / maxI, 0, 1) * plotW;
+  const py = originY - clamp(b.terminalVoltage / b.emf, 0, 1) * plotH;
+  drawBeveledCircle(px, py, 6, "#e86f61", "#9f3f3c", "#7d3e38");
+  ctx.fillStyle = "#536170";
+  ctx.fillText("U-I", x + w - 44, y + h - 12);
+  ctx.restore();
+}
+
+function drawMagneticForce() {
+  const W = S.cssW, H = S.cssH;
+  const m = magneticForceState();
+  const zoneX = W * 0.22;
+  const zoneY = H * 0.24;
+  const zoneW = W * 0.42;
+  const zoneH = H * 0.34;
+  const wireY = zoneY + zoneH * 0.55;
+  const wireLenPx = map(m.length, 0.10, 0.60, zoneW * 0.26, zoneW * 0.82);
+  const wireX1 = zoneX + zoneW / 2 - wireLenPx / 2;
+  const wireX2 = zoneX + zoneW / 2 + wireLenPx / 2;
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.58, 46, "#427aa1");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.48, 9);
+  drawMagneticForceMagnet(zoneX, zoneY, zoneW, zoneH, m);
+
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(96,64,32,.22)";
+  ctx.lineWidth = 16;
+  ctx.beginPath();
+  ctx.moveTo(wireX1 - 60, wireY + 10);
+  ctx.lineTo(wireX2 + 60, wireY - 10);
+  ctx.stroke();
+  const wireGrad = ctx.createLinearGradient(wireX1, wireY, wireX2, wireY);
+  wireGrad.addColorStop(0, "#fff3b0");
+  wireGrad.addColorStop(.28, "#d6a744");
+  wireGrad.addColorStop(1, "#8f6725");
+  ctx.strokeStyle = wireGrad;
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(wireX1, wireY);
+  ctx.lineTo(wireX2, wireY);
+  ctx.stroke();
+  ctx.restore();
+
+  const forceLen = map(m.force, 0.002, 2.8, 42, 108);
+  drawArrow((wireX1 + wireX2) / 2, wireY - 4, (wireX1 + wireX2) / 2, wireY - forceLen, "#e86f61", 4);
+  drawArrow(wireX1 + 12, wireY - 24, wireX1 + 80, wireY - 34, "#2f958e", 3);
+  drawLabel(`I=${fmt(m.current)} A`, wireX1 + 30, wireY - 52, "#236e69");
+  drawLabel(`F=${fmt(m.force)} N`, (wireX1 + wireX2) / 2 + 14, wireY - forceLen + 12, "#7d3e38");
+  drawRoundMeter(W * 0.18, H * 0.25, "A", m.current, "A", 5, "#2f958e");
+  drawMagneticForcePanel(W * 0.70, H * 0.17, W * 0.22, H * 0.33, m);
+
+  drawHotspotHints([
+    { key: "magneticWire", x: (wireX1 + wireX2) / 2, y: wireY, text: "拖动导线" },
+    { key: "magneticField", x: zoneX + zoneW * 0.55, y: zoneY + zoneH * 0.26, text: "拖动磁场" },
+    { key: "magneticCurrent", x: wireX1 + 76, y: wireY - 30, text: "拖动电流" },
+    { key: "ampereForce", x: (wireX1 + wireX2) / 2, y: wireY - forceLen, text: "长按安培力" }
+  ]);
+}
+
+function drawMagneticForceMagnet(x, y, w, h, m) {
+  drawOvalShadow(x + w / 2, y + h + 64, w * 1.05, 34, 0.18);
+  drawChunkRect(x, y, w, 58, 12, "#e86f61", "#9f3f3c", "rgba(84,96,109,.24)", 9);
+  drawChunkRect(x, y + h - 58, w, 58, 12, "#427aa1", "#2e536e", "rgba(84,96,109,.24)", 9);
+  ctx.save();
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 18px Microsoft YaHei";
+  ctx.fillText("N", x + 18, y + 36);
+  ctx.fillText("S", x + 18, y + h - 20);
+  const density = Math.round(map(m.field, 0.1, 1.2, 4, 9));
+  for (let i = 0; i < density; i++) {
+    const xx = x + w * (i + 1) / (density + 1);
+    drawArrow(xx, y + 72, xx, y + h - 72, "rgba(66,122,161,.48)", 2);
+  }
+  ctx.restore();
+}
+
+function drawMagneticForcePanel(x, y, w, h, m) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("垂直磁场时", x + 16, y + 28);
+  ctx.fillText("F = BIL", x + 16, y + 54);
+  const base = y + h - 34;
+  const max = Math.max(0.01, 1.2 * 5 * 0.6);
+  [["B", m.field / 1.2, "#427aa1"], ["I", m.current / 5, "#2f958e"], ["L", m.length / 0.6, "#d6a744"], ["F", m.force / max, "#e86f61"]].forEach(([label, value, color], i) => {
+    const bx = x + 20 + i * ((w - 50) / 4);
+    const bh = clamp(value, 0, 1) * (h - 104);
+    roundRect(bx, base - bh, 19, bh, 5);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.fillStyle = "#536170";
+    ctx.fillText(label, bx + 2, base + 17);
+  });
+  ctx.restore();
+}
+
+function drawPhotoelectric() {
+  const W = S.cssW, H = S.cssH;
+  const p = photoelectricState();
+  const sourceX = W * 0.15;
+  const axisY = H * 0.42;
+  const metalX = W * 0.48;
+  const collectorX = W * 0.62;
+  const color = wavelengthToColor(clamp(3000 / p.frequency, 400, 720));
+
+  drawToyBase(W * 0.10, H * 0.68, W * 0.58, 46, "#d6a744");
+  drawSlotMarks(W * 0.15, H * 0.708, W * 0.48, 9);
+  drawLaserSource(sourceX, axisY, color, `ν=${fmt(p.frequency)}×10¹⁴Hz`);
+  drawGlowLine(sourceX + 74, axisY, metalX - 10, axisY, color, 5);
+  drawPhotoTube(metalX, collectorX, axisY, p, color);
+  drawRoundMeter(W * 0.26, H * 0.25, "μA", p.photocurrent, "μA", 1.4, "#d6a744");
+  drawRoundMeter(W * 0.78, H * 0.54, "V", p.stoppingVoltage, "V", 3.2, "#427aa1");
+  drawPhotoelectricPanel(W * 0.70, H * 0.16, W * 0.22, H * 0.31, p);
+
+  drawLabel(`hν=${fmt(p.photonEnergy)} eV`, W * 0.10, H * 0.19, "#8a6826");
+  drawLabel(p.emits ? "超过临界频率：有光电子" : "未超过临界频率：无光电子", W * 0.10, H * 0.31, p.emits ? "#236e69" : "#7d3e38");
+  drawHotspotHints([
+    { key: "light", x: sourceX + 78, y: axisY, text: "拖动频率" },
+    { key: "metal", x: metalX, y: axisY, text: "拖动金属" },
+    { key: "electrons", x: lerp(metalX, collectorX, .58), y: axisY - 38, text: "长按电子" },
+    { key: "photoGraph", x: W * 0.81, y: H * 0.31, text: "长按图像" }
+  ]);
+}
+
+function drawPhotoTube(metalX, collectorX, y, p, color) {
+  ctx.save();
+  drawOvalShadow((metalX + collectorX) / 2, y + 120, 260, 38, 0.18);
+  roundRect(metalX - 72, y - 92, collectorX - metalX + 148, 190, 22);
+  ctx.fillStyle = "rgba(126,195,220,.16)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,103,122,.42)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  drawChunkRect(metalX - 16, y - 72, 24, 144, 8, "#d6a744", "#8f6725", "rgba(101,76,45,.32)", 7);
+  drawChunkRect(collectorX - 8, y - 68, 18, 136, 8, "#758795", "#46545e", "rgba(36,50,64,.24)", 7);
+  ctx.restore();
+
+  if (p.emits) {
+    const count = Math.round(map(p.intensity, 10, 100, 4, 13));
+    for (let i = 0; i < count; i++) {
+      const progress = (S.t * (0.35 + p.maxKineticEv * .12) + i / count) % 1;
+      const x = lerp(metalX + 10, collectorX - 14, progress);
+      const yWave = y + Math.sin(progress * TAU + i) * 36 * (0.45 + p.maxKineticEv * .10);
+      drawGlowLine(x - 16, yWave + 3, x + 10, yWave - 3, "rgba(245,210,80,.46)", 2);
+      drawBeveledCircle(x, yWave, 5, "#f7fbff", "#cbd5dc", "rgba(214,167,68,.28)");
+    }
+  } else {
+    ctx.save();
+    ctx.strokeStyle = "rgba(232,111,97,.55)";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    ctx.moveTo(metalX + 20, y - 50);
+    ctx.lineTo(collectorX - 20, y + 48);
+    ctx.moveTo(metalX + 20, y + 48);
+    ctx.lineTo(collectorX - 20, y - 50);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+  drawLabel("金属板", metalX - 44, y + 112, "#8a6826");
+  drawLabel("收集极", collectorX - 32, y + 112, "#536170");
+}
+
+function drawPhotoelectricPanel(x, y, w, h, p) {
+  drawChunkRect(x, y, w, h, 10, "#f7fbff", "#d5dde2", "rgba(84,96,109,.22)", 7);
+  const originX = x + 34;
+  const originY = y + h - 34;
+  const plotW = w - 58;
+  const plotH = h - 84;
+  ctx.save();
+  ctx.fillStyle = "#536170";
+  ctx.font = "12px Microsoft YaHei";
+  ctx.fillText("Ek = hν - W₀", x + 16, y + 28);
+  ctx.fillText(`ν₀=${fmt(p.thresholdFrequency)}×10¹⁴Hz`, x + 16, y + 52);
+  ctx.strokeStyle = "#536170";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, y + 72);
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(x + w - 18, originY);
+  ctx.stroke();
+  const startX = originX + clamp((p.thresholdFrequency - 4) / 6, 0, 1) * plotW;
+  ctx.strokeStyle = "#d6a744";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(startX, originY);
+  ctx.lineTo(originX + plotW, originY - plotH);
+  ctx.stroke();
+  const px = originX + clamp((p.frequency - 4) / 6, 0, 1) * plotW;
+  const py = originY - clamp(p.maxKineticEv / 2.8, 0, 1) * plotH;
+  drawBeveledCircle(px, py, 6, p.emits ? "#e86f61" : "#536170", p.emits ? "#9f3f3c" : "#263241", "rgba(255,255,255,.18)");
+  ctx.restore();
+}
+
 function drawHotspotHints(items) {
   ctx.save();
   ctx.font = "12px Microsoft YaHei";
@@ -3575,6 +4356,53 @@ function getHotspotAt(x, y) {
       ["lens", g.lensX, g.axisY, 92],
       ["screen", g.screenX, g.axisY, 92],
       ["graph", W * 0.81, H * 0.26, 82]
+    );
+  }
+  if (id === "centripetal") {
+    const g = centripetalGeometry();
+    spots.push(
+      ["rotor", g.cx, g.cy, 96],
+      ["radius", lerp(g.cx, g.ballX, .52), lerp(g.cy, g.ballY, .52), 82],
+      ["centripetalForce", g.ballX, g.ballY, 88],
+      ["cGraph", W * 0.81, H * 0.34, 90]
+    );
+  }
+  if (id === "battery") {
+    spots.push(
+      ["battery", W * 0.16, H * 0.62, 92],
+      ["loadResistor", W * 0.51, H * 0.28, 92],
+      ["batteryMeters", W * 0.47, H * 0.35, 90],
+      ["batteryGraph", W * 0.81, H * 0.34, 90]
+    );
+  }
+  if (id === "magneticForce") {
+    const m = magneticForceState();
+    const zoneX = W * 0.22;
+    const zoneY = H * 0.24;
+    const zoneW = W * 0.42;
+    const zoneH = H * 0.34;
+    const wireY = zoneY + zoneH * 0.55;
+    const wireLenPx = map(m.length, 0.10, 0.60, zoneW * 0.26, zoneW * 0.82);
+    const wireX1 = zoneX + zoneW / 2 - wireLenPx / 2;
+    const wireX2 = zoneX + zoneW / 2 + wireLenPx / 2;
+    const forceLen = map(m.force, 0.002, 2.8, 42, 108);
+    spots.push(
+      ["magneticWire", (wireX1 + wireX2) / 2, wireY, 92],
+      ["magneticField", zoneX + zoneW * 0.55, zoneY + zoneH * 0.26, 92],
+      ["magneticCurrent", wireX1 + 76, wireY - 30, 84],
+      ["ampereForce", (wireX1 + wireX2) / 2, wireY - forceLen, 90]
+    );
+  }
+  if (id === "photoelectric") {
+    const sourceX = W * 0.15;
+    const axisY = H * 0.42;
+    const metalX = W * 0.48;
+    const collectorX = W * 0.62;
+    spots.push(
+      ["light", sourceX + 78, axisY, 92],
+      ["metal", metalX, axisY, 92],
+      ["electrons", lerp(metalX, collectorX, .58), axisY - 38, 92],
+      ["photoGraph", W * 0.81, H * 0.31, 90]
     );
   }
   const hit = spots
@@ -3760,6 +4588,29 @@ function inferDragTarget(x, y, hot = getHotspotAt(x, y)) {
     if (hot === "screen") return "screenOffset";
     return null;
   }
+  if (id === "centripetal") {
+    if (hot === "rotor" || hot === "centripetalForce") return "angularSpeed";
+    if (hot === "radius" || hot === "cGraph") return "radius";
+    return null;
+  }
+  if (id === "battery") {
+    if (hot === "battery") return "emf";
+    if (hot === "loadResistor" || hot === "batteryGraph") return "loadResistance";
+    if (hot === "batteryMeters") return "internalResistance";
+    return null;
+  }
+  if (id === "magneticForce") {
+    if (hot === "magneticWire" || hot === "ampereForce") return "conductorLength";
+    if (hot === "magneticField") return "magneticField";
+    if (hot === "magneticCurrent") return "current";
+    return null;
+  }
+  if (id === "photoelectric") {
+    if (hot === "light" || hot === "photoGraph") return "frequency";
+    if (hot === "metal") return "workFunction";
+    if (hot === "electrons") return "lightIntensity";
+    return null;
+  }
   return null;
 }
 
@@ -3767,8 +4618,8 @@ function applyDrag(key, x, y) {
   const control = S.current.controls.find(item => item.key === key);
   if (!control) return;
   let ratio = clamp(x / S.cssW, 0, 1);
-  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength", "slitDistance", "refractive"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
-  if (["angle", "wavelength", "screenDistance", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
+  if (["height", "length", "field", "springK", "loadMass", "mass", "voltage", "gasTemp", "wireDiameter", "wireVoltage", "focalLength", "slitDistance", "refractive", "emf", "internalResistance", "magneticField", "current", "workFunction", "lightIntensity"].includes(key)) ratio = clamp(1 - y / S.cssH, 0, 1);
+  if (["angle", "wavelength", "screenDistance", "magnetSpeed", "turns", "naturalLength", "loss", "resistance", "rheostat", "force", "speed", "forceA", "forceB", "forceAngle", "gasVolume", "gasAmount", "wireLength", "objectDistance", "screenOffset", "radius", "angularSpeed", "loadResistance", "conductorLength", "frequency"].includes(key)) ratio = clamp(x / S.cssW, 0, 1);
   let value = control.min + ratio * (control.max - control.min);
   value = Math.round(value / control.step) * control.step;
   S.values[key] = clamp(value, control.min, control.max);
